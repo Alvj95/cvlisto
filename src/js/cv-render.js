@@ -10,7 +10,7 @@ export const TEMPLATES = [
   { id: 'creativa', name: 'Creativa', pro: true, desc: 'Diseño llamativo para destacar.' },
 ];
 
-export const ACCENTS = ['#1f5fbf', '#0f766e', '#7c3aed', '#b91c1c', '#c2410c', '#334155'];
+export const ACCENTS = ['#5b4bff', '#1f5fbf', '#0f766e', '#e0457b', '#c2410c', '#334155'];
 
 export function emptyCV() {
   return {

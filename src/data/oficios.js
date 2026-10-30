@@ -4,6 +4,7 @@
 export const OFICIOS = [
   {
     slug: 'camarero',
+    icono: '🍽️',
     nombre: 'Camarero/a',
     titulo: 'Currículum de camarero/a: ejemplo y plantilla gratis',
     descripcion:
@@ -52,6 +53,7 @@ export const OFICIOS = [
   },
   {
     slug: 'ayudante-de-cocina',
+    icono: '🍳',
     nombre: 'Ayudante de cocina',
     titulo: 'Currículum de ayudante de cocina: ejemplo gratis para descargar',
     descripcion:
@@ -99,6 +101,7 @@ export const OFICIOS = [
   },
   {
     slug: 'dependiente',
+    icono: '🛍️',
     nombre: 'Dependiente/a',
     titulo: 'Currículum de dependiente/a de tienda: ejemplo y plantilla',
     descripcion:
@@ -146,6 +149,7 @@ export const OFICIOS = [
   },
   {
     slug: 'repartidor',
+    icono: '🛵',
     nombre: 'Repartidor/a',
     titulo: 'Currículum de repartidor/a: ejemplo gratis y consejos',
     descripcion:
@@ -192,6 +196,7 @@ export const OFICIOS = [
   },
   {
     slug: 'limpieza',
+    icono: '🧽',
     nombre: 'Personal de limpieza',
     titulo: 'Currículum de limpieza: ejemplo para limpiadora o limpiador',
     descripcion:
@@ -239,6 +244,7 @@ export const OFICIOS = [
   },
   {
     slug: 'cuidador-de-personas-mayores',
+    icono: '🤝',
     nombre: 'Cuidador/a de personas mayores',
     titulo: 'Currículum de cuidadora de personas mayores: ejemplo gratis',
     descripcion:
@@ -286,6 +292,7 @@ export const OFICIOS = [
   },
   {
     slug: 'mozo-de-almacen',
+    icono: '📦',
     nombre: 'Mozo/a de almacén',
     titulo: 'Currículum de mozo de almacén: ejemplo y plantilla gratis',
     descripcion:
@@ -332,6 +339,7 @@ export const OFICIOS = [
   },
   {
     slug: 'recepcionista',
+    icono: '🛎️',
     nombre: 'Recepcionista',
     titulo: 'Currículum de recepcionista: ejemplo para hotel y oficina',
     descripcion:
@@ -379,6 +387,7 @@ export const OFICIOS = [
   },
   {
     slug: 'peon-de-construccion',
+    icono: '🏗️',
     nombre: 'Peón de construcción',
     titulo: 'Currículum de peón de construcción: ejemplo gratis',
     descripcion:
@@ -426,6 +435,7 @@ export const OFICIOS = [
   },
   {
     slug: 'teleoperador',
+    icono: '🎧',
     nombre: 'Teleoperador/a',
     titulo: 'Currículum de teleoperador/a: ejemplo de atención al cliente',
     descripcion:

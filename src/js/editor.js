@@ -39,6 +39,7 @@ const oficio = () => OFICIOS.find((o) => o.slug === cv.oficio);
 let saveTimer;
 function changed({ rerenderForm = false } = {}) {
   if (rerenderForm) renderForm();
+  updateProgress();
   renderPreview();
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
@@ -46,6 +47,33 @@ function changed({ rerenderForm = false } = {}) {
     const el = $('#saved');
     if (el) el.textContent = ok ? 'Guardado en este dispositivo ✓' : '';
   }, 400);
+}
+
+/* ---------- Progreso ---------- */
+const STEPS = [
+  { sec: 'datos', ok: () => cv.nombre.trim() && (cv.telefono.trim() || cv.email.trim()), tip: 'Añade tu nombre y un teléfono o email.' },
+  { sec: 'datos', ok: () => cv.puesto.trim(), tip: 'Indica el puesto que buscas.' },
+  { sec: 'perfil', ok: () => cv.perfil.trim().length > 40, tip: 'Escribe un perfil de 2-3 líneas (o toca una sugerencia).' },
+  { sec: 'experiencia', ok: () => cv.experiencia.some((e) => e.puesto.trim()), tip: 'Añade al menos una experiencia.' },
+  { sec: 'formacion', ok: () => cv.formacion.some((f) => f.titulo.trim()), tip: 'Añade tus estudios o un curso.' },
+  { sec: 'habilidades', ok: () => cv.habilidades.length >= 4, tip: 'Añade al menos 4 habilidades.' },
+  { sec: 'idiomas', ok: () => cv.idiomas.some((i) => i.idioma.trim()), tip: 'Indica qué idiomas hablas.' },
+];
+
+function updateProgress() {
+  const done = STEPS.filter((s) => s.ok());
+  const pct = Math.round((done.length / STEPS.length) * 100);
+  const next = STEPS.find((s) => !s.ok());
+  $('#prog-pct').textContent = `${pct}%`;
+  $('#prog-bar').style.width = `${pct}%`;
+  $('#prog-title').textContent =
+    pct === 100 ? '¡Tu CV está completo! 🎉' : pct >= 60 ? '¡Vas muy bien!' : pct > 0 ? 'Tu CV va tomando forma' : 'Empecemos tu CV';
+  $('#prog-tip').textContent = next ? `Siguiente paso: ${next.tip}` : 'Ya puedes descargarlo en PDF.';
+  const secs = new Set(STEPS.map((s) => s.sec));
+  secs.forEach((sec) => {
+    const ok = STEPS.filter((s) => s.sec === sec).every((s) => s.ok());
+    $(`[data-sec="${sec}"]`)?.parentElement.classList.toggle('is-done', Boolean(ok));
+  });
 }
 
 function renderPreview() {
@@ -450,6 +478,7 @@ function init() {
   }
 
   renderForm();
+  updateProgress();
   renderPreview();
 }
 

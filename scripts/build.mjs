@@ -46,8 +46,15 @@ function layout({ path, title, description, body, active = '', ads = true, bodyC
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${canonical}">
 <meta property="og:locale" content="es_ES">
-<meta name="theme-color" content="#1f5fbf">
+<meta name="theme-color" content="#5b4bff">
 <link rel="icon" href="${url('favicon.svg')}" type="image/svg+xml">
+<link rel="manifest" href="${url('manifest.webmanifest')}">
+<link rel="apple-touch-icon" href="${url('icons/icon-192.png')}">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="${CONFIG.nombreSitio}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="${url('assets/css/site.css')}">
 <link rel="stylesheet" href="${url('assets/css/cv.css')}">
 ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld)}</script>` : ''}
@@ -72,6 +79,25 @@ ${body}
     <a href="${url('cookies/')}">Cookies</a>
   </nav>
 </div></footer>
+${
+  bodyClass === 'editor-page'
+    ? ''
+    : `<nav class="tabbar" aria-label="Navegación">
+  ${[
+    ['', '🏠', 'Inicio', 'inicio'],
+    ['ejemplos/', '📄', 'Ejemplos', 'ejemplos'],
+    ['crear/', '✚', 'Crear', 'crear', 'fab'],
+    ['consejos/', '💡', 'Consejos', 'consejos'],
+    ['pro/', '⭐', 'Pro', 'pro'],
+  ]
+    .map(
+      ([href, icon, label, key, cls]) =>
+        `<a href="${url(href)}"${cls ? ` class="${cls}"` : ''}${active === key ? ' aria-current="page"' : ''}><span class="ti">${icon}</span>${label}</a>`,
+    )
+    .join('')}
+</nav>`
+}
+<script>if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('${url('sw.js')}').catch(function(){})})}</script>
 </body>
 </html>
 `;
@@ -106,13 +132,15 @@ const FAQ = [
   ['¿Sirve si no tengo experiencia?', 'Sí. Puedes destacar tu formación, cursos, voluntariado y disponibilidad. Tenemos una guía específica para hacer un currículum sin experiencia.'],
 ];
 
-const heroCV = renderCV(sampleCV('camarero', 'moderna', '#1f5fbf'));
-const heroCV2 = renderCV(sampleCV('recepcionista', 'clasica', '#0f766e'));
+const TILES = ['t1', 't2', 't3', 't4', 't5'];
+const heroCV = renderCV(sampleCV('camarero', 'moderna', '#5b4bff'));
+const heroCV2 = renderCV(sampleCV('recepcionista', 'compacta', '#0f766e'));
 
 page('', {
   title: 'Crear currículum gratis online y descargar en PDF | CV Listo',
   description:
     'Haz tu currículum gratis en 10 minutos: plantillas profesionales, ejemplos por oficio y frases ya escritas. Descarga en PDF sin registro y sin pagar.',
+  active: 'inicio',
   jsonld: [
     {
       '@context': 'https://schema.org',
@@ -120,7 +148,7 @@ page('', {
       name: CONFIG.nombreSitio,
       url: abs(''),
       applicationCategory: 'BusinessApplication',
-      operatingSystem: 'Web',
+      operatingSystem: 'Web, Android',
       inLanguage: 'es',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
     },
@@ -133,72 +161,84 @@ page('', {
   body: `
 <section class="hero"><div class="wrap">
   <div>
-    <h1>Tu currículum listo en 10 minutos, <em>gratis de verdad</em></h1>
-    <p class="lead">Elige tu oficio, toca las frases que encajan contigo y descarga tu CV en PDF. Sin registro, sin suscripciones y sin sorpresas al final.</p>
+    <span class="pill">✨ 100% gratis · sin registro</span>
+    <h1>Consigue trabajo con un currículum <span class="hl">que destaca</span></h1>
+    <p class="lead">Elige tu oficio, toca las frases que encajan contigo y descarga tu CV en PDF en minutos. Sin suscripciones y sin sorpresas al final.</p>
     <div class="hero-cta">
-      <a class="btn btn-lg" href="${url('crear/')}">Crear mi currículum</a>
-      <a class="btn btn-lg btn-ghost" href="${url('ejemplos/')}">Ver ejemplos</a>
+      <a class="btn btn-white" href="${url('crear/')}">Crear mi currículum →</a>
+      <a class="btn btn-lg btn-glass" href="${url('ejemplos/')}">Ver ejemplos</a>
     </div>
-    <ul class="checks">
-      <li>Descarga en PDF gratis, sin trampas</li>
-      <li>Ejemplos y frases para ${OFICIOS.length} oficios</li>
-      <li>Tus datos se quedan en tu dispositivo</li>
-    </ul>
+    <div class="stats">
+      <div><strong>10 min</strong><span>y lo tienes listo</span></div>
+      <div><strong>${OFICIOS.length} oficios</strong><span>con frases hechas</span></div>
+      <div><strong>0 €</strong><span>por descargarlo</span></div>
+    </div>
   </div>
   <div class="hero-visual" aria-hidden="true">
-    <div class="paper" style="transform:scale(.42) rotate(-4deg);left:0;top:30px">${heroCV2}</div>
-    <div class="paper" style="transform:scale(.46) rotate(3deg);left:110px;top:0">${heroCV}</div>
+    <div class="paper" style="transform:scale(.4) rotate(-6deg);left:0;top:50px">${heroCV2}</div>
+    <div class="paper" style="transform:scale(.46) rotate(4deg);left:120px;top:0">${heroCV}</div>
+    <div class="float-chip" style="left:10px;top:20px"><span class="dot t4">✅</span><div>PDF descargado<small>Listo para enviar</small></div></div>
+    <div class="float-chip" style="right:0;bottom:40px;animation-delay:-2s"><span class="dot t3">⭐</span><div>Tu CV está al 100%<small>¡Perfecto!</small></div></div>
   </div>
 </div></section>
+<svg class="wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 C 360 0 1080 80 1440 30 L1440 60 L0 60 Z" fill="#f7f7fc"/></svg>
 
 <section class="section"><div class="wrap">
-  <h2>Cómo funciona</h2>
-  <p class="sub">Tres pasos y lo tienes.</p>
+  <div class="center"><span class="eyebrow">Así de fácil</span><h2>Tu CV en 3 pasos</h2><p class="sub">Sin complicaciones y desde el móvil.</p></div>
   <div class="grid grid-3">
-    <div class="card"><span class="step-n">1</span><h3>Elige tu oficio</h3><p>Camarero, dependiente, repartidor, cuidadora… Te proponemos frases y habilidades que encajan con ese trabajo.</p></div>
-    <div class="card"><span class="step-n">2</span><h3>Rellena y personaliza</h3><p>Escribe tus datos, toca las sugerencias que te sirvan y mira cómo queda en tiempo real.</p></div>
-    <div class="card"><span class="step-n">3</span><h3>Descarga en PDF</h3><p>Gratis, las veces que quieras. Listo para enviar por email, WhatsApp o portales de empleo.</p></div>
+    <div class="card step"><span class="step-n">1</span><h3>Elige tu oficio</h3><p>Camarero, dependiente, repartidor, cuidadora… Te proponemos frases y habilidades para ese trabajo.</p></div>
+    <div class="card step"><span class="step-n">2</span><h3>Toca y personaliza</h3><p>Rellena tus datos, toca las sugerencias que te sirvan y mira el resultado en tiempo real.</p></div>
+    <div class="card step"><span class="step-n">3</span><h3>Descarga en PDF</h3><p>Gratis, las veces que quieras. Listo para enviar por email, WhatsApp o portales de empleo.</p></div>
   </div>
 </div></section>
 
-<section class="section" style="background:#fff"><div class="wrap">
-  <h2>Plantillas</h2>
-  <p class="sub">Limpias, profesionales y pensadas para caber en una página.</p>
+<section class="section section-alt"><div class="wrap">
+  <span class="eyebrow">Plantillas</span>
+  <h2>Diseños que llaman la atención</h2>
+  <p class="sub">Profesionales, limpios y pensados para caber en una página.</p>
   <div class="tpl-gallery">
     ${TEMPLATES.map(
-      (t) => `<div class="tpl-thumb"><div class="mini">${
-        t.pro ? '' : renderCV(sampleCV('dependiente', t.id, '#1f5fbf'))
-      }${t.pro ? '<div style="display:grid;place-items:center;height:100%;font-size:2rem">🔒</div>' : ''}</div>
+      (t, i) => `<div class="tpl-thumb">${
+        t.pro
+          ? '<div class="mini locked">🔒</div>'
+          : `<div class="mini">${renderCV(sampleCV('dependiente', t.id, ['#5b4bff', '#e0457b', '#0f766e', '#c2410c'][i % 4]))}</div>`
+      }
       <strong>${t.name} ${t.pro ? '<span class="badge">Pro · pronto</span>' : '<span class="badge badge-free">Gratis</span>'}</strong>
-      <small style="color:var(--muted)">${t.desc}</small></div>`,
+      <small>${t.desc}</small></div>`,
     ).join('')}
   </div>
 </div></section>
 
 <section class="section"><div class="wrap">
-  <h2>Ejemplos de currículum por oficio</h2>
-  <p class="sub">Míralos, cópialos y adáptalos a tu experiencia.</p>
+  <span class="eyebrow">Ejemplos reales</span>
+  <h2>Currículums por oficio</h2>
+  <p class="sub">Míralos, cópialos y adáptalos a tu experiencia en un toque.</p>
   <div class="grid grid-3">
     ${OFICIOS.map(
-      (o) => `<a class="card" href="${url(`ejemplos/${o.slug}/`)}"><h3>${esc(o.nombre)}</h3><p>${esc(o.intro.split('. ')[0])}.</p><span class="more">Ver ejemplo →</span></a>`,
+      (o, i) => `<a class="card oficio-card" href="${url(`ejemplos/${o.slug}/`)}"><span class="icon-tile ${TILES[i % 5]}">${o.icono}</span><div><h3>${esc(o.nombre)}</h3><p>${esc(o.intro.split('. ')[0])}.</p><span class="more">Ver ejemplo →</span></div></a>`,
     ).join('')}
   </div>
 </div></section>
 
-<section class="section" style="background:#fff"><div class="wrap">
-  <h2>Por qué CV Listo</h2>
-  <div class="grid grid-3" style="margin-top:20px">
-    <div class="card"><h3>Gratis de verdad</h3><p>Muchas webs te dejan hacer el CV y te cobran al descargarlo, a veces con una suscripción mensual. Aquí no: la descarga es gratis.</p></div>
-    <div class="card"><h3>Hecho para trabajos reales</h3><p>Ejemplos para hostelería, comercio, logística, limpieza, cuidados y más. No solo para oficinas.</p></div>
-    <div class="card"><h3>Nunca te quedas en blanco</h3><p>Frases ya escritas para tu perfil, tus tareas y tus habilidades. Solo tienes que tocarlas.</p></div>
-    <div class="card"><h3>Privado</h3><p>Sin registro. Tu currículum se guarda solo en tu dispositivo y no lo enviamos a ningún sitio.</p></div>
+<section class="section section-alt"><div class="wrap">
+  <div class="center"><span class="eyebrow">Por qué CV Listo</span><h2>Hecho para ayudarte, no para cobrarte</h2><p class="sub">Lo que otras webs no te cuentan.</p></div>
+  <div class="grid grid-3">
+    <div class="card"><span class="icon-tile t4">💸</span><h3>Gratis de verdad</h3><p>Otras webs te dejan hacer el CV y te cobran al descargarlo, a veces con una suscripción. Aquí la descarga es gratis.</p></div>
+    <div class="card"><span class="icon-tile t3">🧰</span><h3>Para trabajos reales</h3><p>Hostelería, comercio, logística, limpieza, cuidados y más. No solo para oficinas.</p></div>
+    <div class="card"><span class="icon-tile t1">🪄</span><h3>Nunca en blanco</h3><p>Frases ya escritas para tu perfil, tus tareas y tus habilidades. Solo tienes que tocarlas.</p></div>
+    <div class="card"><span class="icon-tile t2">🔒</span><h3>Privado</h3><p>Sin registro. Tu currículum se guarda solo en tu dispositivo y no lo enviamos a ningún sitio.</p></div>
   </div>
 </div></section>
 
 <section class="section"><div class="narrow faq">
-  <h2>Preguntas frecuentes</h2>
-  ${FAQ.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}
-  ${ctaBox('¿Empezamos? Tu CV estará listo en unos minutos.')}
+  <div class="center"><span class="eyebrow">Dudas</span><h2>Preguntas frecuentes</h2></div>
+  <div style="margin-top:24px">${FAQ.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</div>
+</div></section>
+
+<section class="wrap"><div class="big-cta">
+  <h2>Tu próximo trabajo empieza aquí</h2>
+  <p>Crea tu currículum ahora. Es gratis y tardas menos que en tomarte un café.</p>
+  <a class="btn btn-white btn-lg" href="${url('crear/')}">Crear mi currículum gratis</a>
 </div></section>`,
 });
 
@@ -212,12 +252,17 @@ page('crear/', {
   body: `
 <div class="editor">
   <section class="ed-form" aria-label="Datos del currículum">
+    <div class="progress-card" aria-live="polite">
+      <div class="top"><strong id="prog-title">Empecemos tu CV</strong><span class="pct" id="prog-pct">0%</span></div>
+      <div class="progress-bar"><i id="prog-bar"></i></div>
+      <p id="prog-tip">Elige tu oficio para ver sugerencias.</p>
+    </div>
     <div class="oficio-box">
       <div class="field"><label for="oficio">¿A qué trabajo te presentas?</label><select id="oficio"></select></div>
       <p>Te sugerimos frases y habilidades para ese oficio. <button type="button" class="btn-link" id="btn-example">Rellenar con un ejemplo</button></p>
     </div>
 
-    <details class="ed-block" open><summary><span class="ico">👤</span>Datos personales</summary><div class="ed-body">
+    <details class="ed-block" open><summary data-sec="datos"><span class="ico t1">👤</span>Datos personales<span class="done">✓</span></summary><div class="ed-body">
       <div class="photo-row">
         <div class="ph" id="photo-preview">👤</div>
         <div>
@@ -237,24 +282,24 @@ page('crear/', {
       </div>
     </div></details>
 
-    <details class="ed-block" open><summary><span class="ico">✍️</span>Perfil</summary><div class="ed-body">
+    <details class="ed-block" open><summary data-sec="perfil"><span class="ico t2">✍️</span>Perfil<span class="done">✓</span></summary><div class="ed-body">
       <div class="field"><label for="f-perfil">Preséntate en 2-3 líneas</label><textarea id="f-perfil" data-f="perfil" rows="4"></textarea></div>
       <div class="perfil-sugg" id="perfil-sugg"></div>
     </div></details>
 
-    <details class="ed-block" open><summary><span class="ico">💼</span>Experiencia</summary><div class="ed-body">
+    <details class="ed-block" open><summary data-sec="experiencia"><span class="ico t3">💼</span>Experiencia<span class="done">✓</span></summary><div class="ed-body">
       <p class="hint">Empieza por la más reciente. ¿Sin experiencia? Pon prácticas, voluntariado o trabajos informales.</p>
       <div id="exp-list"></div>
       <button type="button" class="add-btn" data-add-to="experiencia">+ Añadir experiencia</button>
     </div></details>
 
-    <details class="ed-block"><summary><span class="ico">🎓</span>Formación</summary><div class="ed-body">
+    <details class="ed-block"><summary data-sec="formacion"><span class="ico t4">🎓</span>Formación<span class="done">✓</span></summary><div class="ed-body">
       <p class="hint">Estudios y también cursos cortos: manipulador de alimentos, PRL, carretillero…</p>
       <div id="edu-list"></div>
       <button type="button" class="add-btn" data-add-to="formacion">+ Añadir formación</button>
     </div></details>
 
-    <details class="ed-block"><summary><span class="ico">⭐</span>Habilidades</summary><div class="ed-body">
+    <details class="ed-block"><summary data-sec="habilidades"><span class="ico t5">⭐</span>Habilidades<span class="done">✓</span></summary><div class="ed-body">
       <div class="chips" id="skills-sel"></div>
       <div class="row2" style="grid-template-columns:1fr auto">
         <div class="field" style="margin:0"><input id="skill-input" placeholder="Escribe una y pulsa Enter" aria-label="Nueva habilidad"></div>
@@ -263,16 +308,16 @@ page('crear/', {
       <div id="skills-sugg" style="margin-top:8px"></div>
     </div></details>
 
-    <details class="ed-block"><summary><span class="ico">🌍</span>Idiomas</summary><div class="ed-body">
+    <details class="ed-block"><summary data-sec="idiomas"><span class="ico t1">🌍</span>Idiomas<span class="done">✓</span></summary><div class="ed-body">
       <div id="lang-list"></div>
       <button type="button" class="add-btn" data-add-to="idiomas">+ Añadir idioma</button>
     </div></details>
 
-    <details class="ed-block"><summary><span class="ico">📌</span>Otros datos</summary><div class="ed-body">
+    <details class="ed-block"><summary data-sec="otros"><span class="ico t2">📌</span>Otros datos<span class="done">✓</span></summary><div class="ed-body">
       <div class="field"><label for="f-otros">Uno por línea</label><textarea id="f-otros" data-f="otros" rows="4" placeholder="Carnet de conducir B&#10;Disponibilidad inmediata&#10;Permiso de trabajo en vigor"></textarea></div>
     </div></details>
 
-    <details class="ed-block" open><summary><span class="ico">🎨</span>Diseño</summary><div class="ed-body">
+    <details class="ed-block" open><summary data-sec="diseno"><span class="ico t3">🎨</span>Diseño<span class="done">✓</span></summary><div class="ed-body">
       <div class="tpl-pick" id="tpl-pick"></div>
       <div class="lbl" style="margin-top:12px">Color</div>
       <div class="swatches" id="swatches"></div>
@@ -348,14 +393,14 @@ page('ejemplos/', {
   <p>Elige tu trabajo y verás un currículum de ejemplo completo, con las tareas y habilidades que más piden las empresas. Con un toque lo abres en el editor y lo adaptas a ti.</p></div>
   <div class="grid grid-3" style="margin-top:24px">
     ${OFICIOS.map(
-      (o) => `<a class="card" href="${url(`ejemplos/${o.slug}/`)}"><h3>Currículum de ${esc(o.nombre.toLowerCase())}</h3><p>${esc(o.descripcion)}</p><span class="more">Ver ejemplo →</span></a>`,
+      (o, i) => `<a class="card oficio-card" href="${url(`ejemplos/${o.slug}/`)}"><span class="icon-tile ${TILES[i % 5]}">${o.icono}</span><div><h3>Currículum de ${esc(o.nombre.toLowerCase())}</h3><p>${esc(o.descripcion)}</p><span class="more">Ver ejemplo →</span></div></a>`,
     ).join('')}
   </div>
 </div>`,
 });
 
 OFICIOS.forEach((o, idx) => {
-  const ejemplo = renderCV(sampleCV(o.slug, idx % 2 ? 'clasica' : 'moderna', ['#1f5fbf', '#0f766e', '#7c3aed'][idx % 3]));
+  const ejemplo = renderCV(sampleCV(o.slug, idx % 2 ? 'clasica' : 'moderna', ['#5b4bff', '#0f766e', '#e0457b'][idx % 3]));
   const otros = OFICIOS.filter((x) => x.slug !== o.slug).slice(0, 4);
   page(`ejemplos/${o.slug}/`, {
     title: `${o.titulo} | CV Listo`,
@@ -373,7 +418,8 @@ OFICIOS.forEach((o, idx) => {
     body: `
 <div class="narrow prose">
   <p class="breadcrumb"><a href="${url()}">Inicio</a> › <a href="${url('ejemplos/')}">Ejemplos</a> › ${esc(o.nombre)}</p>
-  <h1>Currículum de ${esc(o.nombre.toLowerCase())}: ejemplo y plantilla</h1>
+  <span class="icon-tile ${TILES[idx % 5]}" style="margin-top:8px">${o.icono}</span>
+  <h1>Currículum de ${esc(o.nombre.toLowerCase())}: <span class="grad-text">ejemplo y plantilla</span></h1>
   <p>${esc(o.intro)}</p>
   ${ctaBox('Usa este ejemplo como base y cámbialo en 5 minutos.', `crear/?oficio=${o.slug}`, 'Usar este ejemplo')}
 
@@ -450,6 +496,7 @@ ARTICULOS.forEach((a) => {
 /* ---------- Pro ---------- */
 page('pro/', {
   title: 'CV Listo Pro | Pago único, sin suscripciones',
+  active: 'pro',
   description: 'CV Listo Pro: plantillas premium y funciones extra con un pago único. La descarga en PDF siempre seguirá siendo gratis.',
   body: `
 <div class="narrow prose">
@@ -573,6 +620,63 @@ await cp(join(ROOT, 'src/css'), join(OUT, 'assets/css'), { recursive: true });
 await cp(join(ROOT, 'src/js'), join(OUT, 'assets/js'), { recursive: true });
 await cp(join(ROOT, 'src/data'), join(OUT, 'assets/js/data'), { recursive: true });
 for (const f of await readdir(join(ROOT, 'src/static'))) await cp(join(ROOT, 'src/static', f), join(OUT, f), { recursive: true });
+
+// App instalable (PWA): es también la base para publicarla en Google Play como TWA.
+await writeFile(
+  join(OUT, 'manifest.webmanifest'),
+  JSON.stringify(
+    {
+      name: `${CONFIG.nombreSitio}: crea tu currículum gratis`,
+      short_name: CONFIG.nombreSitio,
+      description: 'Crea tu currículum gratis con ejemplos por oficio y descárgalo en PDF.',
+      id: BASE,
+      start_url: BASE,
+      scope: BASE,
+      display: 'standalone',
+      orientation: 'portrait',
+      background_color: '#f7f7fc',
+      theme_color: '#5b4bff',
+      lang: 'es',
+      categories: ['business', 'productivity'],
+      icons: [
+        { src: url('icons/icon-192.png'), sizes: '192x192', type: 'image/png' },
+        { src: url('icons/icon-512.png'), sizes: '512x512', type: 'image/png' },
+        { src: url('icons/maskable-512.png'), sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      ],
+      shortcuts: [
+        { name: 'Crear currículum', url: url('crear/') },
+        { name: 'Ejemplos', url: url('ejemplos/') },
+      ],
+    },
+    null,
+    2,
+  ),
+);
+
+// Service worker: páginas primero desde la red (para ver siempre lo último) y
+// recursos desde la caché; así el editor funciona también sin conexión.
+const VERSION = Date.now().toString(36);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/data/oficios.js', 'icons/icon-192.png'].map(url);
+await writeFile(
+  join(OUT, 'sw.js'),
+  `const CACHE = 'cvlisto-${VERSION}';
+const PRECACHE = ${JSON.stringify(PRECACHE)};
+self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)).then(() => self.skipWaiting())); });
+self.addEventListener('activate', (e) => {
+  e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
+});
+self.addEventListener('fetch', (e) => {
+  const req = e.request;
+  if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
+  if (req.mode === 'navigate') {
+    e.respondWith(fetch(req).then((res) => { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); return res; })
+      .catch(() => caches.match(req).then((r) => r || caches.match(${JSON.stringify(url('crear/'))}))));
+    return;
+  }
+  e.respondWith(caches.match(req).then((r) => r || fetch(req).then((res) => { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); return res; })));
+});
+`,
+);
 
 const sitemapUrls = pages.filter((p) => !p.path.endsWith('.html')).map((p) => abs(p.path));
 await writeFile(
