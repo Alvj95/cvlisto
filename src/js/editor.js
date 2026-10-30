@@ -45,12 +45,17 @@ function changed({ rerenderForm = false } = {}) {
   updateLangNote();
   renderPreview();
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    const ok = storage.set(STORE_KEY, JSON.stringify(cv));
-    const el = $('#saved');
-    if (el) el.textContent = ok ? 'Guardado en este dispositivo ✓' : '';
-  }, 400);
+  saveTimer = setTimeout(save, 400);
 }
+
+function save() {
+  clearTimeout(saveTimer);
+  const ok = storage.set(STORE_KEY, JSON.stringify(cv));
+  const el = $('#saved');
+  if (el) el.textContent = ok ? 'Guardado en este dispositivo ✓' : '';
+}
+// Si se sale de la página antes de que salte el temporizador, guardamos igual.
+addEventListener('pagehide', save);
 
 /* ---------- Idioma del currículum ---------- */
 // Lo que escribe el usuario a mano no se traduce: avisamos de qué textos siguen igual.

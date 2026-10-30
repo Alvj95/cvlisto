@@ -172,6 +172,10 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-co
 .example-preview { background: var(--grad-soft); border-radius: var(--radius); padding: 18px; overflow: hidden; }
 .example-preview .scaler { position: relative; margin: 0 auto; }
 .example-preview .cv { position: absolute; top: 0; left: 0; transform-origin: top left; box-shadow: var(--shadow); }
+.letter-sample { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow); }
+.letter-sample p { margin: 0 0 12px; }
+.letter-sample p:last-child { margin: 0; font-weight: 600; }
+.sheet-wrap .letter { position: absolute; top: 0; left: 0; transform-origin: top left; box-shadow: 0 20px 50px rgba(20,27,52,.15); border-radius: 4px; }
 .perfil-ej { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; margin: 10px 0; }
 .perfil-ej strong { color: var(--brand); }
 
@@ -253,6 +257,7 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-co
 .import-card > div { flex: 1; min-width: 0; }
 .import-card strong { font-size: .95rem; }
 .import-card p { margin: 2px 0 0; font-size: .84rem; color: var(--muted); }
+.import-card[hidden] { display: none; }
 .import-card.busy { opacity: .6; pointer-events: none; }
 .import-sum:focus { outline: none; }
 .import-sum { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; max-height: 50vh; overflow: auto; }
@@ -314,7 +319,7 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-co
   .ed-preview { display: none; padding: 16px 12px 110px; }
   .editor.show-preview .ed-form { display: none; }
   .editor.show-preview .ed-preview { display: flex; }
-  .ed-toolbar .js-download { display: none; }
+  .ed-toolbar .js-download, .ed-toolbar .btn-ghost { display: none; }
   .ed-toolbar .grow { text-align: center; }
   .mobile-bar {
     display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 8px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
@@ -341,4 +346,5 @@ dialog .dlg-actions { display: flex; gap: 8px; justify-content: flex-end; margin
   body > *:not(#print-root) { display: none !important; }
   #print-root { display: block; }
   #print-root .cv { box-shadow: none; min-height: 285mm; }
+  #print-root .letter { min-height: 0; }
 }

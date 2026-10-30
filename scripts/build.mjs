@@ -7,6 +7,7 @@ import { CONFIG } from '../src/config.js';
 import { OFICIOS, ejemploCV } from '../src/data/oficios.js';
 import { ARTICULOS } from '../src/data/articulos.js';
 import { renderCV, TEMPLATES } from '../src/js/cv-render.js';
+import { generateLetter, emptyLetter } from '../src/js/letter.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'dist');
@@ -28,6 +29,7 @@ function layout({ path, title, description, body, active = '', ads = true, bodyC
       : '';
   const nav = [
     ['ejemplos/', 'Ejemplos', 'ejemplos'],
+    ['carta/', 'Carta', 'carta'],
     ['consejos/', 'Consejos', 'consejos'],
   ]
     .map(([href, label, key]) => `<a href="${url(href)}"${active === key ? ' aria-current="page"' : ''}>${label}</a>`)
@@ -72,6 +74,7 @@ ${body}
 <footer class="site-foot"><div class="wrap">
   <div><strong>${CONFIG.nombreSitio}</strong> · Currículum gratis, sin trampas. © ${YEAR}</div>
   <nav>
+    <a href="${url('pro/')}">CV Listo Pro</a>
     <a href="${url('sobre-nosotros/')}">Quiénes somos</a>
     <a href="${url('contacto/')}">Contacto</a>
     <a href="${url('aviso-legal/')}">Aviso legal</a>
@@ -87,8 +90,8 @@ ${
     ['', '🏠', 'Inicio', 'inicio'],
     ['ejemplos/', '📄', 'Ejemplos', 'ejemplos'],
     ['crear/', '✚', 'Crear', 'crear', 'fab'],
+    ['carta/', '✉️', 'Carta', 'carta'],
     ['consejos/', '💡', 'Consejos', 'consejos'],
-    ['pro/', '⭐', 'Pro', 'pro'],
   ]
     .map(
       ([href, icon, label, key, cls]) =>
@@ -247,6 +250,27 @@ page('', {
 });
 
 /* ---------- Editor ---------- */
+const MOBILE_BAR = `<div class="mobile-bar">
+  <button type="button" class="btn btn-ghost" id="tab-edit" aria-pressed="true">✎ Editar</button>
+  <button type="button" class="btn btn-ghost" id="tab-preview" aria-pressed="false">👁 Ver</button>
+  <button type="button" class="btn js-download">⬇ PDF</button>
+</div>`;
+
+const PRINT_DIALOG = `<dialog id="dlg-print">
+  <h2>Descargar en PDF</h2>
+  <p>Se abrirá la ventana de imprimir de tu dispositivo. Para guardarlo como archivo:</p>
+  <ul>
+    <li><strong>Ordenador:</strong> en "Destino" elige <em>Guardar como PDF</em>.</li>
+    <li><strong>Android:</strong> arriba, elige <em>Guardar como PDF</em> y toca el botón PDF.</li>
+    <li><strong>iPhone:</strong> toca <em>Compartir</em> (arriba) y luego <em>Guardar en Archivos</em>.</li>
+  </ul>
+  <p>Si ves cabeceras o la fecha en los márgenes, desactiva <em>Encabezados y pies de página</em>.</p>
+  <div class="dlg-actions">
+    <button type="button" class="btn btn-ghost" onclick="this.closest('dialog').close()">Cancelar</button>
+    <button type="button" class="btn" id="dlg-print-ok">Entendido, descargar</button>
+  </div>
+</dialog>`;
+
 page('crear/', {
   title: 'Crear currículum gratis | CV Listo',
   description: 'Editor de currículum online gratis: rellena tus datos, elige plantilla y descarga en PDF. Sin registro.',
@@ -336,6 +360,11 @@ page('crear/', {
       <div class="swatches" id="swatches"></div>
     </div></details>
 
+    <div class="import-card" style="border-color:#dcd8ff">
+      <span class="ico t1">✉️</span>
+      <div><strong>¿Te piden carta de presentación?</strong><p>Se escribe sola con los datos de este currículum.</p></div>
+      <a class="btn btn-sm" href="${url('carta/')}">Crear carta</a>
+    </div>
     <p style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
       <span class="saved" id="saved"></span>
       <button type="button" class="btn-link" id="btn-reset" style="color:#b91c1c">Borrar todo</button>
@@ -345,32 +374,15 @@ page('crear/', {
   <section class="ed-preview" aria-label="Vista previa">
     <div class="ed-toolbar">
       <span class="grow" id="pages-info"></span>
+      <a class="btn btn-ghost" href="${url('carta/')}">✉️ Carta de presentación</a>
       <button type="button" class="btn js-download">⬇ Descargar PDF gratis</button>
     </div>
     <div class="sheet-wrap" id="sheet"></div>
   </section>
 </div>
 
-<div class="mobile-bar">
-  <button type="button" class="btn btn-ghost" id="tab-edit" aria-pressed="true">✎ Editar</button>
-  <button type="button" class="btn btn-ghost" id="tab-preview" aria-pressed="false">👁 Ver</button>
-  <button type="button" class="btn js-download">⬇ PDF</button>
-</div>
-
-<dialog id="dlg-print">
-  <h2>Descargar en PDF</h2>
-  <p>Se abrirá la ventana de imprimir de tu dispositivo. Para guardarlo como archivo:</p>
-  <ul>
-    <li><strong>Ordenador:</strong> en "Destino" elige <em>Guardar como PDF</em>.</li>
-    <li><strong>Android:</strong> arriba, elige <em>Guardar como PDF</em> y toca el botón PDF.</li>
-    <li><strong>iPhone:</strong> toca <em>Compartir</em> (arriba) y luego <em>Guardar en Archivos</em>.</li>
-  </ul>
-  <p>Si ves cabeceras o la fecha en los márgenes, desactiva <em>Encabezados y pies de página</em>.</p>
-  <div class="dlg-actions">
-    <button type="button" class="btn btn-ghost" onclick="this.closest('dialog').close()">Cancelar</button>
-    <button type="button" class="btn" id="dlg-print-ok">Entendido, descargar</button>
-  </div>
-</dialog>
+${MOBILE_BAR}
+${PRINT_DIALOG}
 
 <dialog id="dlg-pro">
   <h2>Plantillas Pro</h2>
@@ -404,6 +416,73 @@ page('crear/', {
 <div id="print-root"></div>`,
 });
 
+/* ---------- Carta de presentación ---------- */
+page('carta/', {
+  title: 'Carta de presentación gratis: se escribe sola con tu CV | CV Listo',
+  description:
+    'Crea tu carta de presentación en 1 minuto: usa los datos de tu currículum, elige empresa y puesto, y descárgala en PDF gratis. En español, inglés, francés, portugués e italiano.',
+  active: 'carta',
+  ads: false,
+  bodyClass: 'editor-page',
+  head: `<script type="module" src="${url('assets/js/carta-editor.js')}"></script>`,
+  body: `
+<div class="editor">
+  <section class="ed-form" aria-label="Datos de la carta">
+    <div class="progress-card">
+      <div class="top"><strong>✉️ Carta de presentación</strong></div>
+      <p style="margin-top:6px">Se escribe sola con los datos de tu currículum. Solo dinos a qué empresa y puesto te presentas.</p>
+    </div>
+
+    <div class="import-card" id="cv-missing" hidden>
+      <span class="ico t3">📄</span>
+      <div><strong>Primero crea tu currículum</strong><p>La carta usa tu nombre, tu experiencia y tus habilidades.</p></div>
+      <a class="btn btn-sm" href="${url('crear/')}">Crear CV</a>
+    </div>
+    <div class="import-card" id="cv-ok" hidden>
+      <span class="ico t4">✅</span>
+      <div><strong id="cv-name"></strong><p>Usamos los datos de tu currículum.</p></div>
+      <a class="btn btn-sm btn-ghost" href="${url('crear/')}">Editar CV</a>
+    </div>
+
+    <details class="ed-block" open><summary><span class="ico t1">🏢</span>¿A dónde la envías?</summary><div class="ed-body">
+      <div class="field"><label for="l-empresa">Empresa</label><input id="l-empresa" data-l="empresa" placeholder="Ej.: Hotel Miramar"></div>
+      <div class="field"><label for="l-puesto">Puesto al que te presentas</label><input id="l-puesto" data-l="puesto"></div>
+      <div class="field"><label for="l-contacto">Persona de contacto (opcional)</label><input id="l-contacto" data-l="contacto" placeholder="Ej.: Sra. García"></div>
+      <div class="field"><label for="l-fuente">¿Dónde viste la oferta?</label><select id="l-fuente" data-l="fuente"></select></div>
+      <div class="field" id="portal-field"><label for="l-portal">Nombre del portal (opcional)</label><input id="l-portal" data-l="portal" placeholder="Ej.: InfoJobs, Indeed, LinkedIn"></div>
+    </div></details>
+
+    <details class="ed-block" open><summary><span class="ico t2">✍️</span>Texto de la carta</summary><div class="ed-body">
+      <p class="hint">Puedes cambiar lo que quieras. Deja una línea en blanco entre párrafos.</p>
+      <div class="field"><textarea id="l-texto" rows="16" aria-label="Texto de la carta"></textarea></div>
+      <p class="lang-note" id="regen-hint" hidden>Has cambiado el texto a mano, así que no lo tocamos. <button type="button" class="btn-link" id="btn-regen">Volver a escribirla con los datos nuevos</button></p>
+      <button type="button" class="add-btn" id="btn-variant">🔄 Otra versión</button>
+    </div></details>
+
+    <details class="ed-block" open><summary><span class="ico t5">🌍</span>Idioma</summary><div class="ed-body">
+      <div class="chips" id="lang-pick"></div>
+      <p class="hint" style="margin:0">El color y el estilo son los mismos que los de tu currículum.</p>
+    </div></details>
+
+    <p><span class="saved" id="saved"></span></p>
+  </section>
+
+  <section class="ed-preview" aria-label="Vista previa">
+    <div class="ed-toolbar">
+      <span class="grow" id="pages-info"></span>
+      <a class="btn btn-ghost" href="${url('crear/')}">📄 Mi currículum</a>
+      <button type="button" class="btn js-download">⬇ Descargar PDF gratis</button>
+    </div>
+    <div class="sheet-wrap" id="sheet"></div>
+  </section>
+</div>
+
+${MOBILE_BAR}
+${PRINT_DIALOG}
+
+<div id="print-root"></div>`,
+});
+
 /* ---------- Ejemplos ---------- */
 page('ejemplos/', {
   title: 'Ejemplos de currículum por oficio (gratis) | CV Listo',
@@ -425,6 +504,7 @@ page('ejemplos/', {
 OFICIOS.forEach((o, idx) => {
   const ejemplo = renderCV(sampleCV(o.slug, idx % 2 ? 'clasica' : 'moderna', ['#5b4bff', '#0f766e', '#e0457b'][idx % 3]));
   const otros = OFICIOS.filter((x) => x.slug !== o.slug).slice(0, 4);
+  const carta = generateLetter({ ...sampleCV(o.slug, 'clasica'), lang: 'es' }, { ...emptyLetter(), empresa: 'Empresa Ejemplo' }, o);
   page(`ejemplos/${o.slug}/`, {
     title: `${o.titulo} | CV Listo`,
     description: o.descripcion,
@@ -462,6 +542,13 @@ OFICIOS.forEach((o, idx) => {
 
   <h2>Consejos para que te llamen</h2>
   <ul>${o.consejos.map((c) => `<li>${esc(c)}</li>`).join('')}</ul>
+
+  <h2>Carta de presentación de ${esc(o.nombre.toLowerCase())}</h2>
+  <p>Así queda una carta escrita automáticamente con los datos de este currículum. La tuya se escribe igual, con tus datos.</p>
+  <div class="letter-sample">${carta
+    .split('\n\n')
+    .map((p) => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`)
+    .join('')}</div>
 
   ${ctaBox(`Crea tu currículum de ${esc(o.nombre.toLowerCase())} gratis.`, `crear/?oficio=${o.slug}`, 'Empezar ahora')}
 
@@ -680,7 +767,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'icons/icon-192.png'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'icons/icon-192.png'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';

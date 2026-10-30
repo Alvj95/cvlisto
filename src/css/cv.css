@@ -86,3 +86,30 @@
 .tpl-compacta .cv-body { display: grid; grid-template-columns: 1fr 58mm; gap: 8mm; padding: 0 14mm; }
 .tpl-compacta .cv-sec { margin-top: 5mm; }
 .tpl-compacta .cv-sec h2 { border-bottom-width: 0.6pt; font-size: 9.5pt; }
+
+/* Carta de presentación */
+.letter {
+  --accent: #5b4bff;
+  --ink: #1d2433;
+  --muted: #5b6475;
+  box-sizing: border-box;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 18mm 20mm;
+  background: #fff;
+  color: var(--ink);
+  font: 10.5pt/1.6 "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.letter *, .letter *::before, .letter *::after { box-sizing: border-box; }
+.letter h1, .letter p { margin: 0; }
+.letter-head { padding-bottom: 6mm; border-bottom: 2pt solid var(--accent); display: flex; justify-content: space-between; align-items: flex-end; gap: 8mm; flex-wrap: wrap; }
+.letter-head h1 { font-size: 20pt; line-height: 1.15; letter-spacing: -0.01em; }
+.letter-role { color: var(--accent); font-weight: 600; font-size: 11pt; margin-top: 2pt !important; }
+.letter-contact { color: var(--muted); font-size: 9pt; text-align: right; max-width: 95mm; }
+.letter-meta { display: flex; justify-content: space-between; gap: 8mm; margin: 10mm 0 8mm; font-size: 10pt; }
+.letter-to { font-weight: 600; }
+.letter-date { color: var(--muted); text-align: right; }
+.letter-body p { margin-bottom: 4.5mm; text-align: left; }
+.letter-body p:last-child { margin-top: 6mm; font-weight: 600; }
