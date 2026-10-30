@@ -893,6 +893,8 @@ function init() {
   $$('.js-word').forEach((b) => b.addEventListener('click', downloadWord));
   $$('.js-offer').forEach((b) => b.addEventListener('click', openOffer));
   $('#offer-go').addEventListener('click', renderOffer);
+  // Enlace directo desde el menú de herramientas: crear/?analizar=1
+  if (new URLSearchParams(location.search).has('analizar')) setTimeout(openOffer, 300);
   $$('.js-share').forEach((b) =>
     b.addEventListener('click', () => {
       if (!cv.nombre.trim()) return alert('Escribe al menos tu nombre antes de enviarlo.');

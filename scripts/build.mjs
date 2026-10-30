@@ -23,6 +23,20 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 
 const pages = [];
 
+// Herramientas: se muestran en el menú "Herramientas" (ordenador y móvil) y en la portada.
+const TOOLS = [
+  { href: 'crear/', icon: '✏️', t: 't1', name: 'Crear CV', desc: 'Elige tu oficio y descárgalo en PDF' },
+  { href: 'carta/', icon: '✉️', t: 't2', name: 'Carta', desc: 'Se escribe sola con tu currículum' },
+  { href: 'crear/?analizar=1', icon: '🎯', t: 't4', name: 'Analizar oferta', desc: 'Qué te falta para cada empleo' },
+  { href: 'entrevista/', icon: '🎤', t: 't2', name: 'Simular entrevista', desc: 'Preguntas y respuestas modelo', nuevo: true },
+  { href: 'candidaturas/', icon: '📋', t: 't5', name: 'Mis candidaturas', desc: 'Organiza tus envíos', nuevo: true },
+  { href: 'app/', icon: '📲', t: 't3', name: 'Instalar app', desc: 'Tenlo en tu móvil como una app' },
+];
+const toolCards = (cls = 'tool-card', withDesc = true) =>
+  TOOLS.map(
+    (x) => `<a class="${cls}" href="${url(x.href)}"><span class="icon-tile ${x.t}">${x.icon}</span><span><strong>${x.name}${x.nuevo ? '<span class="new">NUEVO</span>' : ''}</strong>${withDesc ? `<small>${x.desc}</small>` : ''}</span></a>`,
+  ).join('');
+
 // Instalar la app en la pantalla de inicio (ver src/js/install.js).
 const INSTALL_DIALOG = `<dialog id="dlg-install">
   <h2>📲 Instala Tu CV Gratis</h2>
@@ -69,13 +83,14 @@ function layout({ path, title, description, body, active = '', ads = true, bodyC
     ads && CONFIG.adsenseClient
       ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${esc(CONFIG.adsenseClient)}" crossorigin="anonymous"></script>`
       : '';
-  const nav = [
-    ['ejemplos/', 'Ejemplos', 'ejemplos'],
-    ['carta/', 'Carta', 'carta'],
-    ['consejos/', 'Consejos', 'consejos'],
-  ]
-    .map(([href, label, key]) => `<a href="${url(href)}"${active === key ? ' aria-current="page"' : ''}>${label}</a>`)
-    .join('');
+  const nav =
+    `<details class="tools-dd"><summary>🧰 Herramientas</summary><div class="tools-dd-menu">${toolCards('tool-row', true)}</div></details>` +
+    [
+      ['ejemplos/', 'Ejemplos', 'ejemplos'],
+      ['consejos/', 'Consejos', 'consejos'],
+    ]
+      .map(([href, label, key]) => `<a href="${url(href)}"${active === key ? ' aria-current="page"' : ''}>${label}</a>`)
+      .join('');
   return `<!doctype html>
 <html lang="es">
 <head>
@@ -137,15 +152,25 @@ ${
     ['', '🏠', 'Inicio', 'inicio'],
     ['ejemplos/', '📄', 'Ejemplos', 'ejemplos'],
     ['crear/', '✚', 'Crear', 'crear', 'fab'],
-    ['carta/', '✉️', 'Carta', 'carta'],
+    ['#herramientas', '🧰', 'Herramientas', 'herramientas', 'js-tools'],
     ['consejos/', '💡', 'Consejos', 'consejos'],
   ]
     .map(
       ([href, icon, label, key, cls]) =>
-        `<a href="${url(href)}"${cls ? ` class="${cls}"` : ''}${active === key ? ' aria-current="page"' : ''}><span class="ti">${icon}</span>${label}</a>`,
+        `<a href="${href.startsWith('#') ? href : url(href)}"${cls ? ` class="${cls}"` : ''}${active === key ? ' aria-current="page"' : ''}><span class="ti">${icon}</span>${label}</a>`,
     )
     .join('')}
-</nav>`
+</nav>
+<div class="tools-sheet" id="tools-sheet" hidden>
+  <div class="tools-sheet-bg js-tools-close"></div>
+  <div class="tools-sheet-panel" role="dialog" aria-label="Herramientas">
+    <div class="grab"></div>
+    <h3>🧰 Herramientas</h3>
+    <div class="tools-grid tools-grid-sheet">${toolCards('tool-card', false)}</div>
+  </div>
+</div>
+<script>document.addEventListener('click',function(e){var d=document.querySelector('.tools-dd[open]');if(d&&!d.contains(e.target))d.open=false});</script>
+<script>(function(){var s=document.getElementById('tools-sheet');if(!s)return;var b=document.querySelector('.js-tools');function t(open){s.hidden=!open;b.classList.toggle('on',open)}b.addEventListener('click',function(e){e.preventDefault();t(s.hidden)});s.querySelector('.js-tools-close').addEventListener('click',function(){t(false)});addEventListener('keydown',function(e){if(e.key==='Escape')t(false)})})();</script>`
 }
 ${bodyClass.includes('editor-page') ? '' : INSTALL_BAR}
 ${INSTALL_DIALOG}
@@ -240,6 +265,11 @@ page('', {
   </div>
 </div></section>
 <svg class="wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 C 360 0 1080 80 1440 30 L1440 60 L0 60 Z" fill="#f7f7fc"/></svg>
+
+<section class="section tools-home"><div class="wrap">
+  <div class="center"><span class="eyebrow">Todo en un sitio</span><h2>Tus herramientas para conseguir trabajo</h2></div>
+  <div class="tools-grid">${toolCards()}</div>
+</div></section>
 
 <section class="section"><div class="wrap">
   <div class="center"><span class="eyebrow">Así de fácil</span><h2>Tu CV en 3 pasos</h2><p class="sub">Sin complicaciones y desde el móvil.</p></div>
