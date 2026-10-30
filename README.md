@@ -1,4 +1,4 @@
-# CV Listo
+# Tu CV Gratis
 
 Web para **crear currículums gratis** y descargarlos en PDF, con ejemplos por oficio, frases ya escritas y plantillas profesionales. Preparada para Google AdSense y para una futura versión Pro de pago único.
 
@@ -43,7 +43,7 @@ Cada push a `main` publica la web en GitHub Pages (`.github/workflows/deploy.yml
 
 | Variable | Ejemplo | Para qué |
 | --- | --- | --- |
-| `CUSTOM_DOMAIN` | `cvlisto.es` | Tu dominio. Sin ella se publica en `usuario.github.io/cvlisto`. |
+| `CUSTOM_DOMAIN` | `tucvgratis.es` | Tu dominio. Sin ella se publica en `usuario.github.io/cvlisto`. |
 | `OWNER_NAME`, `OWNER_NIF`, `OWNER_ADDRESS`, `CONTACT_EMAIL` | | Aviso legal y privacidad (obligatorios en España). |
 | `ADSENSE_CLIENT` | `ca-pub-1234567890123456` | Activa los anuncios y genera `ads.txt`. |
 | `PRO_CHECKOUT_URL` | enlace de Lemon Squeezy | Activa el botón de compra de la versión Pro. |

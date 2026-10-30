@@ -2,9 +2,9 @@
 // y antes de pedir la aprobación de AdSense.
 
 export const CONFIG = {
-  nombreSitio: 'CV Listo',
+  nombreSitio: 'Tu CV Gratis',
   // URL pública final, sin barra al final. Se usa en el sitemap y en las etiquetas canonical.
-  url: process.env.SITE_URL || 'https://cvlisto.es',
+  url: process.env.SITE_URL || 'https://tucvgratis.es',
   // Carpeta base: "/" con dominio propio, "/cvlisto/" en GitHub Pages sin dominio.
   base: process.env.BASE_PATH || '/',
 

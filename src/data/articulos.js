@@ -48,7 +48,7 @@ export const ARTICULOS = [
   <li>Inventar experiencia: se descubre enseguida y cierra puertas.</li>
   <li>Enviar el mismo currículum a todo. Cambia al menos el perfil según el puesto.</li>
 </ul>
-<p>Con estas pautas, tu primer currículum puede estar listo en 15 minutos. Y si prefieres que te guiemos, en CV Listo tienes un <a href="../../primer-empleo/">asistente para tu primer empleo</a>: respondes 8 preguntas sencillas y el currículum se escribe solo.</p>`,
+<p>Con estas pautas, tu primer currículum puede estar listo en 15 minutos. Y si prefieres que te guiemos, en Tu CV Gratis tienes un <a href="../../primer-empleo/">asistente para tu primer empleo</a>: respondes 8 preguntas sencillas y el currículum se escribe solo.</p>`,
   },
   {
     slug: 'curriculum-para-extranjeros-en-espana',
@@ -126,6 +126,6 @@ export const ARTICULOS = [
 <h2>10. Enviarlo en Word</h2>
 <p>Un documento de Word puede verse descolocado en otro ordenador o en el móvil. Envíalo siempre en PDF.</p>
 
-<p>En CV Listo las plantillas ya están pensadas para evitar estos errores: son limpias, caben en una página y se descargan en PDF gratis.</p>`,
+<p>En Tu CV Gratis las plantillas ya están pensadas para evitar estos errores: son limpias, caben en una página y se descargan en PDF gratis.</p>`,
   },
 ];

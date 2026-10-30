@@ -76,7 +76,7 @@ ${body}
 <footer class="site-foot"><div class="wrap">
   <div><strong>${CONFIG.nombreSitio}</strong> · Currículum gratis, sin trampas. © ${YEAR}</div>
   <nav>
-    <a href="${url('pro/')}">CV Listo Pro</a>
+    <a href="${url('pro/')}">Versión Pro</a>
     <a href="${url('sobre-nosotros/')}">Quiénes somos</a>
     <a href="${url('contacto/')}">Contacto</a>
     <a href="${url('aviso-legal/')}">Aviso legal</a>
@@ -144,7 +144,7 @@ const heroCV = renderCV(sampleCV('camarero', 'moderna', '#5b4bff'));
 const heroCV2 = renderCV(sampleCV('recepcionista', 'compacta', '#0f766e'));
 
 page('', {
-  title: 'Crear currículum gratis online y descargar en PDF | CV Listo',
+  title: 'Crear currículum gratis online y descargar en PDF | Tu CV Gratis',
   description:
     'Haz tu currículum gratis en 10 minutos: plantillas profesionales, ejemplos por oficio y frases ya escritas. Descarga en PDF sin registro y sin pagar.',
   active: 'inicio',
@@ -236,7 +236,7 @@ page('', {
 </div></section>
 
 <section class="section section-alt"><div class="wrap">
-  <div class="center"><span class="eyebrow">Por qué CV Listo</span><h2>Hecho para ayudarte, no para cobrarte</h2><p class="sub">Lo que otras webs no te cuentan.</p></div>
+  <div class="center"><span class="eyebrow">Por qué Tu CV Gratis</span><h2>Hecho para ayudarte, no para cobrarte</h2><p class="sub">Lo que otras webs no te cuentan.</p></div>
   <div class="grid grid-3">
     <div class="card"><span class="icon-tile t4">💸</span><h3>Gratis de verdad</h3><p>Otras webs te dejan hacer el CV y te cobran al descargarlo, a veces con una suscripción. Aquí la descarga es gratis.</p></div>
     <div class="card"><span class="icon-tile t3">🧰</span><h3>Para trabajos reales</h3><p>Hostelería, comercio, logística, limpieza, cuidados y más. No solo para oficinas.</p></div>
@@ -296,7 +296,7 @@ const PRINT_DIALOG = `<dialog id="dlg-print">
 </dialog>`;
 
 page('crear/', {
-  title: 'Crear currículum gratis | CV Listo',
+  title: 'Crear currículum gratis | Tu CV Gratis',
   description: 'Editor de currículum online gratis: rellena tus datos, elige plantilla y descarga en PDF. Sin registro.',
   ads: false,
   bodyClass: 'editor-page',
@@ -476,7 +476,7 @@ ${SHARE_DIALOG}
 
 /* ---------- Asistente primer empleo ---------- */
 page('primer-empleo/', {
-  title: 'Currículum para tu primer empleo, paso a paso y gratis | CV Listo',
+  title: 'Currículum para tu primer empleo, paso a paso y gratis | Tu CV Gratis',
   description:
     'Haz tu primer currículum respondiendo 8 preguntas sencillas. Ideal si no tienes experiencia: contamos tus prácticas, voluntariado y cursos. Gratis y sin registro.',
   ads: false,
@@ -505,7 +505,7 @@ page('primer-empleo/', {
 
 /* ---------- Carta de presentación ---------- */
 page('carta/', {
-  title: 'Carta de presentación gratis: se escribe sola con tu CV | CV Listo',
+  title: 'Carta de presentación gratis: se escribe sola con tu CV | Tu CV Gratis',
   description:
     'Crea tu carta de presentación en 1 minuto: usa los datos de tu currículum, elige empresa y puesto, y descárgala en PDF gratis. En español, inglés, francés, portugués e italiano.',
   active: 'carta',
@@ -574,7 +574,7 @@ ${SHARE_DIALOG}
 
 /* ---------- Ejemplos ---------- */
 page('ejemplos/', {
-  title: `${OFICIOS.length} ejemplos de currículum por oficio (gratis) | CV Listo`,
+  title: `${OFICIOS.length} ejemplos de currículum por oficio (gratis) | Tu CV Gratis`,
   description: `${OFICIOS.length} ejemplos de currículum para camarero, cajero, conductor, electricista, auxiliar de enfermería, limpieza y más. Cópialos y descárgalos en PDF gratis.`,
   active: 'ejemplos',
   body: `
@@ -601,7 +601,7 @@ OFICIOS.forEach((o, idx) => {
     .slice(0, 5);
   const carta = generateLetter({ ...sampleCV(o.slug, 'clasica'), lang: 'es' }, { ...emptyLetter(), empresa: 'Empresa Ejemplo' }, o);
   page(`ejemplos/${o.slug}/`, {
-    title: `${o.titulo} | CV Listo`,
+    title: `${o.titulo} | Tu CV Gratis`,
     description: o.descripcion,
     active: 'ejemplos',
     jsonld: {
@@ -657,7 +657,7 @@ ${FIT_SCRIPT}`,
 
 /* ---------- Consejos ---------- */
 page('consejos/', {
-  title: 'Consejos para hacer un buen currículum | CV Listo',
+  title: 'Consejos para hacer un buen currículum | Tu CV Gratis',
   description: 'Guías prácticas para hacer tu currículum: sin experiencia, si eres extranjero en España y los errores más comunes.',
   active: 'consejos',
   body: `
@@ -673,7 +673,7 @@ page('consejos/', {
 ARTICULOS.forEach((a) => {
   const otros = ARTICULOS.filter((x) => x.slug !== a.slug);
   page(`consejos/${a.slug}/`, {
-    title: `${a.titulo} | CV Listo`,
+    title: `${a.titulo} | Tu CV Gratis`,
     description: a.descripcion,
     active: 'consejos',
     jsonld: {
@@ -700,14 +700,14 @@ ARTICULOS.forEach((a) => {
 
 /* ---------- Pro ---------- */
 page('pro/', {
-  title: 'CV Listo Pro | Pago único, sin suscripciones',
+  title: 'Versión Pro, pago único sin suscripciones | Tu CV Gratis',
   active: 'pro',
-  description: 'CV Listo Pro: plantillas premium y funciones extra con un pago único. La descarga en PDF siempre seguirá siendo gratis.',
+  description: 'Versión Pro de Tu CV Gratis: plantillas premium y funciones extra con un pago único. La descarga en PDF siempre seguirá siendo gratis.',
   body: `
 <div class="narrow prose">
   <p class="breadcrumb"><a href="${url()}">Inicio</a> › Pro</p>
-  <h1>CV Listo Pro</h1>
-  <p>CV Listo es y seguirá siendo <strong>gratis</strong> para crear y descargar tu currículum. La versión Pro es para quien quiera un extra, con un <strong>pago único</strong>, sin suscripciones ni renovaciones automáticas.</p>
+  <h1>Versión Pro</h1>
+  <p>Tu CV Gratis es y seguirá siendo <strong>gratis</strong> para crear y descargar tu currículum. La versión Pro es para quien quiera un extra, con un <strong>pago único</strong>, sin suscripciones ni renovaciones automáticas.</p>
   <h2>Qué incluirá</h2>
   <ul class="tick">
     <li>Plantillas premium (Ejecutiva, Creativa y más)</li>
@@ -726,14 +726,14 @@ page('pro/', {
 
 /* ---------- Páginas legales e institucionales ---------- */
 const legal = (path, title, description, html) =>
-  page(path, { title: `${title} | CV Listo`, description, body: `<div class="narrow prose"><h1 style="margin-top:32px">${title}</h1>${html}</div>` });
+  page(path, { title: `${title} | Tu CV Gratis`, description, body: `<div class="narrow prose"><h1 style="margin-top:32px">${title}</h1>${html}</div>` });
 
 legal(
   'sobre-nosotros/',
   'Quiénes somos',
-  'Qué es CV Listo, quién está detrás y por qué es gratis.',
-  `<p>CV Listo nació de una idea sencilla: <strong>hacer un currículum no debería costar dinero ni trampas</strong>. Muchas webs te dejan rellenarlo y, al descargar, te piden un pago que acaba siendo una suscripción mensual.</p>
-<p>Por eso CV Listo permite crear y descargar el currículum gratis, con ejemplos pensados para trabajos reales: hostelería, comercio, logística, limpieza, cuidados, construcción y atención al cliente.</p>
+  'Qué es Tu CV Gratis, quién está detrás y por qué es gratis.',
+  `<p>Tu CV Gratis nació de una idea sencilla: <strong>hacer un currículum no debería costar dinero ni trampas</strong>. Muchas webs te dejan rellenarlo y, al descargar, te piden un pago que acaba siendo una suscripción mensual.</p>
+<p>Por eso Tu CV Gratis permite crear y descargar el currículum gratis, con ejemplos pensados para trabajos reales: hostelería, comercio, logística, limpieza, cuidados, construcción y atención al cliente.</p>
 <h2>¿Cómo se mantiene?</h2>
 <p>Con publicidad en las páginas de contenido y, próximamente, con una versión Pro de pago único y opcional. La descarga del currículum siempre será gratuita.</p>
 <h2>Tu privacidad</h2>
@@ -744,7 +744,7 @@ legal(
 legal(
   'contacto/',
   'Contacto',
-  'Contacta con CV Listo para dudas, sugerencias o incidencias.',
+  'Contacta con Tu CV Gratis para dudas, sugerencias o incidencias.',
   `<p>¿Tienes una duda, una sugerencia o has encontrado un error? Escríbenos y te responderemos lo antes posible.</p>
 <p><strong>Email:</strong> <a href="mailto:${esc(CONFIG.email)}">${esc(CONFIG.email)}</a></p>
 <p>Recuerda que no guardamos tu currículum: si borras los datos de tu navegador, no podremos recuperarlo.</p>`,
@@ -753,7 +753,7 @@ legal(
 legal(
   'aviso-legal/',
   'Aviso legal',
-  'Aviso legal e información del titular de CV Listo.',
+  'Aviso legal e información del titular de Tu CV Gratis.',
   `<h2>Titular del sitio web</h2>
 <p>En cumplimiento de la Ley 34/2002, de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se informa de los datos del titular:</p>
 <ul>
@@ -775,7 +775,7 @@ legal(
 legal(
   'privacidad/',
   'Política de privacidad',
-  'Cómo trata CV Listo tus datos personales.',
+  'Cómo trata Tu CV Gratis tus datos personales.',
   `<h2>Responsable</h2>
 <p>${esc(CONFIG.titular)} — ${esc(CONFIG.email)}</p>
 <h2>Tu currículum</h2>
@@ -792,7 +792,7 @@ legal(
 legal(
   'cookies/',
   'Política de cookies',
-  'Qué cookies usa CV Listo y cómo gestionarlas.',
+  'Qué cookies usa Tu CV Gratis y cómo gestionarlas.',
   `<h2>Almacenamiento propio</h2>
 <p>El editor usa el almacenamiento local del navegador para guardar tu currículum mientras lo escribes. Es imprescindible para que funcione y no se usa para rastrearte.</p>
 <h2>Cookies de terceros</h2>
@@ -806,7 +806,7 @@ pages.push({
   path: '404.html',
   html: layout({
     path: '404.html',
-    title: 'Página no encontrada | CV Listo',
+    title: 'Página no encontrada | Tu CV Gratis',
     description: 'La página que buscas no existe.',
     ads: false,
     body: `<div class="narrow prose" style="text-align:center;padding:64px 0"><h1>Página no encontrada</h1><p>Puede que el enlace esté mal o que la página se haya movido.</p><p><a class="btn" href="${url()}">Ir al inicio</a></p></div>`,
