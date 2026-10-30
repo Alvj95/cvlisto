@@ -102,6 +102,7 @@ function layout({ path, title, description, body, active = '', ads = true, bodyC
 <link rel="stylesheet" href="${url('assets/css/site.css')}">
 <link rel="stylesheet" href="${url('assets/css/cv.css')}">
 ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld)}</script>` : ''}
+<script>try{var pro=JSON.parse(localStorage.getItem('cvlisto:pro:v1')||'null');if(pro&&pro.key){document.documentElement.classList.add('is-pro');(window.adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1}}catch(e){}</script>
 ${adsense}
 ${head}
 </head>
@@ -147,6 +148,7 @@ ${
 ${bodyClass.includes('editor-page') ? '' : INSTALL_BAR}
 ${INSTALL_DIALOG}
 <script src="${url('assets/js/install.js')}" defer></script>
+<script type="module">import { recheck } from '${url('assets/js/pro.js')}'; recheck();</script>
 <script>if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('${url('sw.js')}').catch(function(){})})}</script>
 </body>
 </html>
@@ -486,9 +488,9 @@ ${SHARE_DIALOG}
   <div class="dlg-pro-top"><span class="crown-big">👑</span><h2>Esta plantilla es Pro</h2><p>Te queda genial, ¿verdad? Consigue Pro y descárgala hoy.</p></div>
   <ul class="tick">
     <li>8 plantillas premium que destacan</li>
-    <li>Descarga también en Word</li>
-    <li>Analizador de ofertas y simulador de entrevista</li>
     <li>Sin anuncios</li>
+    <li>Pago único, para siempre</li>
+    <li>Y muy pronto: Word, analizador de ofertas y simulador de entrevista</li>
   </ul>
   <p class="price-line">${CONFIG.proPrecioAntes ? `<s>${CONFIG.proPrecioAntes}</s> ` : ''}<strong>${CONFIG.proPrecio}</strong> · pago único, para siempre</p>
   <div class="dlg-actions">
@@ -803,6 +805,9 @@ page('app/', {
 });
 
 /* ---------- Pro ---------- */
+// Funciones Pro aún en construcción: se muestran con la etiqueta "Muy pronto".
+const PRO_SOON = new Set(['Descarga en Word', 'Descarga en Word (.docx)', 'Analizador de ofertas', 'Simulador de entrevista', 'Cartas premium', 'Cartas premium a juego', 'Seguimiento de candidaturas']);
+const soonTag = (name) => (PRO_SOON.has(name) ? ' <span class="badge badge-soon">Muy pronto</span>' : '');
 const PRO_FEATURES = [
   ['👑', 't3', '8 plantillas premium', 'Impacto, Ejecutiva, Creativa, Nocturna, Cronología, Elegante, Geométrica y Suave. Diseños que se recuerdan.'],
   ['📄', 't5', 'Descarga en Word', 'Además del PDF, descarga tu currículum en Word (.docx) para cuando una empresa o un portal te lo pida así.'],
@@ -834,6 +839,7 @@ const PRO_FAQ = [
   ['¿Y si no me convence?', 'Tienes 14 días para pedir la devolución del dinero, sin preguntas. Solo escríbenos.'],
   ['¿Es seguro pagar?', 'Sí. El pago lo gestiona Lemon Squeezy (de Stripe), una de las plataformas de pago más usadas del mundo. Nosotros nunca vemos los datos de tu tarjeta. Puedes pagar con tarjeta, PayPal, Apple Pay o Google Pay.'],
   ['¿Recibo factura?', 'Sí, recibes el recibo por email automáticamente, con el IVA incluido.'],
+  ['¿Qué significa "Muy pronto"?', 'Son funciones que estamos terminando. Si compras ahora, las recibirás sin pagar nada más en cuanto estén listas, igual que todas las mejoras futuras de Pro.'],
   ['¿Lo gratis sigue siendo gratis?', 'Siempre. Crear y descargar tu currículum en PDF con las plantillas gratuitas no tiene ni tendrá coste.'],
 ];
 const proBuy = (cls = 'btn btn-white btn-lg') =>
@@ -867,6 +873,7 @@ page('pro/', {
     <a class="btn btn-lg btn-glass" href="${url('crear/')}">Probar las plantillas gratis</a>
   </div>
   <p class="pro-trust">🔒 Pago seguro · 💳 Tarjeta, PayPal, Apple Pay y Google Pay · ↩️ 14 días de garantía</p>
+  <p class="pro-trust"><a href="${url('pro/activar/')}">¿Ya lo has comprado? Activa tu clave →</a></p>
   <div class="pro-fan" aria-hidden="true">
     ${['impacto', 'nocturna', 'creativa', 'geometrica', 'ejecutiva']
       .map((t, i) => `<div class="paper p${i}">${renderCV(sampleCV(['camarero', 'recepcionista', 'dependiente', 'repartidor', 'camarero'][i], t, ['#5b4bff', '#e0457b', '#0f766e', '#c2410c', '#1f5fbf'][i]))}</div>`)
@@ -877,7 +884,7 @@ page('pro/', {
 <section class="section"><div class="wrap">
   <div class="center"><span class="eyebrow">Todo lo que incluye</span><h2>Más que un currículum bonito</h2><p class="sub">Lo necesario para pasar los filtros y llegar preparado a la entrevista.</p></div>
   <div class="grid pro-feats">
-    ${PRO_FEATURES.map(([ico, t, h, p]) => `<div class="card"><span class="icon-tile ${t}">${ico}</span><h3>${h}</h3><p>${p}</p></div>`).join('')}
+    ${PRO_FEATURES.map(([ico, t, h, p]) => `<div class="card"><span class="icon-tile ${t}">${ico}</span><h3>${h}${soonTag(h)}</h3><p>${p}</p></div>`).join('')}
   </div>
 </div></section>
 
@@ -898,7 +905,7 @@ page('pro/', {
   <div class="center"><span class="eyebrow">Compara</span><h2>Gratis vs Pro</h2><p class="sub">Lo gratis seguirá siendo gratis. Pro es para ir un paso más allá.</p></div>
   <div class="cmp-wrap"><table class="cmp">
     <thead><tr><th></th><th>Gratis</th><th class="pro-col">👑 Pro</th></tr></thead>
-    <tbody>${PRO_ROWS.map(([f, a, b]) => `<tr><td>${f}</td><td>${yes(a)}</td><td class="pro-col">${yes(b)}</td></tr>`).join('')}</tbody>
+    <tbody>${PRO_ROWS.map(([f, a, b]) => `<tr><td>${f}${soonTag(f)}</td><td>${yes(a)}</td><td class="pro-col">${yes(b)}</td></tr>`).join('')}</tbody>
     <tfoot><tr><td></td><td><strong>0 €</strong></td><td class="pro-col"><strong>${CONFIG.proPrecio}</strong><small>una vez</small></td></tr></tfoot>
   </table></div>
 </div></section>
@@ -918,7 +925,7 @@ page('pro/', {
 <section class="section"><div class="narrow faq">
   <div class="center"><span class="eyebrow">Dudas</span><h2>Preguntas frecuentes</h2></div>
   <div style="margin-top:24px">${PRO_FAQ.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</div>
-  <p class="center muted-s" style="margin-top:18px">Consulta las <a href="${url('condiciones/')}">condiciones de venta</a> y la <a href="${url('reembolsos/')}">política de reembolso</a>.</p>
+  <p class="center muted-s" style="margin-top:18px">¿Ya tienes Pro? <a href="${url('pro/activar/')}">Activa tu clave aquí</a>. Consulta las <a href="${url('condiciones/')}">condiciones de venta</a> y la <a href="${url('reembolsos/')}">política de reembolso</a>.</p>
 </div></section>
 
 <section class="wrap"><div class="big-cta">
@@ -926,6 +933,72 @@ page('pro/', {
   <p>${CONFIG.proPrecioAntes ? `<s>${CONFIG.proPrecioAntes}</s> ` : ''}<strong>${CONFIG.proPrecio}</strong> · pago único, para siempre.</p>
   ${proBuy()}
 </div></section>`,
+});
+
+page('pro/activar/', {
+  title: 'Activar Tu CV Gratis Pro',
+  description: 'Activa tu licencia de Tu CV Gratis Pro con la clave que recibiste por email.',
+  ads: false,
+  body: `
+<div class="narrow activate">
+  <p class="breadcrumb"><a href="${url()}">Inicio</a> › <a href="${url('pro/')}">Pro</a> › Activar</p>
+  <div class="act-card" id="act-form-card">
+    <span class="crown-big">👑</span>
+    <h1>Activa Tu CV Gratis Pro</h1>
+    <p>Pega la <strong>clave de licencia</strong> que te llegó por email al comprar. Si no la encuentras, mira en la carpeta de spam.</p>
+    <form id="act-form" autocomplete="off">
+      <input id="act-key" class="act-input" placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" spellcheck="false" aria-label="Clave de licencia" required>
+      <button class="btn btn-lg" type="submit" id="act-btn">Activar Pro</button>
+    </form>
+    <p class="act-error" id="act-error" role="alert" hidden></p>
+    <p class="muted-s">¿Aún no tienes Pro? <a href="${url('pro/')}">Consíguelo por ${CONFIG.proPrecio}</a></p>
+  </div>
+  <div class="act-card act-ok" id="act-ok" hidden>
+    <span class="crown-big">🎉</span>
+    <h1>¡Ya eres Pro!</h1>
+    <p>Todas las funciones Pro están desbloqueadas en este dispositivo. Gracias por apoyar Tu CV Gratis.</p>
+    <p class="act-info" id="act-info"></p>
+    <p><a class="btn btn-lg" href="${url('crear/')}">Ir a mi currículum</a></p>
+    <p class="muted-s">Puedes activar la misma clave en hasta 3 dispositivos.<br>
+    <button type="button" class="btn-link" id="act-deactivate">Desactivar Pro en este dispositivo</button></p>
+  </div>
+</div>
+<script type="module">
+import { activate, deactivate, proInfo } from '${url('assets/js/pro.js')}';
+const $ = (s) => document.querySelector(s);
+function show() {
+  const info = proInfo();
+  $('#act-form-card').hidden = Boolean(info);
+  $('#act-ok').hidden = !info;
+  if (info) $('#act-info').textContent = 'Clave: ' + info.key.slice(0, 8) + '…' + (info.email ? ' · ' + info.email : '');
+}
+$('#act-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('#act-btn');
+  btn.disabled = true;
+  btn.textContent = 'Comprobando…';
+  $('#act-error').hidden = true;
+  const r = await activate($('#act-key').value);
+  btn.disabled = false;
+  btn.textContent = 'Activar Pro';
+  if (!r.ok) {
+    $('#act-error').textContent = r.error;
+    $('#act-error').hidden = false;
+    return;
+  }
+  document.documentElement.classList.add('is-pro');
+  show();
+});
+$('#act-deactivate').addEventListener('click', async () => {
+  if (!confirm('¿Desactivar Pro en este dispositivo? Podrás volver a activarlo con tu clave.')) return;
+  await deactivate();
+  document.documentElement.classList.remove('is-pro');
+  show();
+});
+const k = new URLSearchParams(location.search).get('key');
+if (k) $('#act-key').value = k;
+show();
+</script>`,
 });
 
 /* ---------- Páginas legales e institucionales ---------- */
