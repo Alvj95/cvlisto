@@ -1,9 +1,25 @@
 // Datos de cada oficio: alimentan las páginas de ejemplo y las sugerencias del editor.
 // Los nombres de los ejemplos son inventados.
+import { MAS } from './oficios-mas.js';
 
-export const OFICIOS = [
+// Sectores para agrupar los oficios (orden de aparición).
+export const SECTORES = [
+  { id: 'hosteleria', nombre: 'Hostelería y alimentación' },
+  { id: 'comercio', nombre: 'Comercio y ventas' },
+  { id: 'logistica', nombre: 'Logística y transporte' },
+  { id: 'limpieza', nombre: 'Limpieza' },
+  { id: 'salud', nombre: 'Cuidados y salud' },
+  { id: 'construccion', nombre: 'Construcción' },
+  { id: 'oficios', nombre: 'Oficios y mantenimiento' },
+  { id: 'industria', nombre: 'Industria' },
+  { id: 'oficina', nombre: 'Oficina y atención al cliente' },
+  { id: 'servicios', nombre: 'Servicios y seguridad' },
+];
+
+const BASE = [
   {
     slug: 'camarero',
+    sector: 'hosteleria',
     icono: '🍽️',
     nombre: 'Camarero/a',
     titulo: 'Currículum de camarero/a: ejemplo y plantilla gratis',
@@ -53,6 +69,7 @@ export const OFICIOS = [
   },
   {
     slug: 'ayudante-de-cocina',
+    sector: 'hosteleria',
     icono: '🍳',
     nombre: 'Ayudante de cocina',
     titulo: 'Currículum de ayudante de cocina: ejemplo gratis para descargar',
@@ -101,6 +118,7 @@ export const OFICIOS = [
   },
   {
     slug: 'dependiente',
+    sector: 'comercio',
     icono: '🛍️',
     nombre: 'Dependiente/a',
     titulo: 'Currículum de dependiente/a de tienda: ejemplo y plantilla',
@@ -149,6 +167,7 @@ export const OFICIOS = [
   },
   {
     slug: 'repartidor',
+    sector: 'logistica',
     icono: '🛵',
     nombre: 'Repartidor/a',
     titulo: 'Currículum de repartidor/a: ejemplo gratis y consejos',
@@ -196,6 +215,7 @@ export const OFICIOS = [
   },
   {
     slug: 'limpieza',
+    sector: 'limpieza',
     icono: '🧽',
     nombre: 'Personal de limpieza',
     titulo: 'Currículum de limpieza: ejemplo para limpiadora o limpiador',
@@ -244,6 +264,7 @@ export const OFICIOS = [
   },
   {
     slug: 'cuidador-de-personas-mayores',
+    sector: 'salud',
     icono: '🤝',
     nombre: 'Cuidador/a de personas mayores',
     titulo: 'Currículum de cuidadora de personas mayores: ejemplo gratis',
@@ -292,6 +313,7 @@ export const OFICIOS = [
   },
   {
     slug: 'mozo-de-almacen',
+    sector: 'logistica',
     icono: '📦',
     nombre: 'Mozo/a de almacén',
     titulo: 'Currículum de mozo de almacén: ejemplo y plantilla gratis',
@@ -339,6 +361,7 @@ export const OFICIOS = [
   },
   {
     slug: 'recepcionista',
+    sector: 'oficina',
     icono: '🛎️',
     nombre: 'Recepcionista',
     titulo: 'Currículum de recepcionista: ejemplo para hotel y oficina',
@@ -387,6 +410,7 @@ export const OFICIOS = [
   },
   {
     slug: 'peon-de-construccion',
+    sector: 'construccion',
     icono: '🏗️',
     nombre: 'Peón de construcción',
     titulo: 'Currículum de peón de construcción: ejemplo gratis',
@@ -435,6 +459,7 @@ export const OFICIOS = [
   },
   {
     slug: 'teleoperador',
+    sector: 'oficina',
     icono: '🎧',
     nombre: 'Teleoperador/a',
     titulo: 'Currículum de teleoperador/a: ejemplo de atención al cliente',
@@ -481,6 +506,8 @@ export const OFICIOS = [
     },
   },
 ];
+
+export const OFICIOS = [...BASE, ...MAS];
 
 // Convierte el ejemplo compacto de un oficio en un currículum completo para el editor.
 export function ejemploCV(oficio) {

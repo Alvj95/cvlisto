@@ -1,4 +1,8 @@
-import { FRASES } from '../data/traducciones.js';
+import { FRASES as BASE } from '../data/traducciones.js';
+import { FRASES_MAS } from '../data/traducciones-mas.js';
+import { FRASES_MAS2 } from '../data/traducciones-mas2.js';
+
+const FRASES = [...BASE, ...FRASES_MAS, ...FRASES_MAS2];
 
 // Idiomas en los que se puede generar el currículum (orden = columnas de FRASES).
 export const LANGS = [

@@ -1,5 +1,5 @@
 import { renderCV, emptyCV, TEMPLATES, ACCENTS } from './cv-render.js';
-import { OFICIOS, ejemploCV } from '../data/oficios.js';
+import { OFICIOS, SECTORES, ejemploCV } from '../data/oficios.js';
 import { extractLines, parseCV } from './importer.js';
 import { LANGS, tr, known } from './i18n.js';
 import { reviewCV, notaTexto } from './reviewer.js';
@@ -562,7 +562,12 @@ function init() {
 
   $('#oficio').innerHTML =
     '<option value="">— Elige tu oficio (opcional) —</option>' +
-    OFICIOS.map((o) => `<option value="${o.slug}">${esc(o.nombre)}</option>`).join('') +
+    SECTORES.map(
+      (sec) =>
+        `<optgroup label="${esc(sec.nombre)}">${OFICIOS.filter((o) => o.sector === sec.id)
+          .map((o) => `<option value="${o.slug}">${esc(o.nombre)}</option>`)
+          .join('')}</optgroup>`,
+    ).join('') +
     '<option value="">Otro</option>';
   $('#oficio').addEventListener('change', (e) => {
     cv.oficio = e.target.value;

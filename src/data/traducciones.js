@@ -326,6 +326,13 @@ export const FRASES = [
   ['Permiso de residencia y trabajo en vigor', 'Valid residence and work permit', 'Titre de séjour et de travail valide', 'Autorização de residência e trabalho válida', 'Permesso di soggiorno e di lavoro valido'],
   ['Disponibilidad para viajar', 'Willing to travel', 'Mobilité géographique', 'Disponibilidade para viajar', 'Disponibilità a viaggiare'],
 
+  // Términos internacionales: iguales en todos los idiomas
+  ['Mise en place', 'Mise en place', 'Mise en place', 'Mise en place', 'Mise en place'],
+  ['Visual merchandising', 'Visual merchandising', 'Merchandising visuel', 'Visual merchandising', 'Visual merchandising'],
+  ['Picking', 'Picking', 'Picking', 'Picking', 'Picking'],
+  ['CRM', 'CRM', 'CRM', 'CRM', 'CRM'],
+  ['Office', 'Microsoft Office', 'Bureautique', 'Office', 'Office'],
+
   // Idiomas
   ['Español', 'Spanish', 'Espagnol', 'Espanhol', 'Spagnolo'],
   ['Inglés', 'English', 'Anglais', 'Inglês', 'Inglese'],

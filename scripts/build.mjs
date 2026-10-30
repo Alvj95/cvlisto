@@ -4,7 +4,7 @@ import { mkdir, rm, writeFile, cp, readdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CONFIG } from '../src/config.js';
-import { OFICIOS, ejemploCV } from '../src/data/oficios.js';
+import { OFICIOS, SECTORES, ejemploCV } from '../src/data/oficios.js';
 import { ARTICULOS } from '../src/data/articulos.js';
 import { renderCV, TEMPLATES } from '../src/js/cv-render.js';
 import { generateLetter, emptyLetter } from '../src/js/letter.js';
@@ -17,6 +17,8 @@ const YEAR = new Date().getFullYear();
 
 const url = (p = '') => BASE + p.replace(/^\//, '');
 const abs = (p = '') => SITE + '/' + p.replace(/^\//, '');
+// Primera letra en minúscula, respetando siglas: "auxiliar de enfermería (TCAE)".
+const lc = (s) => s.charAt(0).toLowerCase() + s.slice(1);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
 const pages = [];
@@ -217,12 +219,13 @@ page('', {
 <section class="section"><div class="wrap">
   <span class="eyebrow">Ejemplos reales</span>
   <h2>Currículums por oficio</h2>
-  <p class="sub">Míralos, cópialos y adáptalos a tu experiencia en un toque.</p>
+  <p class="sub">${OFICIOS.length} oficios con ejemplo completo. Míralos, cópialos y adáptalos a tu experiencia en un toque.</p>
   <div class="grid grid-3">
-    ${OFICIOS.map(
+    ${OFICIOS.slice(0, 9).map(
       (o, i) => `<a class="card oficio-card" href="${url(`ejemplos/${o.slug}/`)}"><span class="icon-tile ${TILES[i % 5]}">${o.icono}</span><div><h3>${esc(o.nombre)}</h3><p>${esc(o.intro.split('. ')[0])}.</p><span class="more">Ver ejemplo →</span></div></a>`,
     ).join('')}
   </div>
+  <p class="center" style="margin-top:24px"><a class="btn btn-lg" href="${url('ejemplos/')}">Ver los ${OFICIOS.length} oficios →</a></p>
 </div></section>
 
 <section class="section section-alt"><div class="wrap">
@@ -497,25 +500,31 @@ ${PRINT_DIALOG}
 
 /* ---------- Ejemplos ---------- */
 page('ejemplos/', {
-  title: 'Ejemplos de currículum por oficio (gratis) | CV Listo',
-  description: 'Ejemplos de currículum para camarero, dependiente, repartidor, limpieza, cuidadora y más. Cópialos y descárgalos en PDF gratis.',
+  title: `${OFICIOS.length} ejemplos de currículum por oficio (gratis) | CV Listo`,
+  description: `${OFICIOS.length} ejemplos de currículum para camarero, cajero, conductor, electricista, auxiliar de enfermería, limpieza y más. Cópialos y descárgalos en PDF gratis.`,
   active: 'ejemplos',
   body: `
 <div class="wrap">
   <p class="breadcrumb"><a href="${url()}">Inicio</a> › Ejemplos</p>
   <div class="prose"><h1>Ejemplos de currículum por oficio</h1>
   <p>Elige tu trabajo y verás un currículum de ejemplo completo, con las tareas y habilidades que más piden las empresas. Con un toque lo abres en el editor y lo adaptas a ti.</p></div>
-  <div class="grid grid-3" style="margin-top:24px">
-    ${OFICIOS.map(
-      (o, i) => `<a class="card oficio-card" href="${url(`ejemplos/${o.slug}/`)}"><span class="icon-tile ${TILES[i % 5]}">${o.icono}</span><div><h3>Currículum de ${esc(o.nombre.toLowerCase())}</h3><p>${esc(o.descripcion)}</p><span class="more">Ver ejemplo →</span></div></a>`,
-    ).join('')}
-  </div>
+  <nav class="sector-nav" aria-label="Sectores">${SECTORES.map((sec) => `<a href="#${sec.id}">${esc(sec.nombre)}</a>`).join('')}</nav>
+  ${SECTORES.map(
+    (sec, si) => `<section class="sector" id="${sec.id}"><h2>${esc(sec.nombre)}</h2><div class="grid grid-3">${OFICIOS.filter((o) => o.sector === sec.id)
+      .map(
+        (o) => `<a class="card oficio-card" href="${url(`ejemplos/${o.slug}/`)}"><span class="icon-tile ${TILES[si % 5]}">${o.icono}</span><div><h3>Currículum de ${esc(lc(o.nombre))}</h3><p>${esc(o.descripcion)}</p><span class="more">Ver ejemplo →</span></div></a>`,
+      )
+      .join('')}</div></section>`,
+  ).join('')}
 </div>`,
 });
 
 OFICIOS.forEach((o, idx) => {
   const ejemplo = renderCV(sampleCV(o.slug, idx % 2 ? 'clasica' : 'moderna', ['#5b4bff', '#0f766e', '#e0457b'][idx % 3]));
-  const otros = OFICIOS.filter((x) => x.slug !== o.slug).slice(0, 4);
+  // Primero los del mismo sector, luego el resto.
+  const otros = [...OFICIOS.filter((x) => x.sector === o.sector), ...OFICIOS.filter((x) => x.sector !== o.sector)]
+    .filter((x) => x.slug !== o.slug)
+    .slice(0, 5);
   const carta = generateLetter({ ...sampleCV(o.slug, 'clasica'), lang: 'es' }, { ...emptyLetter(), empresa: 'Empresa Ejemplo' }, o);
   page(`ejemplos/${o.slug}/`, {
     title: `${o.titulo} | CV Listo`,
@@ -534,7 +543,7 @@ OFICIOS.forEach((o, idx) => {
 <div class="narrow prose">
   <p class="breadcrumb"><a href="${url()}">Inicio</a> › <a href="${url('ejemplos/')}">Ejemplos</a> › ${esc(o.nombre)}</p>
   <span class="icon-tile ${TILES[idx % 5]}" style="margin-top:8px">${o.icono}</span>
-  <h1>Currículum de ${esc(o.nombre.toLowerCase())}: <span class="grad-text">ejemplo y plantilla</span></h1>
+  <h1>Currículum de ${esc(lc(o.nombre))}: <span class="grad-text">ejemplo y plantilla</span></h1>
   <p>${esc(o.intro)}</p>
   ${ctaBox('Usa este ejemplo como base y cámbialo en 5 minutos.', `crear/?oficio=${o.slug}`, 'Usar este ejemplo')}
 
@@ -545,7 +554,7 @@ OFICIOS.forEach((o, idx) => {
   <p>El perfil son 2 o 3 líneas al principio que resumen quién eres y qué ofreces. Dos ejemplos que puedes adaptar:</p>
   ${o.perfiles.map((p, i) => `<div class="perfil-ej"><strong>${i === 0 ? 'Con experiencia' : 'Sin experiencia'}:</strong> ${esc(p)}</div>`).join('')}
 
-  <h2>Tareas y funciones de ${esc(o.nombre.toLowerCase())}</h2>
+  <h2>Tareas y funciones de ${esc(lc(o.nombre))}</h2>
   <p>Elige las que hayas hecho de verdad y ponlas en tu experiencia, empezando por las más importantes:</p>
   <ul class="tick">${o.tareas.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
 
@@ -555,17 +564,17 @@ OFICIOS.forEach((o, idx) => {
   <h2>Consejos para que te llamen</h2>
   <ul>${o.consejos.map((c) => `<li>${esc(c)}</li>`).join('')}</ul>
 
-  <h2>Carta de presentación de ${esc(o.nombre.toLowerCase())}</h2>
+  <h2>Carta de presentación de ${esc(lc(o.nombre))}</h2>
   <p>Así queda una carta escrita automáticamente con los datos de este currículum. La tuya se escribe igual, con tus datos.</p>
   <div class="letter-sample">${carta
     .split('\n\n')
     .map((p) => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`)
     .join('')}</div>
 
-  ${ctaBox(`Crea tu currículum de ${esc(o.nombre.toLowerCase())} gratis.`, `crear/?oficio=${o.slug}`, 'Empezar ahora')}
+  ${ctaBox(`Crea tu currículum de ${esc(lc(o.nombre))} gratis.`, `crear/?oficio=${o.slug}`, 'Empezar ahora')}
 
   <h2>Otros ejemplos</h2>
-  <ul>${otros.map((x) => `<li><a href="${url(`ejemplos/${x.slug}/`)}">Currículum de ${esc(x.nombre.toLowerCase())}</a></li>`).join('')}
+  <ul>${otros.map((x) => `<li><a href="${url(`ejemplos/${x.slug}/`)}">Currículum de ${esc(lc(x.nombre))}</a></li>`).join('')}
   <li><a href="${url('consejos/curriculum-sin-experiencia/')}">Cómo hacer un currículum sin experiencia</a></li></ul>
 </div>
 ${FIT_SCRIPT}`,
@@ -779,7 +788,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'icons/icon-192.png'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';
