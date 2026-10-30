@@ -14,7 +14,10 @@ function pdfLib() {
     const s = document.createElement('script');
     s.src = new URL('pdf-lib/pdf-lib.min.js', VENDOR).href;
     s.onload = () => resolve(window.PDFLib);
-    s.onerror = () => reject(new Error('No se pudo cargar pdf-lib'));
+    s.onerror = () => {
+      pdfLibP = null;
+      reject(new Error('LIB'));
+    };
     document.head.appendChild(s);
   });
   return pdfLibP;
@@ -64,18 +67,49 @@ async function renderPage(doc, n, scale) {
   return { canvas: c, w: real.width, h: real.height };
 }
 
+// Decodifica una imagen probando varias formas: no todos los navegadores del móvil admiten lo mismo.
+async function decodeImage(file) {
+  if ('createImageBitmap' in window) {
+    try {
+      return await createImageBitmap(file, { imageOrientation: 'from-image' });
+    } catch {}
+    try {
+      return await createImageBitmap(file);
+    } catch {}
+  }
+  const url = URL.createObjectURL(file);
+  try {
+    return await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = url;
+    });
+  } catch {
+    const heic = /hei[cf]/i.test(file.type) || /\.hei[cf]$/i.test(file.name);
+    throw new Error(heic ? 'HEIC' : `IMG:${file.type || file.name}`);
+  } finally {
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+}
+
 // Imagen (JPG, PNG, WebP…) a JPEG, respetando la orientación de las fotos del móvil.
 async function imageToJpeg(file, max = 2400) {
-  const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
-  const k = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  const bmp = await decodeImage(file);
+  const bw = bmp.width || bmp.naturalWidth;
+  const bh = bmp.height || bmp.naturalHeight;
+  const k = Math.min(1, max / Math.max(bw, bh));
   const c = document.createElement('canvas');
-  c.width = Math.round(bmp.width * k);
-  c.height = Math.round(bmp.height * k);
+  c.width = Math.round(bw * k);
+  c.height = Math.round(bh * k);
   const ctx = c.getContext('2d');
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, c.width, c.height);
   ctx.drawImage(bmp, 0, 0, c.width, c.height);
-  return { data: new Uint8Array(await (await canvasBlob(c, 0.9)).arrayBuffer()), w: c.width, h: c.height };
+  bmp.close?.();
+  const blob = await canvasBlob(c, 0.9);
+  if (!blob) throw new Error('CANVAS');
+  return { data: new Uint8Array(await blob.arrayBuffer()), w: c.width, h: c.height };
 }
 
 // "1-3, 5, 8-" → [1,2,3,5,8,...,total]
@@ -141,7 +175,7 @@ function renderOpts() {
 function renderFiles() {
   $('#pt-files').innerHTML = files
     .map(
-      (f, i) => `<li><span class="pt-ico">${f.type.startsWith('image/') ? '🖼️' : '📄'}</span><span class="pt-name">${esc(f.name)}<small>${size(f.size)}</small></span>
+      (f, i) => `<li><span class="pt-ico">${/\.pdf$/i.test(f.name) ? '📄' : '🖼️'}</span><span class="pt-name">${esc(f.name)}<small>${size(f.size)}</small></span>
       ${cfg.multiple && files.length > 1 ? `<button type="button" data-up="${i}" ${i === 0 ? 'disabled' : ''} aria-label="Subir">↑</button><button type="button" data-down="${i}" ${i === files.length - 1 ? 'disabled' : ''} aria-label="Bajar">↓</button>` : ''}
       <button type="button" data-rm="${i}" aria-label="Quitar">✕</button></li>`,
     )
@@ -161,7 +195,8 @@ function reset() {
 }
 
 async function addFiles(list) {
-  const ok = [...list].filter((f) => (cfg.accept.includes('image') ? f.type.startsWith('image/') : f.type === 'application/pdf' || /\.pdf$/i.test(f.name)));
+  const isImg = (f) => f.type.startsWith('image/') || /\.(jpe?g|png|webp|gif|bmp|hei[cf])$/i.test(f.name);
+  const ok = [...list].filter((f) => (cfg.accept.includes('image') ? isImg(f) : f.type === 'application/pdf' || /\.pdf$/i.test(f.name)));
   if (!ok.length) return alert(cfg.accept.includes('image') ? 'Elige imágenes (JPG, PNG…).' : 'Elige un archivo PDF.');
   files = cfg.multiple ? [...files, ...ok] : [ok[0]];
   pageCount = 0;
@@ -343,7 +378,18 @@ $('#pt-go').addEventListener('click', async () => {
     await RUN[TOOL]();
   } catch (err) {
     console.error(err);
-    alert(/password|encrypt/i.test(String(err)) ? 'Este PDF está protegido con contraseña. Quítale la protección e inténtalo de nuevo.' : 'No hemos podido procesar el archivo. Comprueba que no esté dañado e inténtalo de nuevo.');
+    const msg = String(err?.message || err);
+    alert(
+      /password|encrypt/i.test(msg)
+        ? 'Este PDF está protegido con contraseña. Quítale la protección e inténtalo de nuevo.'
+        : msg === 'HEIC'
+          ? 'Esta foto está en formato HEIC, que tu navegador no puede abrir. En la cámara del móvil, activa "JPG" (o "Más compatible") o haz una captura de pantalla de la foto y usa esa.'
+          : msg === 'LIB'
+            ? 'No se pudo cargar la herramienta. Comprueba tu conexión a internet e inténtalo de nuevo.'
+            : msg.startsWith('IMG:')
+              ? `Tu navegador no puede abrir esta imagen (${msg.slice(4)}). Prueba con una foto en JPG o PNG.`
+              : `No hemos podido procesar el archivo. Comprueba que no esté dañado e inténtalo de nuevo.\n\n(Detalle: ${msg.slice(0, 120)})`,
+    );
   } finally {
     btn.disabled = false;
     btn.textContent = cfg.button;
