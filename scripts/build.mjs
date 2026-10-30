@@ -123,6 +123,7 @@ ${body}
     <a href="${url('aviso-legal/')}">Aviso legal</a>
     <a href="${url('privacidad/')}">Privacidad</a>
     <a href="${url('cookies/')}">Cookies</a>
+    <a href="${url('condiciones/')}">Condiciones de venta</a>
   </nav>
 </div></footer>
 ${
@@ -802,29 +803,129 @@ page('app/', {
 });
 
 /* ---------- Pro ---------- */
+const PRO_FEATURES = [
+  ['👑', 't3', '8 plantillas premium', 'Impacto, Ejecutiva, Creativa, Nocturna, Cronología, Elegante, Geométrica y Suave. Diseños que se recuerdan.'],
+  ['📄', 't5', 'Descarga en Word', 'Además del PDF, descarga tu currículum en Word (.docx) para cuando una empresa o un portal te lo pida así.'],
+  ['🎯', 't4', 'Analizador de ofertas', 'Pega el anuncio de trabajo y te decimos qué palabras clave te faltan para pasar los filtros.'],
+  ['🎤', 't2', 'Simulador de entrevista', 'Preguntas reales de tu oficio con respuestas modelo para que llegues preparado.'],
+  ['✉️', 't1', 'Cartas premium', 'Cartas de presentación con el mismo diseño que tu currículum. Todo a juego.'],
+  ['📋', 't3', 'Seguimiento de candidaturas', 'Apunta a qué empresas enviaste el CV, cuándo y cómo va cada proceso.'],
+  ['🚫', 't5', 'Sin anuncios', 'Navega por toda la web sin publicidad.'],
+  ['♾️', 't4', 'Para siempre', 'Un solo pago. Sin suscripciones, sin renovaciones y con todas las mejoras futuras incluidas.'],
+];
+const PRO_ROWS = [
+  ['Crear y editar tu currículum', true, true],
+  ['Descarga en PDF', true, true],
+  ['Ejemplos para 30 oficios', true, true],
+  ['Carta de presentación', true, true],
+  ['Currículum en 5 idiomas', true, true],
+  ['Plantillas', '4', '12'],
+  ['Descarga en Word (.docx)', false, true],
+  ['Analizador de ofertas', false, true],
+  ['Simulador de entrevista', false, true],
+  ['Cartas premium a juego', false, true],
+  ['Seguimiento de candidaturas', false, true],
+  ['Sin anuncios', false, true],
+];
+const PRO_FAQ = [
+  ['¿Es una suscripción?', `No. Pagas ${CONFIG.proPrecio} una sola vez y es tuyo para siempre. No hay cobros mensuales ni renovaciones automáticas.`],
+  ['¿Cómo lo activo?', 'Al comprar recibes por email una clave de licencia. La pegas en la web y Pro se activa al momento en ese dispositivo. No hace falta crear una cuenta.'],
+  ['¿En cuántos dispositivos puedo usarlo?', 'Hasta en 3: por ejemplo, tu móvil, tu ordenador y una tablet.'],
+  ['¿Y si no me convence?', 'Tienes 14 días para pedir la devolución del dinero, sin preguntas. Solo escríbenos.'],
+  ['¿Es seguro pagar?', 'Sí. El pago lo gestiona Lemon Squeezy (de Stripe), una de las plataformas de pago más usadas del mundo. Nosotros nunca vemos los datos de tu tarjeta. Puedes pagar con tarjeta, PayPal, Apple Pay o Google Pay.'],
+  ['¿Recibo factura?', 'Sí, recibes el recibo por email automáticamente, con el IVA incluido.'],
+  ['¿Lo gratis sigue siendo gratis?', 'Siempre. Crear y descargar tu currículum en PDF con las plantillas gratuitas no tiene ni tendrá coste.'],
+];
+const proBuy = (cls = 'btn btn-white btn-lg') =>
+  CONFIG.proCheckoutUrl
+    ? `<a class="${cls} js-buy" href="${esc(CONFIG.proCheckoutUrl)}" rel="nofollow">👑 Conseguir Pro por ${CONFIG.proPrecio}</a>`
+    : `<span class="${cls} is-soon" aria-disabled="true">👑 Muy pronto disponible</span>`;
+const yes = (v) => (v === true ? '<span class="yes">✓</span>' : v === false ? '<span class="no">—</span>' : `<strong>${v}</strong>`);
+
 page('pro/', {
-  title: 'Versión Pro, pago único sin suscripciones | Tu CV Gratis',
+  title: `Tu CV Gratis Pro: plantillas premium y más por ${CONFIG.proPrecio} (pago único)`,
   active: 'pro',
-  description: 'Versión Pro de Tu CV Gratis: plantillas premium y funciones extra con un pago único. La descarga en PDF siempre seguirá siendo gratis.',
+  description: `Consigue Tu CV Gratis Pro: 8 plantillas premium, descarga en Word, analizador de ofertas y simulador de entrevista. Pago único de ${CONFIG.proPrecio}, sin suscripciones.`,
+  jsonld: {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: 'Tu CV Gratis Pro',
+    description: 'Licencia de pago único con plantillas premium y herramientas para buscar empleo.',
+    brand: { '@type': 'Brand', name: CONFIG.nombreSitio },
+    offers: { '@type': 'Offer', price: CONFIG.proPrecio.replace(/[^\d,]/g, '').replace(',', '.'), priceCurrency: 'EUR', availability: 'https://schema.org/InStock', url: abs('pro/') },
+  },
   body: `
-<div class="narrow prose">
-  <p class="breadcrumb"><a href="${url()}">Inicio</a> › Pro</p>
-  <h1>Versión Pro</h1>
-  <p>Tu CV Gratis es y seguirá siendo <strong>gratis</strong> para crear y descargar tu currículum. La versión Pro es para quien quiera un extra, con un <strong>pago único</strong>, sin suscripciones ni renovaciones automáticas.</p>
-  <h2>Qué incluirá</h2>
-  <ul class="tick">
-    <li>Plantillas premium (Ejecutiva, Creativa y más)</li>
-    <li>Más colores y tipos de letra</li>
-    <li>Carta de presentación a juego con tu currículum</li>
-    <li>Adaptar tu currículum a una oferta de empleo concreta</li>
-  </ul>
-  ${
-    CONFIG.proCheckoutUrl
-      ? `<p><a class="btn btn-lg" href="${esc(CONFIG.proCheckoutUrl)}" rel="nofollow">Conseguir Pro</a></p>`
-      : `<p><span class="badge">Próximamente</span> Estamos terminándola. Mientras tanto, todo lo demás es gratis.</p>`
-  }
-  ${ctaBox('Crea tu currículum gratis ahora.')}
-</div>`,
+<section class="pro-hero"><div class="wrap">
+  <span class="pill">👑 Tu CV Gratis Pro</span>
+  <h1>Un currículum que no pasa <span class="hl">desapercibido</span></h1>
+  <p class="lead">8 plantillas premium y las herramientas para conseguir la entrevista. Paga una vez y es tuyo para siempre.</p>
+  <div class="pro-price">
+    ${CONFIG.proPrecioAntes ? `<s>${CONFIG.proPrecioAntes}</s>` : ''}<strong>${CONFIG.proPrecio}</strong><span>pago único<br>sin suscripción</span>
+  </div>
+  <div class="hero-cta center-cta">
+    ${proBuy()}
+    <a class="btn btn-lg btn-glass" href="${url('crear/')}">Probar las plantillas gratis</a>
+  </div>
+  <p class="pro-trust">🔒 Pago seguro · 💳 Tarjeta, PayPal, Apple Pay y Google Pay · ↩️ 14 días de garantía</p>
+  <div class="pro-fan" aria-hidden="true">
+    ${['impacto', 'nocturna', 'creativa', 'geometrica', 'ejecutiva']
+      .map((t, i) => `<div class="paper p${i}">${renderCV(sampleCV(['camarero', 'recepcionista', 'dependiente', 'repartidor', 'camarero'][i], t, ['#5b4bff', '#e0457b', '#0f766e', '#c2410c', '#1f5fbf'][i]))}</div>`)
+      .join('')}
+  </div>
+</div></section>
+
+<section class="section"><div class="wrap">
+  <div class="center"><span class="eyebrow">Todo lo que incluye</span><h2>Más que un currículum bonito</h2><p class="sub">Lo necesario para pasar los filtros y llegar preparado a la entrevista.</p></div>
+  <div class="grid pro-feats">
+    ${PRO_FEATURES.map(([ico, t, h, p]) => `<div class="card"><span class="icon-tile ${t}">${ico}</span><h3>${h}</h3><p>${p}</p></div>`).join('')}
+  </div>
+</div></section>
+
+<section class="section section-alt"><div class="wrap">
+  <div class="center"><span class="eyebrow">Plantillas premium</span><h2>8 diseños para destacar</h2><p class="sub">Pruébalos gratis con tus datos en el editor. Cambian al color que elijas.</p></div>
+  <div class="tpl-gallery">
+    ${TEMPLATES.filter((t) => t.pro)
+      .map(
+        (t, i) => `<div class="tpl-thumb"><div class="mini">${renderCV(sampleCV(['camarero', 'dependiente', 'recepcionista', 'repartidor'][i % 4], t.id, ['#5b4bff', '#e0457b', '#0f766e', '#c2410c', '#1f5fbf', '#334155'][i % 6]))}<span class="crown">👑 Pro</span></div>
+      <strong>${t.name}</strong><small>${t.desc}</small></div>`,
+      )
+      .join('')}
+  </div>
+  <p class="center" style="margin-top:24px"><a class="btn btn-lg" href="${url('crear/')}">Probarlas con mi currículum</a></p>
+</div></section>
+
+<section class="section"><div class="narrow">
+  <div class="center"><span class="eyebrow">Compara</span><h2>Gratis vs Pro</h2><p class="sub">Lo gratis seguirá siendo gratis. Pro es para ir un paso más allá.</p></div>
+  <div class="cmp-wrap"><table class="cmp">
+    <thead><tr><th></th><th>Gratis</th><th class="pro-col">👑 Pro</th></tr></thead>
+    <tbody>${PRO_ROWS.map(([f, a, b]) => `<tr><td>${f}</td><td>${yes(a)}</td><td class="pro-col">${yes(b)}</td></tr>`).join('')}</tbody>
+    <tfoot><tr><td></td><td><strong>0 €</strong></td><td class="pro-col"><strong>${CONFIG.proPrecio}</strong><small>una vez</small></td></tr></tfoot>
+  </table></div>
+</div></section>
+
+<section class="section section-alt"><div class="wrap">
+  <div class="pro-vs">
+    <div class="card"><span class="eyebrow">Otras webs</span><h3>"Gratis"… hasta que descargas</h3><ul class="x-list"><li>Te cobran al final, cuando ya has hecho el CV</li><li>Suscripción mensual que se renueva sola</li><li>Cuesta darse de baja</li></ul></div>
+    <div class="card card-pro"><span class="eyebrow">Tu CV Gratis Pro</span><h3>Claro desde el principio</h3><ul class="tick-list"><li>Lo básico, gratis de verdad</li><li>Pro: un solo pago de ${CONFIG.proPrecio}</li><li>Sin suscripciones ni sorpresas</li></ul></div>
+  </div>
+</div></section>
+
+<section class="section"><div class="wrap"><div class="guarantee">
+  <span class="g-badge">14<small>días</small></span>
+  <div><h2>Garantía de devolución</h2><p>Si en 14 días Pro no te convence, te devolvemos el dinero. Sin preguntas y sin letra pequeña.</p></div>
+</div></div></section>
+
+<section class="section"><div class="narrow faq">
+  <div class="center"><span class="eyebrow">Dudas</span><h2>Preguntas frecuentes</h2></div>
+  <div style="margin-top:24px">${PRO_FAQ.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</div>
+  <p class="center muted-s" style="margin-top:18px">Consulta las <a href="${url('condiciones/')}">condiciones de venta</a> y la <a href="${url('reembolsos/')}">política de reembolso</a>.</p>
+</div></section>
+
+<section class="wrap"><div class="big-cta">
+  <h2>Destaca entre todos los candidatos</h2>
+  <p>${CONFIG.proPrecioAntes ? `<s>${CONFIG.proPrecioAntes}</s> ` : ''}<strong>${CONFIG.proPrecio}</strong> · pago único, para siempre.</p>
+  ${proBuy()}
+</div></section>`,
 });
 
 /* ---------- Páginas legales e institucionales ---------- */
@@ -886,6 +987,9 @@ legal(
 <h2>Publicidad</h2>
 <p>Este sitio puede mostrar anuncios de Google AdSense en las páginas de contenido. Google y sus socios pueden usar cookies para mostrar anuncios, personalizados o no, según tu consentimiento. Puedes consultar cómo usa Google los datos en <a href="https://policies.google.com/technologies/partner-sites" rel="nofollow">policies.google.com/technologies/partner-sites</a> y gestionar tus preferencias en <a href="https://adssettings.google.com" rel="nofollow">adssettings.google.com</a>.</p>
 <p>El editor de currículum no muestra anuncios.</p>
+<h2>Compras de la versión Pro</h2>
+<p>Los pagos los procesa <strong>Lemon Squeezy</strong> (Lemon Squeezy LLC), que actúa como vendedor y comerciante registrado. Lemon Squeezy recoge los datos necesarios para el cobro y la factura (nombre, email, país y datos de pago) según su propia <a href="https://www.lemonsqueezy.com/privacy" rel="nofollow">política de privacidad</a>. Nosotros nunca vemos los datos de tu tarjeta; solo recibimos tu nombre, tu email y la clave de licencia, que usamos para darte soporte y gestionar devoluciones.</p>
+<p>Al activar Pro, la clave se comprueba con el servicio de licencias de Lemon Squeezy y se guarda en tu navegador.</p>
 <h2>Contacto por email</h2>
 <p>Si nos escribes, usaremos tu email solo para responderte y no lo cederemos a terceros.</p>
 <h2>Tus derechos</h2>
@@ -915,6 +1019,57 @@ pages.push({
     body: `<div class="narrow prose" style="text-align:center;padding:64px 0"><h1>Página no encontrada</h1><p>Puede que el enlace esté mal o que la página se haya movido.</p><p><a class="btn" href="${url()}">Ir al inicio</a></p></div>`,
   }),
 });
+
+legal(
+  'condiciones/',
+  'Condiciones de venta',
+  'Condiciones de compra de Tu CV Gratis Pro: precio, entrega, licencia, desistimiento y reembolsos.',
+  `<p>Estas condiciones regulan la compra de <strong>Tu CV Gratis Pro</strong>, una licencia digital de pago único para usar las funciones premium de ${CONFIG.nombreSitio} (tucvgratis.es). Al comprar, aceptas estas condiciones.</p>
+<h2>1. Quién vende</h2>
+<p>El producto lo ofrece ${esc(CONFIG.titular)} (NIF ${esc(CONFIG.nif)}, ${esc(CONFIG.domicilio)}, ${esc(CONFIG.email)}). El cobro lo realiza <strong>Lemon Squeezy LLC</strong>, que actúa como revendedor y comerciante registrado (<em>merchant of record</em>): procesa el pago, aplica los impuestos que correspondan y emite el recibo o la factura.</p>
+<h2>2. Producto y precio</h2>
+<p>Tu CV Gratis Pro incluye las plantillas premium y las funciones marcadas como Pro en la web. El precio es de <strong>${CONFIG.proPrecio}</strong>, impuestos incluidos, en un <strong>pago único</strong>. No es una suscripción y no hay renovaciones automáticas. Las funciones gratuitas siguen siendo gratuitas.</p>
+<h2>3. Pago</h2>
+<p>Puedes pagar con tarjeta y otros métodos disponibles en la pasarela de Lemon Squeezy (por ejemplo, PayPal, Apple Pay o Google Pay). Nunca tenemos acceso a los datos de tu tarjeta.</p>
+<h2>4. Entrega</h2>
+<p>Tras el pago recibes al instante, por email, una <strong>clave de licencia</strong>. Para activar Pro, pégala en la web. Si no te llega, revisa la carpeta de spam o escríbenos.</p>
+<h2>5. Licencia de uso</h2>
+<ul>
+  <li>La licencia es personal e intransferible.</li>
+  <li>Se puede activar en un máximo de <strong>3 dispositivos o navegadores</strong>.</li>
+  <li>Es de por vida mientras el servicio esté disponible, e incluye las mejoras de Pro que se publiquen en el futuro.</li>
+  <li>No está permitido revender ni compartir públicamente la clave.</li>
+</ul>
+<p>Tus currículums se guardan en tu propio dispositivo. Te recomendamos descargarlos en PDF para tener siempre una copia.</p>
+<h2>6. Derecho de desistimiento y garantía</h2>
+<p>Al tratarse de contenido digital que se entrega al momento, de acuerdo con el artículo 103.m) del Real Decreto Legislativo 1/2007, al completar la compra das tu consentimiento para recibirlo de inmediato y reconoces que pierdes el derecho legal de desistimiento.</p>
+<p>Aun así, te ofrecemos voluntariamente una <strong>garantía de devolución de 14 días</strong>: consulta la <a href="${url('reembolsos/')}">política de reembolso</a>.</p>
+<h2>7. Soporte</h2>
+<p>Para cualquier problema con tu compra o la activación, escríbenos a ${esc(CONFIG.email)}. Respondemos lo antes posible, normalmente en 48 horas.</p>
+<h2>8. Responsabilidad</h2>
+<p>Pro es una herramienta para ayudarte a preparar tu candidatura. No garantizamos la obtención de un empleo ni el resultado de ningún proceso de selección.</p>
+<h2>9. Cambios y legislación</h2>
+<p>Podemos actualizar estas condiciones; la versión aplicable es la vigente en el momento de tu compra. Se rigen por la legislación española. Como consumidor, también puedes usar la plataforma europea de resolución de litigios en línea: <a href="https://ec.europa.eu/consumers/odr" rel="nofollow">ec.europa.eu/consumers/odr</a>.</p>
+<p class="muted-s">Última actualización: octubre de ${YEAR}.</p>`,
+);
+
+legal(
+  'reembolsos/',
+  'Política de reembolso',
+  'Garantía de devolución de 14 días de Tu CV Gratis Pro.',
+  `<p>Queremos que estés contento con tu compra. Por eso Tu CV Gratis Pro tiene una <strong>garantía de devolución de 14 días</strong>.</p>
+<h2>Cómo pedir el reembolso</h2>
+<ol>
+  <li>Escríbenos a ${esc(CONFIG.email)} en los <strong>14 días siguientes a la compra</strong>.</li>
+  <li>Indica el email con el que compraste (o el número de pedido del recibo).</li>
+  <li>No tienes que darnos ningún motivo, aunque nos ayuda saber qué podemos mejorar.</li>
+</ol>
+<h2>Qué pasa después</h2>
+<p>Tramitamos la devolución a través de Lemon Squeezy en un plazo máximo de 5 días hábiles. El dinero vuelve al mismo método de pago que usaste; según tu banco, puede tardar unos días más en aparecer. Al reembolsar, la clave de licencia se desactiva.</p>
+<h2>Fuera de plazo</h2>
+<p>Pasados 14 días no se ofrecen devoluciones, salvo que el producto no funcione y no podamos solucionarlo, o cuando la ley lo exija.</p>
+<p>Consulta también las <a href="${url('condiciones/')}">condiciones de venta</a>.</p>`,
+);
 
 /* ---------- Escritura ---------- */
 await rm(OUT, { recursive: true, force: true });
