@@ -23,6 +23,46 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 
 const pages = [];
 
+// Instalar la app en la pantalla de inicio (ver src/js/install.js).
+const INSTALL_DIALOG = `<dialog id="dlg-install">
+  <h2>📲 Instala Tu CV Gratis</h2>
+  <div data-os="ios">
+    <p>En iPhone se instala desde Safari en 3 toques:</p>
+    <ol>
+      <li>Toca el botón <strong>Compartir</strong> <span aria-hidden="true">(el cuadrado con la flecha ↑)</span>, abajo o arriba de la pantalla.</li>
+      <li>Baja y elige <strong>Añadir a pantalla de inicio</strong>.</li>
+      <li>Toca <strong>Añadir</strong>. ¡Listo! Te aparecerá el icono como una app más.</li>
+    </ol>
+    <p class="muted-s">Si usas Chrome en el iPhone, el botón Compartir está arriba a la derecha.</p>
+  </div>
+  <div data-os="android">
+    <p>En Android:</p>
+    <ol>
+      <li>Toca el menú <strong>⋮</strong> de arriba a la derecha del navegador.</li>
+      <li>Elige <strong>Instalar aplicación</strong> o <strong>Añadir a pantalla de inicio</strong>.</li>
+      <li>Confirma con <strong>Instalar</strong>. Te aparecerá el icono con tus apps.</li>
+    </ol>
+  </div>
+  <div data-os="desktop">
+    <p>En el ordenador (Chrome o Edge):</p>
+    <ol>
+      <li>Busca el icono de <strong>instalar</strong> <span aria-hidden="true">(una pantalla con una flecha)</span> a la derecha de la barra de direcciones.</li>
+      <li>O abre el menú <strong>⋮</strong> → <strong>Guardar y compartir</strong> → <strong>Instalar página como aplicación</strong>.</li>
+    </ol>
+    <p class="muted-s">También puedes abrir esta web en tu móvil e instalarla allí.</p>
+  </div>
+  <div class="dlg-actions">
+    <button type="button" class="btn" onclick="this.closest('dialog').close()">Entendido</button>
+  </div>
+</dialog>`;
+
+const INSTALL_BAR = `<div class="install-bar" id="install-bar" hidden>
+  <img src="${url('icons/icon-192.png')}" alt="" width="40" height="40">
+  <div><strong>Instala la app</strong><small>Gratis, sin ocupar espacio</small></div>
+  <button type="button" class="btn btn-sm js-install">Instalar</button>
+  <button type="button" class="install-x js-install-close" aria-label="Cerrar">✕</button>
+</div>`;
+
 function layout({ path, title, description, body, active = '', ads = true, bodyClass = '', head = '', jsonld = null }) {
   const canonical = abs(path);
   const adsense =
@@ -76,6 +116,7 @@ ${body}
 <footer class="site-foot"><div class="wrap">
   <div><strong>${CONFIG.nombreSitio}</strong> · Currículum gratis, sin trampas. © ${YEAR}</div>
   <nav>
+    <a href="${url('app/')}">📲 Instalar la app</a>
     <a href="${url('pro/')}">Versión Pro</a>
     <a href="${url('sobre-nosotros/')}">Quiénes somos</a>
     <a href="${url('contacto/')}">Contacto</a>
@@ -102,6 +143,9 @@ ${
     .join('')}
 </nav>`
 }
+${bodyClass.includes('editor-page') ? '' : INSTALL_BAR}
+${INSTALL_DIALOG}
+<script src="${url('assets/js/install.js')}" defer></script>
 <script>if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('${url('sw.js')}').catch(function(){})})}</script>
 </body>
 </html>
@@ -246,6 +290,20 @@ page('', {
     <div class="card"><span class="icon-tile t2">🔒</span><h3>Privado</h3><p>Sin registro. Tu currículum se guarda solo en tu dispositivo y no lo enviamos a ningún sitio.</p></div>
   </div>
 </div></section>
+
+<section class="section"><div class="wrap"><div class="app-promo">
+  <div>
+    <span class="eyebrow">📲 App gratis</span>
+    <h2>Llévalo en el móvil como una app</h2>
+    <p>Instala Tu CV Gratis en tu pantalla de inicio: se abre al momento, a pantalla completa y funciona incluso sin conexión. No ocupa casi espacio y no hace falta tienda de aplicaciones.</p>
+    <div class="hero-cta">
+      <button type="button" class="btn btn-lg js-install" hidden>Instalar la app</button>
+      <span class="badge js-install-done" hidden>✅ Ya la tienes instalada</span>
+      <a class="btn btn-lg btn-ghost" href="${url('app/')}">Cómo funciona</a>
+    </div>
+  </div>
+  <img class="app-promo-icon" src="${url('icons/icon-512.png')}" alt="Icono de la app Tu CV Gratis" width="160" height="160" loading="lazy">
+</div></div></section>
 
 <section class="section"><div class="narrow faq">
   <div class="center"><span class="eyebrow">Dudas</span><h2>Preguntas frecuentes</h2></div>
@@ -658,7 +716,7 @@ ${FIT_SCRIPT}`,
 /* ---------- Consejos ---------- */
 page('consejos/', {
   title: 'Consejos para hacer un buen currículum | Tu CV Gratis',
-  description: 'Guías prácticas para hacer tu currículum: sin experiencia, si eres extranjero en España y los errores más comunes.',
+  description: 'Guías prácticas para tu currículum y tu búsqueda de empleo: perfil, habilidades, entrevistas, trabajo de verano, sin experiencia y más.',
   active: 'consejos',
   body: `
 <div class="wrap">
@@ -696,6 +754,44 @@ ARTICULOS.forEach((a) => {
   <li><a href="${url('ejemplos/')}">Ejemplos de currículum por oficio</a></li></ul>
 </article>`,
   });
+});
+
+/* ---------- App ---------- */
+page('app/', {
+  title: 'Descargar la app de Tu CV Gratis para Android e iPhone',
+  description: 'Instala gratis la app de Tu CV Gratis en tu móvil Android o iPhone: crea tu currículum desde la pantalla de inicio, incluso sin conexión.',
+  body: `
+<div class="narrow prose">
+  <p class="breadcrumb"><a href="${url()}">Inicio</a> › App</p>
+  <h1>📲 La app de Tu CV Gratis</h1>
+  <p>Puedes tener Tu CV Gratis en el móvil como una aplicación más: con su icono en la pantalla de inicio, a pantalla completa y sin barra del navegador. Es <strong>gratis</strong>, se instala en segundos y casi no ocupa espacio.</p>
+  <p class="app-cta">
+    <button type="button" class="btn btn-lg js-install" hidden>Instalar la app</button>
+    <span class="badge js-install-done" hidden>✅ Ya la tienes instalada en este dispositivo</span>
+  </p>
+  <h2>Ventajas</h2>
+  <ul class="tick">
+    <li>Abres tu currículum con un toque, sin buscar la web.</li>
+    <li>Funciona también sin conexión: puedes editar tu CV en el metro o sin cobertura.</li>
+    <li>Siempre actualizada: no tienes que descargar actualizaciones.</li>
+    <li>Tus datos siguen guardados solo en tu móvil.</li>
+  </ul>
+  <h2>Cómo instalarla en Android</h2>
+  <ol>
+    <li>Abre <strong>tucvgratis.es</strong> en Chrome.</li>
+    <li>Toca el botón <strong>Instalar la app</strong> de esta página, o el menú <strong>⋮</strong> → <strong>Instalar aplicación</strong>.</li>
+    <li>Confirma con <strong>Instalar</strong>. El icono aparecerá con el resto de tus apps.</li>
+  </ol>
+  <h2>Cómo instalarla en iPhone</h2>
+  <ol>
+    <li>Abre <strong>tucvgratis.es</strong> en Safari.</li>
+    <li>Toca <strong>Compartir</strong> (el cuadrado con la flecha hacia arriba).</li>
+    <li>Elige <strong>Añadir a pantalla de inicio</strong> y toca <strong>Añadir</strong>.</li>
+  </ol>
+  <h2>¿Cómo la desinstalo?</h2>
+  <p>Como cualquier otra app: mantén pulsado el icono y elige <em>Desinstalar</em> o <em>Eliminar app</em>. Ten en cuenta que, si borras los datos, también se borran los currículums guardados en ese dispositivo; descárgalos antes en PDF.</p>
+  ${ctaBox('¿Prefieres no instalar nada? Puedes crear tu currículum directamente desde el navegador.')}
+</div>`,
 });
 
 /* ---------- Pro ---------- */
@@ -862,7 +958,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';
