@@ -2,8 +2,9 @@
 // al comprar; se comprueban con su API pública de licencias (no necesita clave de API).
 const KEY = 'cvlisto:pro:v1';
 const API = 'https://api.lemonsqueezy.com/v1/licenses/';
-// Solo se aceptan claves de productos de Tu CV Gratis (evita claves de otras tiendas).
-// Se compara sin mayúsculas, tildes ni espacios para no depender del nombre exacto.
+// Solo se aceptan claves de nuestra tienda de Lemon Squeezy (evita claves de otras tiendas).
+const STORE_ID = 511301;
+// Si la respuesta no trae tienda, se comprueba el nombre del producto (sin mayúsculas, tildes ni espacios).
 const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, '');
 const isOurProduct = (name) => norm(name).includes('cvgratis');
 const RECHECK_DAYS = 7;
@@ -60,10 +61,11 @@ export async function activate(rawKey) {
     return { ok: false, error: 'No hay conexión con el servidor de licencias. Comprueba tu internet e inténtalo de nuevo.' };
   }
   if (!data?.activated) return { ok: false, error: friendly(data?.error) };
-  if (data.meta?.product_name && !isOurProduct(data.meta.product_name)) {
+  const foreign = data.meta?.store_id ? Number(data.meta.store_id) !== STORE_ID : data.meta?.product_name && !isOurProduct(data.meta.product_name);
+  if (foreign) {
     // Clave válida de otro producto: se libera la activación y se rechaza.
     call('deactivate', { license_key: key, instance_id: data.instance.id }).catch(() => {});
-    return { ok: false, error: `Esta clave es del producto «${data.meta.product_name}», no de Tu CV Gratis Pro.` };
+    return { ok: false, error: 'Esta clave no es de Tu CV Gratis Pro.' };
   }
   store({
     key,

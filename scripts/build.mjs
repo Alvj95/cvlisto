@@ -1106,7 +1106,7 @@ function show() {
   const info = proInfo();
   $('#act-form-card').hidden = Boolean(info);
   $('#act-ok').hidden = !info;
-  if (info) $('#act-info').textContent = 'Clave: ' + info.key.slice(0, 8) + '…' + (info.email ? ' · ' + info.email : '') + (info.storeId ? ' · Tienda #' + info.storeId : '');
+  if (info) $('#act-info').textContent = 'Clave: ' + info.key.slice(0, 8) + '…' + (info.email ? ' · ' + info.email : '');
 }
 $('#act-form').addEventListener('submit', async (e) => {
   e.preventDefault();
