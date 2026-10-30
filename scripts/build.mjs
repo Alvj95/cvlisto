@@ -945,7 +945,6 @@ const PRO_FAQ = [
   ['¿Y si no me convence?', 'Tienes 14 días para pedir la devolución del dinero, sin preguntas. Solo escríbenos.'],
   ['¿Es seguro pagar?', 'Sí. El pago lo gestiona Lemon Squeezy (de Stripe), una de las plataformas de pago más usadas del mundo. Nosotros nunca vemos los datos de tu tarjeta. Puedes pagar con tarjeta, PayPal, Apple Pay o Google Pay.'],
   ['¿Recibo factura?', 'Sí, recibes el recibo por email automáticamente, con el IVA incluido.'],
-  ['¿Qué significa "Muy pronto"?', 'Son funciones que estamos terminando. Si compras ahora, las recibirás sin pagar nada más en cuanto estén listas, igual que todas las mejoras futuras de Pro.'],
   ['¿Lo gratis sigue siendo gratis?', 'Siempre. Crear y descargar tu currículum en PDF con las plantillas gratuitas no tiene ni tendrá coste.'],
 ];
 const proBuy = (cls = 'btn btn-white btn-lg') =>
