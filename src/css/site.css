@@ -671,3 +671,4 @@ html.is-pro .dlg-offer h2 .badge { display: none; }
   .iv-groups { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; margin-inline: -16px; padding-inline: 16px; scrollbar-width: none; }
   .iv-groups .chip { flex: none; }
 }
+.tpl-opt .mini .letter { transform: scale(.11); transform-origin: top left; position: absolute; top: 0; left: 0; pointer-events: none; }

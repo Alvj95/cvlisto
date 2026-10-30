@@ -1,6 +1,7 @@
 // Carta de presentación: genera el texto a partir del currículum y la pinta en A4
 // con el mismo color que el CV. Sin DOM, para usarla también al generar el sitio.
 import { tr } from './i18n.js';
+import { soft, dark } from './cv-render.js';
 
 export const FUENTES = [
   { id: 'portal', label: 'En un portal de empleo' },
@@ -294,18 +295,37 @@ export function generateLetter(cv, letter, oficio) {
   ].join('\n\n');
 }
 
+// Diseños de carta. Los Pro van a juego con las plantillas Pro del currículum.
+export const LETTER_DESIGNS = [
+  { id: 'sencilla', name: 'Sencilla', pro: false },
+  { id: 'impacto', name: 'Impacto', pro: true },
+  { id: 'ejecutiva', name: 'Ejecutiva', pro: true },
+  { id: 'lateral', name: 'Lateral', pro: true },
+  { id: 'elegante', name: 'Elegante', pro: true },
+];
+const MATCH = { impacto: 'impacto', creativa: 'impacto', geometrica: 'impacto', ejecutiva: 'ejecutiva', nocturna: 'lateral', moderna: 'sencilla', elegante: 'elegante', cronologia: 'elegante', suave: 'impacto' };
+
+// Diseño a usar: el elegido o, si no se ha elegido, el que combina con la plantilla del CV.
+export const letterDesign = (cv, letter) =>
+  LETTER_DESIGNS.some((d) => d.id === letter.diseno) ? letter.diseno : MATCH[cv.template] || 'sencilla';
+export const isProDesign = (id) => Boolean(LETTER_DESIGNS.find((d) => d.id === id)?.pro);
+
 export function renderLetter(cv, letter, texto) {
   const lang = T[cv.lang] ? cv.lang : 'es';
   const accent = /^#[0-9a-f]{6}$/i.test(cv.accent || '') ? cv.accent : '#5b4bff';
   const fecha = new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
-  const contacto = [cv.telefono, cv.email, cv.ciudad, cv.web].filter((x) => x && String(x).trim()).map(esc).join(' · ');
+  const contacto = [cv.telefono, cv.email, cv.ciudad, cv.web]
+    .filter((x) => x && String(x).trim())
+    .map((x) => `<span>${esc(x)}</span>`)
+    .join('<i> · </i>');
   const paras = String(texto || '')
     .split(/\n\s*\n/)
     .map((p) => p.trim())
     .filter(Boolean)
     .map((p) => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`)
     .join('');
-  return `<article class="letter" lang="${lang}" style="--accent:${accent}">
+  const diseno = letterDesign(cv, letter);
+  return `<article class="letter letter-d-${diseno}" lang="${lang}" style="--accent:${accent};--accent-soft:${soft(accent)};--accent-dark:${dark(accent)}">
   <header class="letter-head">
     <div><h1>${esc(cv.nombre) || '…'}</h1>${cv.puesto ? `<p class="letter-role">${esc(tr(cv.puesto, lang))}</p>` : ''}</div>
     <p class="letter-contact">${contacto}</p>

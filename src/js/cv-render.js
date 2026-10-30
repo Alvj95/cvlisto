@@ -239,14 +239,14 @@ Object.assign(RENDERERS, {
 });
 
 // Color de acento mezclado con blanco (10 %), para fondos suaves.
-function soft(hex) {
+export function soft(hex) {
   const n = parseInt(hex.slice(1), 16);
   const mix = (c) => Math.round(c * 0.1 + 255 * 0.9);
   return `rgb(${mix(n >> 16)}, ${mix((n >> 8) & 255)}, ${mix(n & 255)})`;
 }
 
 // Color de acento oscurecido (65 %), para degradados.
-function dark(hex) {
+export function dark(hex) {
   const n = parseInt(hex.slice(1), 16);
   const mix = (c) => Math.round(c * 0.65);
   return `rgb(${mix(n >> 16)}, ${mix((n >> 8) & 255)}, ${mix(n & 255)})`;

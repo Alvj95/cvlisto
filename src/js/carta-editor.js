@@ -1,7 +1,8 @@
 import { emptyCV } from './cv-render.js';
+import { isPro } from './pro.js';
 import { OFICIOS } from '../data/oficios.js';
 import { LANGS } from './i18n.js';
-import { FUENTES, emptyLetter, generateLetter, renderLetter } from './letter.js';
+import { FUENTES, emptyLetter, generateLetter, renderLetter, LETTER_DESIGNS, letterDesign, isProDesign } from './letter.js';
 import { htmlToPdf, shareOrDownload, fileName } from './share.js';
 
 // La carta usa los datos del currículum guardado en este dispositivo.
@@ -68,6 +69,35 @@ function renderPreview() {
   wrap.style.height = `${Math.max(sheet.offsetHeight, A4_H) * scale}px`;
   const pages = Math.ceil((sheet.offsetHeight - 2) / A4_H);
   $('#pages-info').textContent = pages > 1 ? 'Ocupa más de una página: acórtala un poco.' : 'Cabe en 1 página ✓';
+  $('#pro-lock').hidden = !locked();
+}
+
+/* ---------- Diseños (los Pro se pueden probar; para descargarlos hace falta Pro) ---------- */
+const locked = () => isProDesign(letterDesign(cv, letter)) && !isPro();
+
+function renderDesigns() {
+  const current = letterDesign(cv, letter);
+  const sample = { ...cv, nombre: cv.nombre || 'Tu nombre' };
+  const text = letter.texto || 'Estimado/a responsable de selección:\n\nMe dirijo a usted para presentar mi candidatura.\n\nUn saludo,';
+  $('#letter-pick').innerHTML = LETTER_DESIGNS.map(
+    (d) => `<button type="button" class="tpl-opt ${d.pro ? 'is-pro' : ''}" data-design="${d.id}" aria-pressed="${current === d.id}">
+      <div class="mini">${renderLetter(sample, { ...letter, diseno: d.id }, text)}${d.pro ? '<span class="crown">👑 Pro</span>' : ''}</div>${d.name}</button>`,
+  ).join('');
+  $$('[data-design]').forEach((b) =>
+    b.addEventListener('click', () => {
+      letter.diseno = b.dataset.design;
+      renderDesigns();
+      changed();
+    }),
+  );
+}
+
+function proGate() {
+  if (!locked()) return false;
+  $('#dlg-pro-title').textContent = 'Este diseño de carta es Pro';
+  $('#dlg-pro-text').textContent = 'Cartas con el mismo estilo que tu currículum. Consigue Pro y descárgala hoy.';
+  $('#dlg-pro').showModal();
+  return true;
 }
 
 function renderLangs() {
@@ -160,6 +190,16 @@ function init() {
   });
 
   renderLangs();
+  renderDesigns();
+  $$('.js-free-tpl').forEach((b) =>
+    b.addEventListener('click', () => {
+      $('#dlg-pro').close();
+      letter.diseno = 'sencilla';
+      renderDesigns();
+      changed();
+    }),
+  );
+  if (isPro()) $$('.js-download').forEach((b) => (b.textContent = b.textContent.replace(' gratis', '')));
   if (!letter.texto) regenerate();
   else $('#l-texto').value = letter.texto;
 
@@ -168,6 +208,7 @@ function init() {
       alert('Primero escribe tu nombre en tu currículum.');
       return;
     }
+    if (proGate()) return;
     if (storage.get(PRINT_TIP_KEY)) return printLetter();
     $('#dlg-print').showModal();
   };
@@ -175,6 +216,7 @@ function init() {
   $$('.js-share').forEach((b) =>
     b.addEventListener('click', () => {
       if (!cv.nombre.trim()) return alert('Primero escribe tu nombre en tu currículum.');
+      if (proGate()) return;
       share(b, renderLetter(cv, letter, letter.texto), fileName('Carta', cv.nombre), 'Te envío mi carta de presentación.');
     }),
   );

@@ -226,3 +226,35 @@
 .letter-date { color: var(--muted); text-align: right; }
 .letter-body p { margin-bottom: 4.5mm; text-align: left; }
 .letter-body p:last-child { margin-top: 6mm; font-weight: 600; }
+
+/* Cartas Pro */
+.letter-d-impacto { padding: 0 20mm 18mm; }
+.letter-d-impacto .letter-head { margin: 0 -20mm; padding: 14mm 20mm 11mm; background: linear-gradient(120deg, var(--accent) 0%, var(--accent-dark) 100%); color: #fff; border-bottom: 0; }
+.letter-d-impacto .letter-head h1 { font-size: 24pt; font-weight: 800; }
+.letter-d-impacto .letter-role { color: #fff; opacity: .9; }
+.letter-d-impacto .letter-contact { color: #fff; opacity: .92; }
+.letter-d-impacto .letter-body p:last-child { color: var(--accent); }
+
+.letter-d-ejecutiva { padding: 0 20mm 18mm; font-family: Georgia, "Times New Roman", serif; }
+.letter-d-ejecutiva .letter-head { margin: 0 -20mm; padding: 13mm 20mm 10mm; background: #1d2433; color: #fff; border-bottom: 3pt solid var(--accent); }
+.letter-d-ejecutiva .letter-head h1 { font-weight: 400; letter-spacing: .05em; text-transform: uppercase; font-size: 21pt; }
+.letter-d-ejecutiva .letter-role { color: #fff; opacity: .8; font-style: italic; font-weight: 400; }
+.letter-d-ejecutiva .letter-contact { color: #d6d9e2; font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif; }
+.letter-d-ejecutiva .letter-body { font-size: 10.5pt; }
+
+.letter-d-lateral { position: relative; padding: 18mm 18mm 18mm 76mm; }
+.letter-d-lateral .letter-head { position: absolute; left: 0; top: 0; bottom: 0; width: 62mm; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 6mm; padding: 18mm 8mm; background: #1b2030; color: #fff; border-bottom: 0; }
+.letter-d-lateral .letter-head h1 { font-size: 19pt; color: #fff; }
+.letter-d-lateral .letter-role { color: var(--accent-soft); }
+.letter-d-lateral .letter-head::after { content: ""; width: 12mm; height: 2pt; background: var(--accent); border-radius: 2pt; order: 1; }
+.letter-d-lateral .letter-contact { order: 2; text-align: left; color: #d6d9e2; max-width: none; line-height: 1.9; word-break: break-word; }
+.letter-d-lateral .letter-meta { margin-top: 0; }
+.letter-d-lateral .letter-body p:last-child { color: var(--accent); }
+
+.letter-d-elegante { font-family: Georgia, "Times New Roman", serif; padding: 20mm 24mm; }
+.letter-d-elegante .letter-head { flex-direction: column; align-items: center; text-align: center; gap: 2mm; border-bottom: 2.4pt double var(--accent); }
+.letter-d-elegante .letter-head h1 { font-weight: 400; text-transform: uppercase; letter-spacing: .2em; font-size: 20pt; }
+.letter-d-elegante .letter-role { font-style: italic; font-weight: 400; }
+.letter-d-elegante .letter-contact { text-align: center; max-width: none; }
+.letter-d-elegante .letter-body p:last-child { font-style: italic; }
+.letter-d-lateral .letter-contact span { display: block; } .letter-d-lateral .letter-contact i { display: none; } .letter-contact i { font-style: normal; }

@@ -341,6 +341,21 @@ const SHARE_DIALOG = `<dialog id="dlg-shared">
   </div>
 </dialog>`;
 
+const PRO_DIALOG = `<dialog id="dlg-pro" class="dlg-pro">
+  <div class="dlg-pro-top"><span class="crown-big">👑</span><h2 id="dlg-pro-title">Esta plantilla es Pro</h2><p id="dlg-pro-text">Te queda genial, ¿verdad? Consigue Pro y descárgala hoy.</p></div>
+  <ul class="tick">
+    <li>8 plantillas premium que destacan</li>
+    <li>Descarga en Word (.docx)</li>
+    <li>Sin anuncios · pago único, para siempre</li>
+    <li>Analizador de ofertas y simulador de entrevista</li>
+  </ul>
+  <p class="price-line">${CONFIG.proPrecioAntes ? `<s>${CONFIG.proPrecioAntes}</s> ` : ''}<strong>${CONFIG.proPrecio}</strong> · pago único, para siempre</p>
+  <div class="dlg-actions">
+    <button type="button" class="btn btn-ghost js-free-tpl">Usar una gratis</button>
+    <a class="btn" href="${url('pro/')}">👑 Ver Pro</a>
+  </div>
+</dialog>`;
+
 const PRINT_DIALOG = `<dialog id="dlg-print">
   <h2>Descargar en PDF</h2>
   <p>Se abrirá la ventana de imprimir de tu dispositivo. Para guardarlo como archivo:</p>
@@ -502,20 +517,7 @@ ${MOBILE_BAR}
 ${PRINT_DIALOG}
 ${SHARE_DIALOG}
 
-<dialog id="dlg-pro" class="dlg-pro">
-  <div class="dlg-pro-top"><span class="crown-big">👑</span><h2 id="dlg-pro-title">Esta plantilla es Pro</h2><p id="dlg-pro-text">Te queda genial, ¿verdad? Consigue Pro y descárgala hoy.</p></div>
-  <ul class="tick">
-    <li>8 plantillas premium que destacan</li>
-    <li>Descarga en Word (.docx)</li>
-    <li>Sin anuncios · pago único, para siempre</li>
-    <li>Analizador de ofertas y simulador de entrevista</li>
-  </ul>
-  <p class="price-line">${CONFIG.proPrecioAntes ? `<s>${CONFIG.proPrecioAntes}</s> ` : ''}<strong>${CONFIG.proPrecio}</strong> · pago único, para siempre</p>
-  <div class="dlg-actions">
-    <button type="button" class="btn btn-ghost js-free-tpl">Usar una gratis</button>
-    <a class="btn" href="${url('pro/')}">👑 Ver Pro</a>
-  </div>
-</dialog>
+${PRO_DIALOG}
 
 <dialog id="dlg-offer" class="dlg-offer">
   <h2>🎯 Analizador de ofertas <span class="badge badge-pro">👑 Pro</span></h2>
@@ -645,9 +647,12 @@ page('carta/', {
       <button type="button" class="add-btn" id="btn-variant">🔄 Otra versión</button>
     </div></details>
 
-    <details class="ed-block" open><summary><span class="ico t5">🌍</span>Idioma</summary><div class="ed-body">
+    <details class="ed-block" open><summary><span class="ico t5">🎨</span>Diseño e idioma</summary><div class="ed-body">
+      <div class="lbl">Diseño de la carta</div>
+      <div class="tpl-pick" id="letter-pick"></div>
+      <div class="lbl" style="margin-top:12px">Idioma</div>
       <div class="chips" id="lang-pick"></div>
-      <p class="hint" style="margin:0">El color y el estilo son los mismos que los de tu currículum.</p>
+      <p class="hint" style="margin:0">El color es el mismo que el de tu currículum.</p>
     </div></details>
 
     <p><span class="saved" id="saved"></span></p>
@@ -660,11 +665,16 @@ page('carta/', {
       <button type="button" class="btn btn-ghost js-share">📤 Enviar</button>
       <button type="button" class="btn js-download">⬇ Descargar PDF gratis</button>
     </div>
+    <div class="pro-lock" id="pro-lock" hidden>
+      <span>👑 Estás probando un <strong>diseño Pro</strong>. Pruébalo gratis; para descargarlo, consigue Pro.</span>
+      <span class="pro-lock-btns"><button type="button" class="btn btn-sm btn-ghost js-free-tpl">Usar la sencilla</button><a class="btn btn-sm" href="${url('pro/')}">Ver Pro</a></span>
+    </div>
     <div class="sheet-wrap" id="sheet"></div>
   </section>
 </div>
 
 ${MOBILE_BAR}
+${PRO_DIALOG}
 ${PRINT_DIALOG}
 ${SHARE_DIALOG}
 
@@ -857,7 +867,7 @@ page('app/', {
 
 /* ---------- Pro ---------- */
 // Funciones Pro aún en construcción: se muestran con la etiqueta "Muy pronto".
-const PRO_SOON = new Set(['Cartas premium', 'Cartas premium a juego', 'Seguimiento de candidaturas']);
+const PRO_SOON = new Set(['Seguimiento de candidaturas']);
 const soonTag = (name) => (PRO_SOON.has(name) ? ' <span class="badge badge-soon">Muy pronto</span>' : '');
 const PRO_FEATURES = [
   ['👑', 't3', '8 plantillas premium', 'Impacto, Ejecutiva, Creativa, Nocturna, Cronología, Elegante, Geométrica y Suave. Diseños que se recuerdan.'],
