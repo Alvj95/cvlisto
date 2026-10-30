@@ -12,7 +12,9 @@ export const CONFIG = {
   adsenseClient: process.env.ADSENSE_CLIENT || 'ca-pub-8590744942912233',
 
   // Enlace de pago de la versión Pro (Lemon Squeezy, Paddle…). Vacío = "Próximamente".
-  proCheckoutUrl: process.env.PRO_CHECKOUT_URL || 'https://tucvgratis.lemonsqueezy.com/checkout/buy/a19b2ce1-f5eb-43b7-9202-e3d8d8be025b',
+  // Desactivado hasta que Lemon Squeezy active la tienda (en modo de prueba se podría "comprar" con tarjetas de prueba).
+  // Enlace de compra: https://tucvgratis.lemonsqueezy.com/checkout/buy/a19b2ce1-f5eb-43b7-9202-e3d8d8be025b
+  proCheckoutUrl: process.env.PRO_CHECKOUT_URL || '',
   // Precio de la versión Pro (pago único). "proPrecioAntes" se muestra tachado: quítalo si no hay oferta.
   proPrecio: '4,99 €',
   proPrecioAntes: '9,99 €',
