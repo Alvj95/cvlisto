@@ -334,6 +334,28 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-co
   .mobile-bar .btn-ghost[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
 }
 
+/* Mis currículums */
+.cv-switch { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; font: inherit; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 10px 14px; margin-bottom: 12px; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.cv-switch:hover { border-color: var(--brand); box-shadow: 0 6px 18px rgba(91,75,255,.12); }
+.cv-switch .ico { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 12px; background: var(--brand-soft); flex: none; }
+.cv-switch .grow { flex: 1; min-width: 0; display: grid; }
+.cv-switch small { color: var(--muted); font-size: .75rem; font-weight: 600; }
+.cv-switch strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cv-switch-more { color: var(--brand); font-weight: 700; font-size: .85rem; white-space: nowrap; }
+.cvs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; max-height: 55vh; overflow: auto; }
+.cvs-list li { display: flex; align-items: center; gap: 10px; background: var(--bg); border: 1.5px solid transparent; border-radius: 14px; padding: 10px 12px; }
+.cvs-list li.active { border-color: var(--brand); background: var(--brand-soft); }
+.cvs-list .cvs-ico { font-size: 1.4rem; flex: none; }
+.cvs-list .grow { flex: 1; min-width: 0; }
+.cvs-list strong { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cvs-list small { color: var(--muted); }
+.cvs-actions { display: flex; gap: 4px; flex: none; align-items: center; }
+@media (max-width: 560px) {
+  .cvs-list li { flex-wrap: wrap; }
+  .cvs-list .grow { flex-basis: calc(100% - 44px); }
+  .cvs-actions { width: 100%; justify-content: flex-end; }
+}
+
 /* Revisor */
 .review-btn { margin-top: 12px; }
 .review-badge { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--pink); color: #fff; font-size: .75rem; }

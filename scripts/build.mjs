@@ -283,6 +283,11 @@ page('crear/', {
   body: `
 <div class="editor">
   <section class="ed-form" aria-label="Datos del currículum">
+    <button type="button" class="cv-switch" id="cv-switch">
+      <span class="ico">📁</span>
+      <span class="grow"><small>Estás editando</small><strong id="cv-switch-label">Mi currículum</strong></span>
+      <span class="cv-switch-more"><span id="cv-switch-count">Crear otro</span> ▾</span>
+    </button>
     <div class="progress-card" aria-live="polite">
       <div class="top"><strong id="prog-title">Empecemos tu CV</strong><span class="pct" id="prog-pct">0%</span></div>
       <div class="progress-bar"><i id="prog-bar"></i></div>
@@ -371,7 +376,7 @@ page('crear/', {
     </div>
     <p style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
       <span class="saved" id="saved"></span>
-      <button type="button" class="btn-link" id="btn-reset" style="color:#b91c1c">Borrar todo</button>
+      <button type="button" class="btn-link" id="btn-reset" style="color:#b91c1c">Vaciar este CV</button>
     </p>
   </section>
 
@@ -404,6 +409,16 @@ ${PRINT_DIALOG}
   <div class="dlg-actions">
     <button type="button" class="btn btn-ghost" onclick="this.closest('dialog').close()">Mantener el mío</button>
     <button type="button" class="btn" id="dlg-example-ok">Cargar ejemplo</button>
+  </div>
+</dialog>
+
+<dialog id="dlg-cvs" class="dlg-wide">
+  <h2>Mis currículums</h2>
+  <p class="hint" style="margin:0 0 12px">Ten uno para cada tipo de trabajo. Se guardan solo en este dispositivo.</p>
+  <ul class="cvs-list" id="cvs-list"></ul>
+  <div class="dlg-actions" style="justify-content:space-between">
+    <button type="button" class="btn btn-ghost" onclick="this.closest('dialog').close()">Cerrar</button>
+    <button type="button" class="btn" id="cvs-new">+ Nuevo currículum</button>
   </div>
 </dialog>
 

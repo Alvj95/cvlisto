@@ -6,6 +6,7 @@ import { reviewCV, notaTexto } from './reviewer.js';
 
 // Todo se guarda en el navegador del usuario: el currículum nunca sale de su dispositivo.
 const STORE_KEY = 'cvlisto:cv:v1';
+const LIST_KEY = 'cvlisto:cvs:v1';
 const PRINT_TIP_KEY = 'cvlisto:print-tip-seen';
 const A4_W = 793.7; // 210 mm en píxeles CSS
 const A4_H = 1122.5; // 297 mm
@@ -26,15 +27,32 @@ const storage = {
   },
 };
 
-function load() {
+const blankCV = () => ({ ...emptyCV(), oficio: '' });
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+// Varios currículums: la lista vive en LIST_KEY y el abierto se copia también en
+// STORE_KEY, que es el que lee la página de la carta.
+function loadList() {
+  try {
+    const raw = storage.get(LIST_KEY);
+    if (raw) {
+      const list = JSON.parse(raw);
+      if (Array.isArray(list.items) && list.items.length) return list;
+    }
+  } catch { /* datos corruptos: empezamos de cero */ }
+  // Primera vez con la lista: el currículum que ya tenía pasa a ser el primero.
+  let first = blankCV();
   try {
     const raw = storage.get(STORE_KEY);
-    if (raw) return { ...emptyCV(), oficio: '', ...JSON.parse(raw) };
-  } catch { /* datos corruptos: empezamos de cero */ }
-  return { ...emptyCV(), oficio: '' };
+    if (raw) first = { ...first, ...JSON.parse(raw) };
+  } catch { /* sin currículum previo */ }
+  const id = newId();
+  return { active: id, items: [{ id, label: '', updated: Date.now(), data: first }] };
 }
 
-let cv = load();
+let list = loadList();
+const current = () => list.items.find((x) => x.id === list.active) || list.items[0];
+let cv = { ...blankCV(), ...current().data };
 const isEmpty = () => !cv.nombre && !cv.perfil && cv.experiencia.length === 0;
 const oficio = () => OFICIOS.find((o) => o.slug === cv.oficio);
 
@@ -52,12 +70,109 @@ function changed({ rerenderForm = false } = {}) {
 
 function save() {
   clearTimeout(saveTimer);
-  const ok = storage.set(STORE_KEY, JSON.stringify(cv));
+  const item = current();
+  item.data = cv;
+  item.updated = Date.now();
+  const ok = storage.set(LIST_KEY, JSON.stringify(list)) && storage.set(STORE_KEY, JSON.stringify(cv));
+  renderSwitcher();
   const el = $('#saved');
   if (el) el.textContent = ok ? 'Guardado en este dispositivo ✓' : '';
 }
 // Si se sale de la página antes de que salte el temporizador, guardamos igual.
 addEventListener('pagehide', save);
+
+/* ---------- Mis currículums ---------- */
+function labelOf(item) {
+  if (item.label) return item.label;
+  const d = item.data || {};
+  const o = OFICIOS.find((x) => x.slug === d.oficio);
+  return d.puesto?.trim() || o?.nombre || d.nombre?.trim() || 'Mi currículum';
+}
+
+function renderSwitcher() {
+  const el = $('#cv-switch-label');
+  if (!el) return;
+  el.textContent = labelOf(current());
+  $('#cv-switch-count').textContent = list.items.length > 1 ? `${list.items.length} guardados` : 'Crear otro';
+}
+
+function renderCvList() {
+  const fecha = new Intl.DateTimeFormat('es', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  const sorted = [...list.items].sort((a, b) => b.updated - a.updated);
+  $('#cvs-list').innerHTML = sorted
+    .map((item) => {
+      const o = OFICIOS.find((x) => x.slug === item.data?.oficio);
+      const active = item.id === list.active;
+      return `<li class="${active ? 'active' : ''}">
+        <span class="cvs-ico">${o?.icono || '📄'}</span>
+        <div class="grow"><strong>${esc(labelOf(item))}</strong><small>${esc(item.data?.nombre || 'Sin nombre')} · ${fecha.format(item.updated)}${active ? ' · <b>Abierto</b>' : ''}</small></div>
+        <span class="cvs-actions">
+          ${active ? '' : `<button type="button" class="btn btn-sm" data-cv-open="${item.id}">Abrir</button>`}
+          <button type="button" class="icon-btn" data-cv-dup="${item.id}" title="Duplicar" aria-label="Duplicar">⧉</button>
+          <button type="button" class="icon-btn" data-cv-ren="${item.id}" title="Cambiar nombre" aria-label="Cambiar nombre">✎</button>
+          <button type="button" class="icon-btn" data-cv-del="${item.id}" title="Eliminar" aria-label="Eliminar">🗑</button>
+        </span></li>`;
+    })
+    .join('');
+  const find = (id) => list.items.find((x) => x.id === id);
+  $$('[data-cv-open]').forEach((b) => b.addEventListener('click', () => switchTo(b.dataset.cvOpen)));
+  $$('[data-cv-dup]').forEach((b) =>
+    b.addEventListener('click', () => {
+      save();
+      const src = find(b.dataset.cvDup);
+      const id = newId();
+      list.items.push({ id, label: `${labelOf(src)} (copia)`, updated: Date.now(), data: JSON.parse(JSON.stringify(src.data)) });
+      switchTo(id);
+    }),
+  );
+  $$('[data-cv-ren]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const item = find(b.dataset.cvRen);
+      const name = prompt('Nombre para este currículum (por ejemplo, "Hostelería" o "Para tiendas"):', labelOf(item));
+      if (name === null) return;
+      item.label = name.trim();
+      save();
+      renderCvList();
+    }),
+  );
+  $$('[data-cv-del]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const item = find(b.dataset.cvDel);
+      if (!confirm(`¿Eliminar "${labelOf(item)}"? No se puede deshacer.`)) return;
+      list.items = list.items.filter((x) => x !== item);
+      if (!list.items.length) list.items.push({ id: newId(), label: '', updated: Date.now(), data: blankCV() });
+      if (item.id === list.active) openItem(list.items[0].id);
+      else {
+        save();
+        renderCvList();
+      }
+    }),
+  );
+}
+
+function switchTo(id) {
+  save();
+  openItem(id);
+}
+
+// Abre un currículum de la lista sin guardar antes el actual (p. ej. tras borrarlo).
+function openItem(id) {
+  list.active = id;
+  cv = { ...blankCV(), ...current().data };
+  renderForm();
+  changed();
+  save();
+  renderCvList();
+  if ($('#dlg-cvs').open) $('#dlg-cvs').close();
+  window.scrollTo(0, 0);
+}
+
+function newCV() {
+  save();
+  const id = newId();
+  list.items.push({ id, label: '', updated: Date.now(), data: blankCV() });
+  switchTo(id);
+}
 
 /* ---------- Idioma del currículum ---------- */
 // Lo que escribe el usuario a mano no se traduce: avisamos de qué textos siguen igual.
@@ -610,6 +725,12 @@ function init() {
   });
 
   $$('.js-review').forEach((b) => b.addEventListener('click', openReview));
+  $('#cv-switch').addEventListener('click', () => {
+    save();
+    renderCvList();
+    $('#dlg-cvs').showModal();
+  });
+  $('#cvs-new').addEventListener('click', newCV);
   $('#import-input').addEventListener('change', (e) => importFile(e.target.files[0]));
   $('#dlg-import-ok').addEventListener('click', applyImport);
 
@@ -621,9 +742,8 @@ function init() {
   });
 
   $('#btn-reset').addEventListener('click', () => {
-    if (!confirm('¿Borrar todo el currículum y empezar de cero? No se puede deshacer.')) return;
-    storage.del(STORE_KEY);
-    cv = { ...emptyCV(), oficio: '' };
+    if (!confirm('¿Vaciar este currículum y empezar de cero? Los demás currículums guardados no se tocan.')) return;
+    cv = blankCV();
     renderForm();
     changed();
   });
@@ -676,6 +796,7 @@ function init() {
   updateProgress();
   updateLangNote();
   updateReviewBadge();
+  renderSwitcher();
   renderPreview();
 }
 
