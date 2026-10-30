@@ -10,9 +10,17 @@ export const TEMPLATES = [
   { id: 'moderna', name: 'Moderna', pro: false, desc: 'Barra lateral de color con foto y datos de contacto.' },
   { id: 'minimal', name: 'Minimal', pro: false, desc: 'Mucho espacio en blanco y fechas a la izquierda.' },
   { id: 'compacta', name: 'Compacta', pro: false, desc: 'Cabe mucho en una sola página.' },
-  { id: 'ejecutiva', name: 'Ejecutiva', pro: true, desc: 'Para puestos de responsabilidad.' },
-  { id: 'creativa', name: 'Creativa', pro: true, desc: 'Diseño llamativo para destacar.' },
+  { id: 'impacto', name: 'Impacto', pro: true, desc: 'Cabecera a todo color que se ve desde lejos.' },
+  { id: 'ejecutiva', name: 'Ejecutiva', pro: true, desc: 'Elegante y seria, para puestos de responsabilidad.' },
+  { id: 'creativa', name: 'Creativa', pro: true, desc: 'Foto destacada y títulos de color para destacar.' },
+  { id: 'nocturna', name: 'Nocturna', pro: true, desc: 'Columna oscura con detalles de color. Muy moderna.' },
+  { id: 'cronologia', name: 'Cronología', pro: true, desc: 'Tu trayectoria en una línea de tiempo visual.' },
+  { id: 'elegante', name: 'Elegante', pro: true, desc: 'Letra clásica y centrada, con aire distinguido.' },
+  { id: 'geometrica', name: 'Geométrica', pro: true, desc: 'Cabecera en diagonal con un toque de diseño.' },
+  { id: 'suave', name: 'Suave', pro: true, desc: 'Bloques redondeados sobre fondo de color suave.' },
 ];
+
+export const isProTemplate = (id) => Boolean(TEMPLATES.find((t) => t.id === id)?.pro);
 
 export const ACCENTS = ['#5b4bff', '#1f5fbf', '#0f766e', '#e0457b', '#c2410c', '#334155'];
 
@@ -160,6 +168,76 @@ const RENDERERS = {
     )}</div></div>`,
 };
 
+// Plantillas Pro.
+const SIDE = (d) =>
+  section(label(L, 'habilidades'), skillsBlock(d)) + section(label(L, 'idiomas'), langBlock(d)) + section(label(L, 'otros'), otherBlock(d));
+const MAIN = (d, datesLeft = false) =>
+  section(label(L, 'perfil'), perfil(d)) +
+  section(label(L, 'experiencia'), experienceBlock(d, datesLeft)) +
+  section(label(L, 'formacion'), educationBlock(d, datesLeft));
+const contactList = (d) => `<ul class="cv-contact">${contactItems(d)}</ul>`;
+
+Object.assign(RENDERERS, {
+  impacto: (d) =>
+    `<header class="cv-band">${photo(d)}<div class="cv-id"><h1>${esc(d.nombre) || label(L, 'nombre')}</h1>${
+      d.puesto ? `<p class="cv-role">${esc(tr(d.puesto, L))}</p>` : ''
+    }${contactList(d)}</div></header>` + `<div class="cv-body"><div class="cv-main">${MAIN(d)}</div><div class="cv-aside">${SIDE(d)}</div></div>`,
+
+  ejecutiva: (d) =>
+    `<header class="cv-band"><div class="cv-id"><h1>${esc(d.nombre) || label(L, 'nombre')}</h1>${
+      d.puesto ? `<p class="cv-role">${esc(tr(d.puesto, L))}</p>` : ''
+    }</div>${photo(d)}</header><div class="cv-contact-bar">${contactList(d)}</div>` +
+    `<div class="cv-body"><div class="cv-main">${MAIN(d)}</div><div class="cv-aside">${SIDE(d)}</div></div>`,
+
+  creativa: (d) =>
+    `<header class="cv-band"><div class="cv-id"><h1>${esc(d.nombre) || label(L, 'nombre')}</h1>${
+      d.puesto ? `<p class="cv-role">${esc(tr(d.puesto, L))}</p>` : ''
+    }</div>${photo(d)}</header><div class="cv-contact-bar">${contactList(d)}</div><div class="cv-body">${MAIN(d)}<div class="cv-cols">${section(
+      label(L, 'habilidades'),
+      skillsBlock(d),
+    )}${section(label(L, 'idiomas'), langBlock(d))}</div>${section(label(L, 'otros'), otherBlock(d))}</div>`,
+
+  nocturna: (d) =>
+    `<aside class="cv-side">${photo(d)}<div class="cv-id"><h1>${esc(d.nombre) || label(L, 'nombre')}</h1>${
+      d.puesto ? `<p class="cv-role">${esc(tr(d.puesto, L))}</p>` : ''
+    }</div>${section(label(L, 'contacto'), contactList(d))}${SIDE(d)}</aside><div class="cv-main">${MAIN(d)}</div>`,
+
+  cronologia: (d) =>
+    header(d) +
+    section(label(L, 'perfil'), perfil(d)) +
+    section(label(L, 'experiencia'), experienceBlock(d), 'cv-tl') +
+    section(label(L, 'formacion'), educationBlock(d), 'cv-tl') +
+    `<div class="cv-cols">${section(label(L, 'habilidades'), skillsBlock(d))}${section(label(L, 'idiomas'), langBlock(d))}</div>` +
+    section(label(L, 'otros'), otherBlock(d)),
+
+  elegante: (d) =>
+    header(d) +
+    section(label(L, 'perfil'), perfil(d)) +
+    section(label(L, 'experiencia'), experienceBlock(d)) +
+    section(label(L, 'formacion'), educationBlock(d)) +
+    `<div class="cv-cols">${section(label(L, 'habilidades'), skillsBlock(d))}${section(label(L, 'idiomas'), langBlock(d))}</div>` +
+    section(label(L, 'otros'), otherBlock(d)),
+
+  geometrica: (d) =>
+    `<header class="cv-band"><div class="cv-id"><h1>${esc(d.nombre) || label(L, 'nombre')}</h1>${
+      d.puesto ? `<p class="cv-role">${esc(tr(d.puesto, L))}</p>` : ''
+    }${contactList(d)}</div>${photo(d)}</header>` + `<div class="cv-body"><div class="cv-main">${MAIN(d)}</div><div class="cv-aside">${SIDE(d)}</div></div>`,
+
+  suave: (d) =>
+    `<div class="cv-card cv-card-head">${header(d)}</div>` +
+    `<div class="cv-body"><div class="cv-main">${['perfil', 'experiencia', 'formacion']
+      .map((k) => {
+        const body = k === 'perfil' ? perfil(d) : k === 'experiencia' ? experienceBlock(d) : educationBlock(d);
+        return body ? `<div class="cv-card">${section(label(L, k), body)}</div>` : '';
+      })
+      .join('')}</div><div class="cv-aside">${['habilidades', 'idiomas', 'otros']
+      .map((k) => {
+        const body = k === 'habilidades' ? skillsBlock(d) : k === 'idiomas' ? langBlock(d) : otherBlock(d);
+        return body ? `<div class="cv-card">${section(label(L, k), body)}</div>` : '';
+      })
+      .join('')}</div></div>`,
+});
+
 // Color de acento mezclado con blanco (10 %), para fondos suaves.
 function soft(hex) {
   const n = parseInt(hex.slice(1), 16);
@@ -167,9 +245,16 @@ function soft(hex) {
   return `rgb(${mix(n >> 16)}, ${mix((n >> 8) & 255)}, ${mix(n & 255)})`;
 }
 
+// Color de acento oscurecido (65 %), para degradados.
+function dark(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  const mix = (c) => Math.round(c * 0.65);
+  return `rgb(${mix(n >> 16)}, ${mix((n >> 8) & 255)}, ${mix(n & 255)})`;
+}
+
 export function renderCV(d) {
   L = d.lang || 'es';
   const tpl = RENDERERS[d.template] ? d.template : 'clasica';
   const accent = /^#[0-9a-f]{6}$/i.test(d.accent || '') ? d.accent : ACCENTS[0];
-  return `<article class="cv tpl-${tpl}" lang="${L}" style="--accent:${accent};--accent-soft:${soft(accent)}">${RENDERERS[tpl](d)}</article>`;
+  return `<article class="cv tpl-${tpl}" lang="${L}" style="--accent:${accent};--accent-soft:${soft(accent)};--accent-dark:${dark(accent)}">${RENDERERS[tpl](d)}</article>`;
 }

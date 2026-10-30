@@ -257,11 +257,9 @@ page('', {
   <div class="tpl-gallery">
     ${TEMPLATES.map(
       (t, i) => `<div class="tpl-thumb">${
-        t.pro
-          ? '<div class="mini locked">🔒</div>'
-          : `<div class="mini">${renderCV(sampleCV('dependiente', t.id, ['#5b4bff', '#e0457b', '#0f766e', '#c2410c'][i % 4]))}</div>`
+        `<div class="mini">${renderCV(sampleCV('dependiente', t.id, ['#5b4bff', '#e0457b', '#0f766e', '#c2410c'][i % 4]))}${t.pro ? '<span class="crown">👑 Pro</span>' : ''}</div>`
       }
-      <strong>${t.name} ${t.pro ? '<span class="badge">Pro · pronto</span>' : '<span class="badge badge-free">Gratis</span>'}</strong>
+      <strong>${t.name} ${t.pro ? '<span class="badge badge-pro">Pro</span>' : '<span class="badge badge-free">Gratis</span>'}</strong>
       <small>${t.desc}</small></div>`,
     ).join('')}
   </div>
@@ -471,6 +469,10 @@ page('crear/', {
       <button type="button" class="btn btn-ghost js-share">📤 Enviar</button>
       <button type="button" class="btn js-download">⬇ Descargar PDF gratis</button>
     </div>
+    <div class="pro-lock" id="pro-lock" hidden>
+      <span>👑 Estás probando una <strong>plantilla Pro</strong>. Pruébala gratis; para descargarla, consigue Pro.</span>
+      <span class="pro-lock-btns"><button type="button" class="btn btn-sm btn-ghost js-free-tpl">Usar una gratis</button><a class="btn btn-sm" href="${url('pro/')}">Ver Pro</a></span>
+    </div>
     <div class="sheet-wrap" id="sheet"></div>
   </section>
 </div>
@@ -479,13 +481,18 @@ ${MOBILE_BAR}
 ${PRINT_DIALOG}
 ${SHARE_DIALOG}
 
-<dialog id="dlg-pro">
-  <h2>Plantillas Pro</h2>
-  <p>Estamos preparando plantillas premium y nuevas funciones con un <strong>pago único</strong>, sin suscripciones.</p>
-  <p>Mientras tanto, todas las plantillas gratuitas y la descarga en PDF siguen siendo gratis.</p>
+<dialog id="dlg-pro" class="dlg-pro">
+  <div class="dlg-pro-top"><span class="crown-big">👑</span><h2>Esta plantilla es Pro</h2><p>Te queda genial, ¿verdad? Consigue Pro y descárgala hoy.</p></div>
+  <ul class="tick">
+    <li>8 plantillas premium que destacan</li>
+    <li>Descarga también en Word</li>
+    <li>Analizador de ofertas y simulador de entrevista</li>
+    <li>Sin anuncios</li>
+  </ul>
+  <p class="price-line">${CONFIG.proPrecioAntes ? `<s>${CONFIG.proPrecioAntes}</s> ` : ''}<strong>${CONFIG.proPrecio}</strong> · pago único, para siempre</p>
   <div class="dlg-actions">
-    <a class="btn btn-ghost" href="${url('pro/')}">Saber más</a>
-    <button type="button" class="btn" onclick="this.closest('dialog').close()">Vale</button>
+    <button type="button" class="btn btn-ghost js-free-tpl">Usar una gratis</button>
+    <a class="btn" href="${url('pro/')}">👑 Ver Pro</a>
   </div>
 </dialog>
 
@@ -958,7 +965,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js', 'assets/js/pro.js'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';

@@ -13,6 +13,9 @@ export const CONFIG = {
 
   // Enlace de pago de la versión Pro (Lemon Squeezy, Paddle…). Vacío = "Próximamente".
   proCheckoutUrl: process.env.PRO_CHECKOUT_URL || '',
+  // Precio de la versión Pro (pago único). "proPrecioAntes" se muestra tachado: quítalo si no hay oferta.
+  proPrecio: '4,99 €',
+  proPrecioAntes: '9,99 €',
 
   // Datos del titular para el aviso legal (obligatorios por la LSSI en España).
   titular: process.env.OWNER_NAME || 'Jose Alejandro Alvarado Rodriguez',

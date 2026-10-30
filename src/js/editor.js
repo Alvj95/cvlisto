@@ -1,4 +1,5 @@
-import { renderCV, emptyCV, TEMPLATES, ACCENTS } from './cv-render.js';
+import { renderCV, emptyCV, TEMPLATES, ACCENTS, isProTemplate } from './cv-render.js';
+import { isPro } from './pro.js';
 import { OFICIOS, SECTORES, ejemploCV } from '../data/oficios.js';
 import { extractLines, parseCV } from './importer.js';
 import { LANGS, tr, known } from './i18n.js';
@@ -307,6 +308,8 @@ function renderPreview() {
     line.innerHTML = `<span>Página ${p + 1}</span>`;
     wrap.appendChild(line);
   }
+  const lock = $('#pro-lock');
+  if (lock) lock.hidden = !locked();
   const info = $('#pages-info');
   if (info) info.textContent = pages > 1 ? `Ocupa ${pages} páginas. Intenta resumir para que quepa en una.` : 'Cabe en 1 página ✓';
 }
@@ -522,16 +525,16 @@ function readPhoto(file) {
 
 /* ---------- Plantillas y color ---------- */
 function renderDesign() {
-  const sample = { ...cv, nombre: cv.nombre || 'Tu nombre', puesto: cv.puesto || 'Puesto' };
+  // Miniaturas con contenido de ejemplo mientras el CV está casi vacío, para que se vea cada diseño.
+  const ejemplo = cv.experiencia.length ? cv : { ...ejemploCV(OFICIOS.find((o) => o.slug === cv.oficio) || OFICIOS[0]), lang: cv.lang };
+  const sample = { ...ejemplo, accent: cv.accent, foto: cv.foto, nombre: cv.nombre || 'Tu nombre', puesto: cv.puesto || ejemplo.puesto || 'Puesto' };
   $('#tpl-pick').innerHTML = TEMPLATES.map(
-    (t) => `<button type="button" class="tpl-opt ${t.pro ? 'locked' : ''}" data-tpl="${t.id}" aria-pressed="${cv.template === t.id}">
-      <div class="mini">${t.pro ? '' : renderCV({ ...sample, template: t.id })}</div>${t.name}</button>`,
+    (t) => `<button type="button" class="tpl-opt ${t.pro ? 'is-pro' : ''}" data-tpl="${t.id}" aria-pressed="${cv.template === t.id}">
+      <div class="mini">${renderCV({ ...sample, template: t.id })}${t.pro ? '<span class="crown">👑 Pro</span>' : ''}</div>${t.name}</button>`,
   ).join('');
   $$('[data-tpl]').forEach((b) =>
     b.addEventListener('click', () => {
-      const t = TEMPLATES.find((x) => x.id === b.dataset.tpl);
-      if (t.pro) return $('#dlg-pro').showModal();
-      cv.template = t.id;
+      cv.template = b.dataset.tpl;
       renderDesign();
       changed();
     }),
@@ -570,6 +573,22 @@ function renderForm() {
   renderDesign();
 }
 
+/* ---------- Plantillas Pro ---------- */
+// Las plantillas Pro se pueden probar; para descargarlas hace falta la versión Pro.
+const locked = () => isProTemplate(cv.template) && !isPro();
+
+function proGate() {
+  if (!locked()) return false;
+  $('#dlg-pro').showModal();
+  return true;
+}
+
+function useFreeTemplate() {
+  cv.template = 'moderna';
+  renderDesign();
+  changed();
+}
+
 /* ---------- Descargar PDF ---------- */
 function printCV() {
   $('#print-root').innerHTML = renderCV(cv);
@@ -584,6 +603,7 @@ function download() {
     alert('Escribe al menos tu nombre antes de descargar.');
     return;
   }
+  if (proGate()) return;
   if (storage.get(PRINT_TIP_KEY)) return printCV();
   $('#dlg-print').showModal();
 }
@@ -761,7 +781,14 @@ function init() {
   $$('.js-share').forEach((b) =>
     b.addEventListener('click', () => {
       if (!cv.nombre.trim()) return alert('Escribe al menos tu nombre antes de enviarlo.');
+      if (proGate()) return;
       share(b, renderCV(cv), fileName('CV', cv.nombre), 'Te envío mi currículum.');
+    }),
+  );
+  $$('.js-free-tpl').forEach((b) =>
+    b.addEventListener('click', () => {
+      $('#dlg-pro').close();
+      useFreeTemplate();
     }),
   );
   $('#dlg-print-ok').addEventListener('click', () => {
