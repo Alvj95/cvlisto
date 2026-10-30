@@ -1,0 +1,88 @@
+/* Plantillas de currículum. Tamaño A4 real para que la vista previa y el PDF coincidan. */
+.cv {
+  --accent: #1f5fbf;
+  --ink: #1d2433;
+  --muted: #5b6475;
+  --line: #dfe3ea;
+  box-sizing: border-box;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 16mm 16mm 14mm;
+  background: #fff;
+  color: var(--ink);
+  font: 10pt/1.45 "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.cv *, .cv *::before, .cv *::after { box-sizing: border-box; }
+.cv h1, .cv h2, .cv h3, .cv p, .cv ul { margin: 0; padding: 0; }
+.cv ul { list-style: none; }
+.cv h1 { font-size: 22pt; line-height: 1.15; font-weight: 700; letter-spacing: -0.01em; }
+.cv-role { font-size: 12pt; color: var(--accent); font-weight: 600; margin-top: 2pt !important; }
+.cv-contact { display: flex; flex-wrap: wrap; gap: 3pt 12pt; margin-top: 6pt !important; color: var(--muted); font-size: 9pt; }
+.cv-contact li { display: flex; align-items: center; gap: 4pt; word-break: break-word; }
+.cv-ic { color: var(--accent); font-size: 9pt; }
+.cv-photo { width: 30mm; height: 30mm; object-fit: cover; border-radius: 50%; flex: none; }
+.cv-head { display: flex; align-items: center; gap: 6mm; }
+.cv-sec { margin-top: 6mm; break-inside: avoid-page; }
+.cv-sec h2 {
+  font-size: 10.5pt; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent);
+  padding-bottom: 2pt; margin-bottom: 3mm !important; border-bottom: 1.2pt solid var(--accent);
+}
+.cv-perfil { color: var(--ink); }
+.cv-item { margin-bottom: 3.5mm; break-inside: avoid; }
+.cv-item:last-child { margin-bottom: 0; }
+.cv-item-head { display: flex; justify-content: space-between; align-items: baseline; gap: 4mm; }
+.cv-item h3 { font-size: 10.5pt; font-weight: 650; }
+.cv-date { color: var(--muted); font-size: 9pt; white-space: nowrap; }
+.cv-meta { color: var(--muted); font-size: 9.5pt; }
+.cv-item ul, .cv-list { margin-top: 1.5mm !important; }
+.cv-item ul li, .cv-list li { position: relative; padding-left: 10pt; margin-bottom: 1pt; }
+.cv-item ul li::before, .cv-list li::before {
+  content: ""; position: absolute; left: 1pt; top: 0.62em; width: 4pt; height: 4pt; border-radius: 50%; background: var(--accent);
+}
+.cv-tags { display: flex; flex-wrap: wrap; gap: 4pt; }
+.cv-tags li {
+  padding: 2pt 7pt; border-radius: 10pt; font-size: 9pt;
+  background: color-mix(in srgb, var(--accent) 10%, #fff); color: var(--ink);
+}
+.cv-langs li { display: flex; justify-content: space-between; gap: 6pt; margin-bottom: 2pt; }
+.cv-langs span { color: var(--muted); }
+
+/* Clásica */
+.tpl-clasica .cv-head { flex-direction: column; text-align: center; gap: 3mm; padding-bottom: 4mm; border-bottom: 0.6pt solid var(--line); }
+.tpl-clasica .cv-contact { justify-content: center; }
+.tpl-clasica .cv-sec h2 { border-bottom-width: 0.8pt; }
+
+/* Moderna */
+.tpl-moderna { display: grid; grid-template-columns: 66mm 1fr; padding: 0; }
+.tpl-moderna .cv-side { background: var(--accent); color: #fff; padding: 14mm 7mm; }
+.tpl-moderna .cv-side .cv-photo { display: block; width: 36mm; height: 36mm; margin: 0 auto 2mm; border: 2pt solid rgba(255,255,255,.7); }
+.tpl-moderna .cv-side .cv-sec h2 { color: #fff; border-bottom-color: rgba(255,255,255,.55); }
+.tpl-moderna .cv-side .cv-contact { flex-direction: column; color: #fff; margin: 0 !important; }
+.tpl-moderna .cv-side .cv-ic { color: #fff; }
+.tpl-moderna .cv-side .cv-tags li { background: rgba(255,255,255,.18); color: #fff; }
+.tpl-moderna .cv-side .cv-langs span { color: rgba(255,255,255,.8); }
+.tpl-moderna .cv-side .cv-list li::before { background: #fff; }
+.tpl-moderna .cv-main { padding: 14mm 12mm 12mm 10mm; }
+.tpl-moderna .cv-main .cv-head { padding-bottom: 1mm; }
+.tpl-moderna .cv-main h1 { font-size: 24pt; }
+
+/* Minimal */
+.tpl-minimal { padding: 18mm 20mm; }
+.tpl-minimal h1 { font-weight: 300; font-size: 26pt; }
+.tpl-minimal .cv-role { color: var(--muted); font-weight: 400; }
+.tpl-minimal .cv-sec h2 { border: 0; color: var(--ink); font-size: 9pt; letter-spacing: 0.18em; margin-bottom: 3mm !important; }
+.tpl-minimal .cv-sec h2::after { content: ""; display: block; width: 10mm; height: 1.5pt; background: var(--accent); margin-top: 2pt; }
+.tpl-minimal .cv-row { display: grid; grid-template-columns: 34mm 1fr; gap: 4mm; }
+.tpl-minimal .cv-row .cv-date { white-space: normal; padding-top: 1pt; }
+.tpl-minimal .cv-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8mm; }
+.tpl-minimal .cv-tags li { background: none; border: 0.6pt solid var(--line); }
+
+/* Compacta */
+.tpl-compacta { padding: 0 0 12mm; font-size: 9.5pt; }
+.tpl-compacta .cv-head { background: color-mix(in srgb, var(--accent) 9%, #fff); padding: 10mm 14mm; border-bottom: 2pt solid var(--accent); }
+.tpl-compacta .cv-photo { width: 26mm; height: 26mm; border-radius: 4pt; }
+.tpl-compacta .cv-body { display: grid; grid-template-columns: 1fr 58mm; gap: 8mm; padding: 0 14mm; }
+.tpl-compacta .cv-sec { margin-top: 5mm; }
+.tpl-compacta .cv-sec h2 { border-bottom-width: 0.6pt; font-size: 9.5pt; }

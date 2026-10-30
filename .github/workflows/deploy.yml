@@ -1,0 +1,50 @@
+name: Publicar en GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generar sitio
+        env:
+          # Ajustes en Settings → Secrets and variables → Actions → Variables
+          CUSTOM_DOMAIN: ${{ vars.CUSTOM_DOMAIN }}
+          SITE_URL: ${{ vars.CUSTOM_DOMAIN && format('https://{0}', vars.CUSTOM_DOMAIN) || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
+          BASE_PATH: ${{ vars.CUSTOM_DOMAIN && '/' || format('/{0}/', github.event.repository.name) }}
+          ADSENSE_CLIENT: ${{ vars.ADSENSE_CLIENT }}
+          PRO_CHECKOUT_URL: ${{ vars.PRO_CHECKOUT_URL }}
+          OWNER_NAME: ${{ vars.OWNER_NAME }}
+          OWNER_NIF: ${{ vars.OWNER_NIF }}
+          OWNER_ADDRESS: ${{ vars.OWNER_ADDRESS }}
+          CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
+        run: node scripts/build.mjs
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
