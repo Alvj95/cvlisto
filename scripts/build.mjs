@@ -108,7 +108,7 @@ ${head}
 </head>
 <body class="${bodyClass}">
 <header class="site-head"><div class="wrap">
-  <a class="logo" href="${url()}"><span class="logo-mark">CV</span>${CONFIG.nombreSitio}</a>
+  <a class="logo" href="${url()}"><span class="logo-mark">CV</span>${CONFIG.nombreSitio}<span class="pro-chip pro-only">👑 PRO</span></a>
   <nav class="nav">${nav}<a class="btn btn-sm" href="${url('crear/')}">Crear mi CV</a></nav>
 </div></header>
 <main>
@@ -215,7 +215,8 @@ page('', {
   body: `
 <section class="hero"><div class="wrap">
   <div>
-    <span class="pill">✨ 100% gratis · sin registro</span>
+    <span class="pill free-only">✨ 100% gratis · sin registro</span>
+    <span class="pill pro-only">👑 Eres Pro · todo desbloqueado</span>
     <h1>Consigue trabajo con un currículum <span class="hl">que destaca</span></h1>
     <p class="lead">Elige tu oficio, toca las frases que encajan contigo y descarga tu CV en PDF en minutos. Sin suscripciones y sin sorpresas al final.</p>
     <div class="hero-cta">
@@ -863,6 +864,7 @@ page('pro/', {
   body: `
 <section class="pro-hero"><div class="wrap">
   <span class="pill">👑 Tu CV Gratis Pro</span>
+  <div class="pro-owned pro-only">🎉 <strong>Ya eres Pro en este dispositivo.</strong> Gracias por tu apoyo. <a href="${url('crear/')}">Ir a mi currículum →</a></div>
   <h1>Un currículum que no pasa <span class="hl">desapercibido</span></h1>
   <p class="lead">8 plantillas premium y las herramientas para conseguir la entrevista. Paga una vez y es tuyo para siempre.</p>
   <div class="pro-price">

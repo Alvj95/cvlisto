@@ -554,3 +554,53 @@ dialog .dlg-actions { display: flex; gap: 8px; justify-content: flex-end; margin
 /* Usuarios Pro: sin anuncios */
 html.is-pro ins.adsbygoogle, html.is-pro .google-auto-placed { display: none !important; }
 .badge-soon { background: #e3f0ff; color: #1f5fbf; font-size: .66rem; margin-left: 4px; }
+
+/* ===== Tema Pro: negro y oro ===== */
+.pro-only { display: none !important; }
+.pro-chip { display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; padding: 3px 9px; border-radius: 999px; font-size: .68rem; font-weight: 800; letter-spacing: .06em; background: linear-gradient(135deg, #f9dc7c, #e8b13a 55%, #c98a1b); color: #2b1b00; box-shadow: 0 3px 10px rgba(201,138,27,.4); vertical-align: middle; }
+html.is-pro .pro-only { display: inline-flex !important; }
+html.is-pro div.pro-only { display: block !important; }
+html.is-pro .free-only { display: none !important; }
+html.is-pro {
+  --grad: linear-gradient(135deg, #f9dc7c 0%, #eab54a 45%, #c98a1b 100%);
+  --brand: #a86b12;
+  --brand-dark: #7a4c0a;
+  --brand-soft: #fff3d6;
+  --pink: #c98a1b;
+}
+html.is-pro .btn, html.is-pro .btn:hover { color: #2b1b00; }
+html.is-pro .btn { box-shadow: 0 8px 20px rgba(201,138,27,.32); }
+html.is-pro .btn:hover { box-shadow: 0 12px 28px rgba(201,138,27,.42); }
+html.is-pro .btn-ghost, html.is-pro .btn-ghost:hover { color: var(--ink); box-shadow: none; }
+html.is-pro .btn-white, html.is-pro .btn-white:hover { color: #7a4c0a; }
+html.is-pro .btn-glass, html.is-pro .btn-glass:hover { color: #fff; box-shadow: none; }
+/* Cabecera oscura */
+html.is-pro .site-head { background: rgba(21,19,31,.94); border-bottom: 1px solid rgba(234,181,74,.45); }
+html.is-pro .logo, html.is-pro .logo:hover { color: #fff; }
+html.is-pro .logo-mark { color: #2b1b00; box-shadow: 0 6px 16px rgba(201,138,27,.45); }
+html.is-pro .nav a { color: #d8d2c2; }
+html.is-pro .nav a:hover, html.is-pro .nav a[aria-current="page"] { color: #f9dc7c; background: rgba(249,220,124,.1); }
+html.is-pro .nav .btn { color: #2b1b00; }
+/* Portadas y bloques destacados en negro con brillo dorado */
+html.is-pro .hero, html.is-pro .pro-hero, html.is-pro .big-cta, html.is-pro .dlg-pro-top {
+  background: radial-gradient(circle at 85% 10%, rgba(234,181,74,.38), transparent 42%), radial-gradient(circle at 10% 90%, rgba(201,138,27,.22), transparent 40%), linear-gradient(135deg, #17142a 0%, #272042 55%, #3a2914 100%);
+}
+html.is-pro .hero::before, html.is-pro .hero::after { opacity: .18; }
+html.is-pro .pill { border-color: rgba(249,220,124,.5); }
+html.is-pro .eyebrow { color: #c98a1b; }
+html.is-pro .pro-owned { background: rgba(249,220,124,.14); border: 1px solid rgba(249,220,124,.5); border-radius: 16px; padding: 12px 18px; margin: 4px auto 6px; max-width: 560px; }
+html.is-pro .pro-owned a { color: #f9dc7c; font-weight: 700; }
+html.is-pro .js-buy, html.is-pro .pro-price, html.is-pro .big-cta .is-soon { display: none !important; }
+/* Menú inferior y pie */
+html.is-pro .tabbar { background: rgba(21,19,31,.96); border-top-color: rgba(234,181,74,.4); }
+html.is-pro .tabbar a { color: #a8a294; }
+html.is-pro .tabbar a[aria-current="page"] { color: #f9dc7c; }
+html.is-pro .tabbar a.fab .ti { color: #2b1b00; border-color: #15131f; box-shadow: 0 10px 24px rgba(201,138,27,.45); }
+html.is-pro .site-foot { background: #15131f; border-top: 3px solid #c98a1b; }
+/* Editor */
+html.is-pro .editor-page { background: #f1ece0; }
+html.is-pro .crown { background: #15131f; color: #f9dc7c; }
+html.is-pro .crown::after { content: " ✓"; }
+html.is-pro .tpl-opt.is-pro { border-color: #e8d3a0; }
+html.is-pro .ed-toolbar .pro-chip { margin: 0 4px 0 0; font-size: .75rem; padding: 4px 11px; }
+html.is-pro .ed-preview { background: radial-gradient(circle at 20% 0%, #fff0c9 0, transparent 40%), radial-gradient(circle at 100% 100%, #f3dfb4 0, transparent 40%), #efe9dc; }

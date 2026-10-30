@@ -777,6 +777,11 @@ function init() {
   $('#import-input').addEventListener('change', (e) => importFile(e.target.files[0]));
   $('#dlg-import-ok').addEventListener('click', applyImport);
 
+  if (isPro()) {
+    // Estilo Pro: sin el "gratis" en los botones y con distintivo en la barra.
+    $$('.js-download').forEach((b) => (b.textContent = b.textContent.replace(' gratis', '')));
+    $('#pages-info')?.insertAdjacentHTML('beforebegin', '<span class="pro-chip">👑 PRO</span>');
+  }
   $$('.js-download').forEach((b) => b.addEventListener('click', download));
   $$('.js-share').forEach((b) =>
     b.addEventListener('click', () => {
