@@ -9,7 +9,7 @@ export const CONFIG = {
   base: process.env.BASE_PATH || '/',
 
   // ID de editor de AdSense, p. ej. "ca-pub-1234567890123456". Vacío = sin anuncios.
-  adsenseClient: process.env.ADSENSE_CLIENT || '',
+  adsenseClient: process.env.ADSENSE_CLIENT || 'ca-pub-8590744942912233',
 
   // Enlace de pago de la versión Pro (Lemon Squeezy, Paddle…). Vacío = "Próximamente".
   proCheckoutUrl: process.env.PRO_CHECKOUT_URL || '',
