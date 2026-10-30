@@ -1,5 +1,9 @@
 // Convierte los datos de un currículum en HTML. No usa el DOM, así que sirve
 // tanto en el navegador (editor) como en Node (páginas de ejemplo generadas).
+import { label, tr, level } from './i18n.js';
+
+// Idioma del currículum que se está generando (renderCV es síncrono).
+let L = 'es';
 
 export const TEMPLATES = [
   { id: 'clasica', name: 'Clásica', pro: false, desc: 'Sobria y fácil de leer. Vale para cualquier empleo.' },
@@ -16,6 +20,7 @@ export function emptyCV() {
   return {
     template: 'clasica',
     accent: ACCENTS[0],
+    lang: 'es',
     nombre: '',
     puesto: '',
     email: '',
@@ -42,7 +47,7 @@ const lines = (s) =>
     .filter(Boolean);
 
 const range = (a, b, actual) => {
-  const fin = actual ? 'Actualidad' : b;
+  const fin = actual ? label(L, 'actualidad') : b;
   if (a && fin) return `${esc(a)} – ${esc(fin)}`;
   return esc(a || fin || '');
 };
@@ -66,14 +71,14 @@ function experienceBlock(d, datesLeft = false) {
   if (!has(d, 'experiencia')) return '';
   return d.experiencia
     .map((e) => {
-      const tareas = lines(e.tareas);
+      const tareas = lines(e.tareas).map((t) => tr(t, L));
       const meta = [e.empresa, e.lugar].filter(Boolean).map(esc).join(' · ');
       const dates = range(e.inicio, e.fin, e.actual);
       const list = tareas.length ? `<ul>${tareas.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : '';
       if (datesLeft) {
-        return `<div class="cv-item cv-row"><div class="cv-date">${dates}</div><div><h3>${esc(e.puesto)}</h3>${meta ? `<p class="cv-meta">${meta}</p>` : ''}${list}</div></div>`;
+        return `<div class="cv-item cv-row"><div class="cv-date">${dates}</div><div><h3>${esc(tr(e.puesto, L))}</h3>${meta ? `<p class="cv-meta">${meta}</p>` : ''}${list}</div></div>`;
       }
-      return `<div class="cv-item"><div class="cv-item-head"><h3>${esc(e.puesto)}</h3><span class="cv-date">${dates}</span></div>${meta ? `<p class="cv-meta">${meta}</p>` : ''}${list}</div>`;
+      return `<div class="cv-item"><div class="cv-item-head"><h3>${esc(tr(e.puesto, L))}</h3><span class="cv-date">${dates}</span></div>${meta ? `<p class="cv-meta">${meta}</p>` : ''}${list}</div>`;
     })
     .join('');
 }
@@ -92,71 +97,72 @@ function educationBlock(d, datesLeft = false) {
 }
 
 const skillsBlock = (d) =>
-  has(d, 'habilidades') ? `<ul class="cv-tags">${d.habilidades.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>` : '';
+  has(d, 'habilidades') ? `<ul class="cv-tags">${d.habilidades.map((h) => `<li>${esc(tr(h, L))}</li>`).join('')}</ul>` : '';
 
 const langBlock = (d) =>
   has(d, 'idiomas')
     ? `<ul class="cv-langs">${d.idiomas
         .filter((i) => i.idioma)
-        .map((i) => `<li><strong>${esc(i.idioma)}</strong>${i.nivel ? ` <span>${esc(i.nivel)}</span>` : ''}</li>`)
+        .map((i) => `<li><strong>${esc(tr(i.idioma, L))}</strong>${i.nivel ? ` <span>${esc(level(i.nivel, L))}</span>` : ''}</li>`)
         .join('')}</ul>`
     : '';
 
 const otherBlock = (d) => {
-  const items = lines(d.otros);
+  const items = lines(d.otros).map((t) => tr(t, L));
   return items.length ? `<ul class="cv-list">${items.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : '';
 };
 
 const photo = (d) => (d.foto ? `<img class="cv-photo" src="${esc(d.foto)}" alt="">` : '');
-const perfil = (d) => (has(d, 'perfil') ? `<p class="cv-perfil">${esc(d.perfil)}</p>` : '');
+const perfil = (d) => (has(d, 'perfil') ? `<p class="cv-perfil">${esc(tr(d.perfil, L))}</p>` : '');
 
 function header(d, withContact = true) {
-  return `<header class="cv-head">${photo(d)}<div class="cv-id"><h1>${esc(d.nombre) || 'Tu nombre'}</h1>${
-    d.puesto ? `<p class="cv-role">${esc(d.puesto)}</p>` : ''
+  return `<header class="cv-head">${photo(d)}<div class="cv-id"><h1>${esc(d.nombre) || label(L, 'nombre')}</h1>${
+    d.puesto ? `<p class="cv-role">${esc(tr(d.puesto, L))}</p>` : ''
   }${withContact ? `<ul class="cv-contact">${contactItems(d)}</ul>` : ''}</div></header>`;
 }
 
 const RENDERERS = {
   clasica: (d) =>
     header(d) +
-    section('Perfil', perfil(d)) +
-    section('Experiencia', experienceBlock(d)) +
-    section('Formación', educationBlock(d)) +
-    section('Habilidades', skillsBlock(d)) +
-    section('Idiomas', langBlock(d)) +
-    section('Otros datos', otherBlock(d)),
+    section(label(L, 'perfil'), perfil(d)) +
+    section(label(L, 'experiencia'), experienceBlock(d)) +
+    section(label(L, 'formacion'), educationBlock(d)) +
+    section(label(L, 'habilidades'), skillsBlock(d)) +
+    section(label(L, 'idiomas'), langBlock(d)) +
+    section(label(L, 'otros'), otherBlock(d)),
 
   moderna: (d) =>
-    `<aside class="cv-side">${photo(d)}${section('Contacto', `<ul class="cv-contact">${contactItems(d)}</ul>`)}${section(
-      'Habilidades',
+    `<aside class="cv-side">${photo(d)}${section(label(L, 'contacto'), `<ul class="cv-contact">${contactItems(d)}</ul>`)}${section(
+      label(L, 'habilidades'),
       skillsBlock(d),
-    )}${section('Idiomas', langBlock(d))}${section('Otros datos', otherBlock(d))}</aside>` +
-    `<div class="cv-main">${header({ ...d, foto: '' }, false)}${section('Perfil', perfil(d))}${section(
-      'Experiencia',
+    )}${section(label(L, 'idiomas'), langBlock(d))}${section(label(L, 'otros'), otherBlock(d))}</aside>` +
+    `<div class="cv-main">${header({ ...d, foto: '' }, false)}${section(label(L, 'perfil'), perfil(d))}${section(
+      label(L, 'experiencia'),
       experienceBlock(d),
-    )}${section('Formación', educationBlock(d))}</div>`,
+    )}${section(label(L, 'formacion'), educationBlock(d))}</div>`,
 
   minimal: (d) =>
     header(d) +
-    section('Perfil', perfil(d)) +
-    section('Experiencia', experienceBlock(d, true)) +
-    section('Formación', educationBlock(d, true)) +
-    `<div class="cv-cols">${section('Habilidades', skillsBlock(d))}${section('Idiomas', langBlock(d))}</div>` +
-    section('Otros datos', otherBlock(d)),
+    section(label(L, 'perfil'), perfil(d)) +
+    section(label(L, 'experiencia'), experienceBlock(d, true)) +
+    section(label(L, 'formacion'), educationBlock(d, true)) +
+    `<div class="cv-cols">${section(label(L, 'habilidades'), skillsBlock(d))}${section(label(L, 'idiomas'), langBlock(d))}</div>` +
+    section(label(L, 'otros'), otherBlock(d)),
 
   compacta: (d) =>
     header(d) +
-    `<div class="cv-body"><div class="cv-main">${section('Perfil', perfil(d))}${section('Experiencia', experienceBlock(d))}${section(
-      'Formación',
+    `<div class="cv-body"><div class="cv-main">${section(label(L, 'perfil'), perfil(d))}${section(label(L, 'experiencia'), experienceBlock(d))}${section(
+      label(L, 'formacion'),
       educationBlock(d),
-    )}</div><div class="cv-aside">${section('Habilidades', skillsBlock(d))}${section('Idiomas', langBlock(d))}${section(
-      'Otros datos',
+    )}</div><div class="cv-aside">${section(label(L, 'habilidades'), skillsBlock(d))}${section(label(L, 'idiomas'), langBlock(d))}${section(
+      label(L, 'otros'),
       otherBlock(d),
     )}</div></div>`,
 };
 
 export function renderCV(d) {
+  L = d.lang || 'es';
   const tpl = RENDERERS[d.template] ? d.template : 'clasica';
   const accent = /^#[0-9a-f]{6}$/i.test(d.accent || '') ? d.accent : ACCENTS[0];
-  return `<article class="cv tpl-${tpl}" style="--accent:${accent}">${RENDERERS[tpl](d)}</article>`;
+  return `<article class="cv tpl-${tpl}" lang="${L}" style="--accent:${accent}">${RENDERERS[tpl](d)}</article>`;
 }

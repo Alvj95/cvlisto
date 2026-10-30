@@ -1,6 +1,7 @@
 import { renderCV, emptyCV, TEMPLATES, ACCENTS } from './cv-render.js';
 import { OFICIOS, ejemploCV } from '../data/oficios.js';
 import { extractLines, parseCV } from './importer.js';
+import { LANGS, tr, known } from './i18n.js';
 
 // Todo se guarda en el navegador del usuario: el currículum nunca sale de su dispositivo.
 const STORE_KEY = 'cvlisto:cv:v1';
@@ -41,6 +42,7 @@ let saveTimer;
 function changed({ rerenderForm = false } = {}) {
   if (rerenderForm) renderForm();
   updateProgress();
+  updateLangNote();
   renderPreview();
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
@@ -48,6 +50,35 @@ function changed({ rerenderForm = false } = {}) {
     const el = $('#saved');
     if (el) el.textContent = ok ? 'Guardado en este dispositivo ✓' : '';
   }, 400);
+}
+
+/* ---------- Idioma del currículum ---------- */
+// Lo que escribe el usuario a mano no se traduce: avisamos de qué textos siguen igual.
+function updateLangNote() {
+  const note = $('#lang-note');
+  if (!note) return;
+  const lang = cv.lang || 'es';
+  if (lang === 'es') {
+    note.hidden = true;
+    return;
+  }
+  const pending = [
+    cv.puesto,
+    cv.perfil,
+    ...cv.experiencia.flatMap((e) => [e.puesto, ...String(e.tareas).split('\n')]),
+    ...cv.habilidades,
+    ...String(cv.otros).split('\n'),
+  ]
+    .map((t) => String(t ?? '').trim())
+    .filter((t) => t && !known(t));
+  const name = LANGS.find((l) => l.id === lang).es;
+  note.hidden = false;
+  note.innerHTML = pending.length
+    ? `<strong>✍️ ${pending.length} ${pending.length === 1 ? 'texto escrito por ti' : 'textos escritos por ti'} no se traducen solos.</strong> Escríbelos en ${esc(name)} en el formulario, por ejemplo: <em>${pending
+        .slice(0, 2)
+        .map((t) => esc(t.length > 50 ? `${t.slice(0, 50)}…` : t))
+        .join('</em>, <em>')}</em>.`
+    : `<strong>✅ Todo tu currículum está en ${esc(name)}.</strong>`;
 }
 
 /* ---------- Progreso ---------- */
@@ -121,11 +152,11 @@ function renderOficio() {
   const box = $('#perfil-sugg');
   box.innerHTML = o
     ? `<div class="sugg-title">Ideas para ${esc(o.nombre.toLowerCase())}</div>` +
-      o.perfiles.map((p, i) => `<button type="button" data-perfil="${i}">${esc(p)}</button>`).join('')
+      o.perfiles.map((p, i) => `<button type="button" data-perfil="${i}">${esc(tr(p, cv.lang))}</button>`).join('')
     : '';
   $$('[data-perfil]', box).forEach((b) =>
     b.addEventListener('click', () => {
-      cv.perfil = o.perfiles[Number(b.dataset.perfil)];
+      cv.perfil = tr(o.perfiles[Number(b.dataset.perfil)], cv.lang);
       $('[data-f="perfil"]').value = cv.perfil;
       changed();
     }),
@@ -183,9 +214,9 @@ const LISTS = {
 function tareasSugg(x) {
   const o = oficio();
   if (!o) return '';
-  const used = new Set(String(x.tareas).split('\n').map((t) => t.trim()));
+  const used = new Set(String(x.tareas).split('\n').map((t) => tr(t.trim(), 'es')));
   return `<div class="sugg-title">Toca para añadir</div><div class="chips">${o.tareas
-    .map((t) => `<button type="button" class="chip ${used.has(t) ? 'used' : ''}" data-tarea="${esc(t)}">+ ${esc(t)}</button>`)
+    .map((t) => `<button type="button" class="chip ${used.has(t) ? 'used' : ''}" data-tarea="${esc(tr(t, cv.lang))}">+ ${esc(tr(t, cv.lang))}</button>`)
     .join('')}</div>`;
 }
 
@@ -222,7 +253,7 @@ function renderList(key) {
         const t = chip.dataset.tarea;
         const cur = cv[key][i].tareas.trim();
         const list = cur ? cur.split('\n') : [];
-        if (list.map((l) => l.trim()).includes(t)) return;
+        if (list.some((l) => tr(l.trim(), 'es') === tr(t, 'es'))) return;
         cv[key][i].tareas = [...list, t].join('\n');
         $('[data-k="tareas"]', item).value = cv[key][i].tareas;
         chip.classList.add('used');
@@ -262,8 +293,8 @@ function renderSkills() {
   );
   const o = oficio();
   const sugg = $('#skills-sugg');
-  const have = new Set(cv.habilidades.map((h) => h.toLowerCase()));
-  const options = o ? o.habilidades.filter((h) => !have.has(h.toLowerCase())) : [];
+  const have = new Set(cv.habilidades.map((h) => tr(h, 'es').toLowerCase()));
+  const options = o ? o.habilidades.filter((h) => !have.has(h.toLowerCase())).map((h) => tr(h, cv.lang)) : [];
   sugg.innerHTML = options.length
     ? `<div class="sugg-title">Sugerencias</div><div class="chips">${options
         .map((h) => `<button type="button" class="chip" data-add="${esc(h)}">+ ${esc(h)}</button>`)
@@ -319,6 +350,19 @@ function renderDesign() {
       const t = TEMPLATES.find((x) => x.id === b.dataset.tpl);
       if (t.pro) return $('#dlg-pro').showModal();
       cv.template = t.id;
+      renderDesign();
+      changed();
+    }),
+  );
+  $('#lang-pick').innerHTML = LANGS.map(
+    (l) => `<button type="button" class="chip lang-opt" data-lang="${l.id}" aria-pressed="${(cv.lang || 'es') === l.id}">${l.flag} ${l.name}</button>`,
+  ).join('');
+  $$('[data-lang]').forEach((b) =>
+    b.addEventListener('click', () => {
+      cv.lang = b.dataset.lang;
+      renderOficio();
+      renderList('experiencia');
+      renderSkills();
       renderDesign();
       changed();
     }),
@@ -548,6 +592,7 @@ function init() {
 
   renderForm();
   updateProgress();
+  updateLangNote();
   renderPreview();
 }
 

@@ -129,6 +129,8 @@ const FAQ = [
   ['¿Dónde se guardan mis datos?', 'Solo en tu navegador, en tu propio dispositivo. Tu currículum no se envía ni se guarda en ningún servidor.'],
   ['¿Cómo descargo el PDF?', 'Pulsa "Descargar PDF" y, en la ventana que se abre, elige "Guardar como PDF" como destino. Funciona en ordenador, Android y iPhone.'],
   ['¿Necesito crear una cuenta?', 'No. Entras, rellenas y descargas. Tu progreso se guarda automáticamente en el dispositivo que estés usando.'],
+  ['¿Puedo subir mi currículum antiguo?', 'Sí. En el editor pulsa "Subir" y elige tu currículum en Word (.docx), PDF o texto. Leemos tus datos en tu propio dispositivo y los pasamos a la plantilla nueva para que solo tengas que revisarlos.'],
+  ['¿Puedo hacer el currículum en otros idiomas?', 'Sí: español, inglés, francés, portugués e italiano. Los títulos y las frases sugeridas se traducen solos; lo que escribas tú, te avisamos para que lo pongas en ese idioma.'],
   ['¿Sirve si no tengo experiencia?', 'Sí. Puedes destacar tu formación, cursos, voluntariado y disponibilidad. Tenemos una guía específica para hacer un currículum sin experiencia.'],
 ];
 
@@ -226,6 +228,8 @@ page('', {
     <div class="card"><span class="icon-tile t4">💸</span><h3>Gratis de verdad</h3><p>Otras webs te dejan hacer el CV y te cobran al descargarlo, a veces con una suscripción. Aquí la descarga es gratis.</p></div>
     <div class="card"><span class="icon-tile t3">🧰</span><h3>Para trabajos reales</h3><p>Hostelería, comercio, logística, limpieza, cuidados y más. No solo para oficinas.</p></div>
     <div class="card"><span class="icon-tile t1">🪄</span><h3>Nunca en blanco</h3><p>Frases ya escritas para tu perfil, tus tareas y tus habilidades. Solo tienes que tocarlas.</p></div>
+    <div class="card"><span class="icon-tile t4">📂</span><h3>Sube tu CV antiguo</h3><p>¿Ya tienes uno en Word o PDF? Súbelo y pasamos tus datos a una plantilla nueva en segundos.</p></div>
+    <div class="card"><span class="icon-tile t5">🌍</span><h3>En 5 idiomas</h3><p>Español, inglés, francés, portugués e italiano. Ideal para trabajar en el extranjero o en zonas turísticas.</p></div>
     <div class="card"><span class="icon-tile t2">🔒</span><h3>Privado</h3><p>Sin registro. Tu currículum se guarda solo en tu dispositivo y no lo enviamos a ningún sitio.</p></div>
   </div>
 </div></section>
@@ -322,7 +326,11 @@ page('crear/', {
       <div class="field"><label for="f-otros">Uno por línea</label><textarea id="f-otros" data-f="otros" rows="4" placeholder="Carnet de conducir B&#10;Disponibilidad inmediata&#10;Permiso de trabajo en vigor"></textarea></div>
     </div></details>
 
-    <details class="ed-block" open><summary data-sec="diseno"><span class="ico t3">🎨</span>Diseño<span class="done">✓</span></summary><div class="ed-body">
+    <details class="ed-block" open><summary data-sec="diseno"><span class="ico t3">🎨</span>Diseño e idioma<span class="done">✓</span></summary><div class="ed-body">
+      <div class="lbl">Idioma del currículum</div>
+      <div class="chips" id="lang-pick"></div>
+      <p class="lang-note" id="lang-note" hidden></p>
+      <div class="lbl" style="margin-top:12px">Plantilla</div>
       <div class="tpl-pick" id="tpl-pick"></div>
       <div class="lbl" style="margin-top:12px">Color</div>
       <div class="swatches" id="swatches"></div>
