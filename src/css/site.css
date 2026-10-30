@@ -607,3 +607,34 @@ html.is-pro .ed-preview { background: radial-gradient(circle at 20% 0%, #fff0c9 
 .crown-mini { font-size: .8em; margin-left: 2px; }
 .word-card { border-color: #f3d48a !important; background: linear-gradient(135deg, #fffaf0, #fff) !important; }
 .word-card .badge { font-size: .65rem; margin-left: 4px; }
+
+/* Analizador de ofertas */
+.offer-card { border-color: #bfeedd !important; background: linear-gradient(135deg, #effbf6, #fff) !important; }
+.dlg-offer { max-width: 620px; }
+.dlg-offer h2 .badge { font-size: .7rem; vertical-align: middle; }
+.dlg-offer textarea { width: 100%; font: inherit; font-size: .95rem; padding: 12px 14px; border: 2px solid var(--line); border-radius: 14px; resize: vertical; }
+.dlg-offer textarea:focus { outline: none; border-color: var(--brand); }
+.dlg-offer h3 { font-size: 1rem; margin: 18px 0 8px; }
+.offer-score { display: flex; gap: 16px; align-items: center; background: #f7f7fc; border-radius: 18px; padding: 14px 16px; }
+.offer-score p { margin: 2px 0; color: var(--muted); font-size: .92rem; }
+.offer-score small { color: var(--muted); }
+.ring { --c: #10a37f; flex: none; width: 82px; height: 82px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--c) calc(var(--p) * 1%), #e7e8f2 0); }
+.ring b { width: 64px; height: 64px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 1.15rem; }
+.offer-score.mid .ring { --c: #e8a317; }
+.offer-score.low .ring { --c: #dc4c4c; }
+.kws { display: flex; flex-wrap: wrap; gap: 6px; }
+.kw { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; font-size: .85rem; font-weight: 600; }
+.kw.hit { background: #dcf7ef; color: #0b6b52; }
+.kw.miss { background: #ffe8e8; color: #9b1c1c; }
+.kw-add { border: 0; background: #fff; color: #9b1c1c; border-radius: 999px; font: inherit; font-size: .75rem; font-weight: 800; padding: 2px 8px; cursor: pointer; }
+.offer-checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.offer-checks li { border-radius: 14px; padding: 10px 12px; display: grid; gap: 4px; font-size: .9rem; }
+.offer-checks li.ok { background: #f0fbf6; }
+.offer-checks li.ko { background: #fff6e6; }
+.offer-checks li span { color: var(--muted); }
+.offer-checks .btn { justify-self: start; margin-top: 4px; }
+.offer-locked { filter: blur(5px); pointer-events: none; user-select: none; max-height: 260px; overflow: hidden; }
+.offer-unlock { text-align: center; margin-top: -140px; position: relative; background: rgba(255,255,255,.94); border: 2px solid #f0c25a; border-radius: 20px; padding: 18px; box-shadow: var(--shadow); }
+.offer-unlock p { color: var(--muted); margin: 6px 0 12px; font-size: .92rem; }
+.offer-unlock .crown-big { font-size: 2rem; }
+html.is-pro .dlg-offer h2 .badge { display: none; }

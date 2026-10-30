@@ -1,6 +1,7 @@
 import { renderCV, emptyCV, TEMPLATES, ACCENTS, isProTemplate } from './cv-render.js';
 import { isPro } from './pro.js';
 import { cvToDocx } from './docx.js';
+import { analyzeOffer } from './analyzer.js';
 import { OFICIOS, SECTORES, ejemploCV } from '../data/oficios.js';
 import { extractLines, parseCV } from './importer.js';
 import { LANGS, tr, known } from './i18n.js';
@@ -597,6 +598,84 @@ function proGate() {
   return true;
 }
 
+/* ---------- Analizador de ofertas (Pro) ---------- */
+// Sin Pro se ve la nota y el resto aparece borroso, para que se entienda qué se desbloquea.
+const escH = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+function openOffer() {
+  $('#offer-step1').hidden = false;
+  $('#offer-result').hidden = true;
+  $('#dlg-offer').showModal();
+  setTimeout(() => $('#offer-text').focus(), 50);
+}
+
+function renderOffer() {
+  const text = $('#offer-text').value;
+  if (text.trim().length < 40) return alert('Pega el texto completo de la oferta (al menos un par de líneas).');
+  const r = analyzeOffer(text, cv);
+  const pro = isPro();
+  const color = r.score >= 75 ? 'good' : r.score >= 45 ? 'mid' : 'low';
+  const verdict = !r.total
+    ? 'No hemos encontrado palabras clave claras en esta oferta. Revisa los requisitos de abajo.'
+    : r.score >= 75
+      ? '¡Muy buen encaje! Tu currículum responde a lo que pide la oferta.'
+      : r.score >= 45
+        ? 'Encaje medio. Añade lo que te falta (si es verdad) para pasar los filtros.'
+        : 'Encaje bajo. Adapta tu currículum a esta oferta antes de enviarlo.';
+  const chips = (list, cls, add) =>
+    list.length
+      ? list.map((t) => `<span class="kw ${cls}">${escH(t)}${add && pro ? ` <button type="button" class="kw-add" data-add="${escH(t)}" title="Añadir a mis habilidades">+ Añadir</button>` : ''}</span>`).join('')
+      : '<span class="muted-s">Ninguna</span>';
+  const checks = r.checks
+    .map(
+      (c, i) => `<li class="${c.ok ? 'ok' : 'ko'}"><strong>${c.ok ? '✅' : '⚠️'} ${escH(c.title)}</strong><span>${escH(c.detail)}</span>${
+        c.action && pro ? `<button type="button" class="btn btn-sm btn-ghost" data-action="${i}">Usar «${escH(c.action.value)}» como título</button>` : ''
+      }</li>`,
+    )
+    .join('');
+  $('#offer-result').innerHTML = `
+    <div class="offer-score ${color}"><span class="ring" style="--p:${r.score}"><b>${r.score}%</b></span>
+      <div><strong>Encaje con la oferta</strong><p>${verdict}</p><small>${r.found.length} de ${r.total} palabras clave en tu CV</small></div></div>
+    <div class="${pro ? '' : 'offer-locked'}">
+      <h3>❌ Te faltan (${r.missing.length})</h3><div class="kws">${chips(r.missing, 'miss', true)}</div>
+      <h3>✅ Ya las tienes (${r.found.length})</h3><div class="kws">${chips(r.found, 'hit')}</div>
+      ${checks ? `<h3>Requisitos de la oferta</h3><ul class="offer-checks">${checks}</ul>` : ''}
+      <p class="muted-s">Añade solo lo que sea verdad: te lo pueden preguntar en la entrevista.</p>
+    </div>
+    ${
+      pro
+        ? ''
+        : `<div class="offer-unlock"><span class="crown-big">👑</span><strong>Desbloquea el análisis completo</strong><p>Mira qué palabras clave te faltan, qué requisitos no cumples y añádelas con un toque.</p><a class="btn" href="${$('#dlg-pro a.btn').getAttribute('href')}">Ver Pro</a></div>`
+    }
+    <div class="dlg-actions">
+      <button type="button" class="btn btn-ghost" id="offer-back">Otra oferta</button>
+      <button type="button" class="btn" onclick="this.closest('dialog').close()">Hecho</button>
+    </div>`;
+  $('#offer-step1').hidden = true;
+  $('#offer-result').hidden = false;
+  $('#offer-back').addEventListener('click', () => {
+    $('#offer-step1').hidden = false;
+    $('#offer-result').hidden = true;
+  });
+  $$('#offer-result [data-add]').forEach((b) =>
+    b.addEventListener('click', () => {
+      if (!cv.habilidades.includes(b.dataset.add)) cv.habilidades.push(b.dataset.add);
+      renderSkills();
+      changed();
+      renderOffer();
+    }),
+  );
+  $$('#offer-result [data-action]').forEach((b) =>
+    b.addEventListener('click', () => {
+      cv.puesto = r.checks[b.dataset.action].action.value;
+      syncSimpleFields();
+      changed();
+      renderOffer();
+    }),
+  );
+  $('#offer-result').scrollTop = 0;
+}
+
 /* ---------- Descargar en Word (Pro) ---------- */
 function downloadWord() {
   if (!isPro()) return showPro('word');
@@ -812,6 +891,8 @@ function init() {
   }
   $$('.js-download').forEach((b) => b.addEventListener('click', download));
   $$('.js-word').forEach((b) => b.addEventListener('click', downloadWord));
+  $$('.js-offer').forEach((b) => b.addEventListener('click', openOffer));
+  $('#offer-go').addEventListener('click', renderOffer);
   $$('.js-share').forEach((b) =>
     b.addEventListener('click', () => {
       if (!cv.nombre.trim()) return alert('Escribe al menos tu nombre antes de enviarlo.');

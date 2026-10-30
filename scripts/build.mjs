@@ -455,6 +455,11 @@ page('crear/', {
       <div class="swatches" id="swatches"></div>
     </div></details>
 
+    <div class="import-card offer-card">
+      <span class="ico t4">🎯</span>
+      <div><strong>¿Vas a enviarlo a una oferta?</strong><p>Pega el anuncio y te decimos qué palabras clave te faltan.</p></div>
+      <button type="button" class="btn btn-sm js-offer">Analizar oferta</button>
+    </div>
     <div class="import-card word-card">
       <span class="ico t3">📄</span>
       <div><strong>Descárgalo en Word <span class="badge badge-pro">👑 Pro</span></strong><p>Para editarlo en tu ordenador o cuando una empresa te lo pida en .docx.</p></div>
@@ -497,13 +502,27 @@ ${SHARE_DIALOG}
     <li>8 plantillas premium que destacan</li>
     <li>Descarga en Word (.docx)</li>
     <li>Sin anuncios · pago único, para siempre</li>
-    <li>Y muy pronto: analizador de ofertas y simulador de entrevista</li>
+    <li>Analizador de ofertas: qué te falta para cada empleo</li>
+    <li>Y muy pronto: simulador de entrevista</li>
   </ul>
   <p class="price-line">${CONFIG.proPrecioAntes ? `<s>${CONFIG.proPrecioAntes}</s> ` : ''}<strong>${CONFIG.proPrecio}</strong> · pago único, para siempre</p>
   <div class="dlg-actions">
     <button type="button" class="btn btn-ghost js-free-tpl">Usar una gratis</button>
     <a class="btn" href="${url('pro/')}">👑 Ver Pro</a>
   </div>
+</dialog>
+
+<dialog id="dlg-offer" class="dlg-offer">
+  <h2>🎯 Analizador de ofertas <span class="badge badge-pro">👑 Pro</span></h2>
+  <div id="offer-step1">
+    <p>Copia el texto completo de la oferta de empleo (de InfoJobs, Indeed, LinkedIn…) y pégalo aquí.</p>
+    <textarea id="offer-text" rows="9" placeholder="Ej.: Camarero/a de sala. Buscamos persona con experiencia de 2 años, inglés y disponibilidad de fines de semana…"></textarea>
+    <div class="dlg-actions">
+      <button type="button" class="btn btn-ghost" onclick="this.closest('dialog').close()">Cerrar</button>
+      <button type="button" class="btn" id="offer-go">Analizar</button>
+    </div>
+  </div>
+  <div id="offer-result" hidden></div>
 </dialog>
 
 <dialog id="dlg-example">
@@ -813,7 +832,7 @@ page('app/', {
 
 /* ---------- Pro ---------- */
 // Funciones Pro aún en construcción: se muestran con la etiqueta "Muy pronto".
-const PRO_SOON = new Set(['Analizador de ofertas', 'Simulador de entrevista', 'Cartas premium', 'Cartas premium a juego', 'Seguimiento de candidaturas']);
+const PRO_SOON = new Set(['Simulador de entrevista', 'Cartas premium', 'Cartas premium a juego', 'Seguimiento de candidaturas']);
 const soonTag = (name) => (PRO_SOON.has(name) ? ' <span class="badge badge-soon">Muy pronto</span>' : '');
 const PRO_FEATURES = [
   ['👑', 't3', '8 plantillas premium', 'Impacto, Ejecutiva, Creativa, Nocturna, Cronología, Elegante, Geométrica y Suave. Diseños que se recuerdan.'],
@@ -1201,7 +1220,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js', 'assets/js/pro.js', 'assets/js/docx.js'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js', 'assets/js/pro.js', 'assets/js/docx.js', 'assets/js/analyzer.js'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';
