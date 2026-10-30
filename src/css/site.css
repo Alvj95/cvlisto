@@ -752,3 +752,31 @@ html.is-pro .dlg-offer h2 .badge { display: none; }
   .tools-home .tool-card .new { display: table; margin: 4px auto 0; }
 }
 html.is-pro .tools-dd summary { color: #f9dc7c; background: rgba(249,220,124,.12); }
+
+/* Herramientas PDF */
+.pt-wrap { padding: 22px 0 32px; }
+.pt-card { background: #fff; border: 1px solid var(--line); border-radius: 24px; padding: 20px; box-shadow: var(--shadow); }
+.pt-drop { display: grid; justify-items: center; gap: 6px; text-align: center; padding: 34px 16px; border: 2.5px dashed #c9c3ff; border-radius: 20px; background: var(--brand-soft); cursor: pointer; transition: background .15s, border-color .15s; }
+.pt-drop:hover, .pt-drop.over { background: #e4e0ff; border-color: var(--brand); }
+.pt-drop.has-files { padding: 16px; }
+.pt-drop.has-files .pt-drop-ico { font-size: 1.4rem; }
+.pt-drop-ico { font-size: 2.6rem; }
+.pt-drop strong { font-size: 1.1rem; }
+.pt-files { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 8px; }
+.pt-files li { display: flex; align-items: center; gap: 8px; background: #f7f7fc; border-radius: 14px; padding: 8px 10px; }
+.pt-files .pt-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; font-size: .92rem; }
+.pt-files small { display: block; color: var(--muted); font-weight: 500; }
+.pt-files button { border: 0; background: #fff; border-radius: 10px; width: 32px; height: 32px; cursor: pointer; font-weight: 800; color: var(--ink); flex: none; }
+.pt-files button[disabled] { opacity: .3; }
+.pt-files .pt-hint { background: #fff6e6; font-size: .88rem; }
+.pt-opts { margin-top: 12px; display: grid; gap: 8px; }
+.pt-opt { display: grid; gap: 4px; font-weight: 700; font-size: .9rem; }
+.pt-opt select, .pt-opt input { font: inherit; font-weight: 500; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; }
+.pt-check { display: flex; gap: 8px; align-items: center; font-weight: 600; font-size: .92rem; }
+.pt-go { width: 100%; margin-top: 14px; }
+.pt-go[hidden] { display: none; }
+.pt-result { margin-top: 16px; text-align: center; background: #f0fbf6; border-radius: 18px; padding: 18px; }
+.pt-result[hidden] { display: none; }
+.pt-done { font-size: 1.3rem; font-weight: 800; color: var(--ok); }
+.pt-dl { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 10px 0; }
+.pt-private { margin-top: 12px; background: #dcf7ef; color: #0b6b52; border-radius: 14px; padding: 10px 14px; font-size: .9rem; }

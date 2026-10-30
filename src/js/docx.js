@@ -19,7 +19,7 @@ function crc32(bytes) {
   return (c ^ 0xffffffff) >>> 0;
 }
 
-function zip(files) {
+export function zip(files, type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
   const enc = new TextEncoder();
   const parts = [];
   const central = [];
@@ -58,9 +58,7 @@ function zip(files) {
   end.setUint16(10, files.length, true);
   end.setUint32(12, cenSize, true);
   end.setUint32(16, offset, true);
-  return new Blob([...parts, ...central, new Uint8Array(end.buffer)], {
-    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  });
+  return new Blob([...parts, ...central, new Uint8Array(end.buffer)], { type });
 }
 
 /* ---------- Contenido ---------- */
@@ -227,4 +225,41 @@ export function cvToDocx(d) {
   ];
   if (photo) files.push({ name: `word/media/foto.${photo.ext}`, data: photo.bytes });
   return zip(files);
+}
+
+// Documento Word sencillo a partir de texto (para "PDF a Word").
+// pages: [[{ text, heading }], ...] → un salto de página entre páginas.
+export function textToDocx(pages, title = 'Documento') {
+  const body = pages
+    .map((paras, i) =>
+      (i ? '<w:p><w:r><w:br w:type="page"/></w:r></w:p>' : '') +
+      paras.map((p) => para(run(p.text, p.heading ? { b: true, size: 28 } : {}), p.heading ? { before: 160, after: 120 } : {})).join(''),
+    )
+    .join('');
+  const doc = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="0" w:footer="0" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+  return zip([
+    {
+      name: '[Content_Types].xml',
+      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`,
+    },
+    {
+      name: '_rels/.rels',
+      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`,
+    },
+    {
+      name: 'docProps/core.xml',
+      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>${x(title)}</dc:title></cp:coreProperties>`,
+    },
+    {
+      name: 'word/_rels/document.xml.rels',
+      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`,
+    },
+    { name: 'word/document.xml', data: doc },
+    { name: 'word/styles.xml', data: STYLES('333333') },
+  ]);
 }

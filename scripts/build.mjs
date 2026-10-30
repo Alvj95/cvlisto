@@ -25,11 +25,11 @@ const pages = [];
 
 // Herramientas: se muestran en el menú "Herramientas" (ordenador y móvil) y en la portada.
 const TOOLS = [
-  { href: 'crear/', icon: '✏️', t: 't1', name: 'Crear CV', desc: 'Elige tu oficio y descárgalo en PDF' },
   { href: 'carta/', icon: '✉️', t: 't2', name: 'Carta', desc: 'Se escribe sola con tu currículum' },
   { href: 'crear/?analizar=1', icon: '🎯', t: 't4', name: 'Analizar oferta', desc: 'Qué te falta para cada empleo' },
   { href: 'entrevista/', icon: '🎤', t: 't2', name: 'Simular entrevista', desc: 'Preguntas y respuestas modelo', nuevo: true },
   { href: 'candidaturas/', icon: '📋', t: 't5', name: 'Mis candidaturas', desc: 'Organiza tus envíos', nuevo: true },
+  { href: 'herramientas-pdf/', icon: '📎', t: 't1', name: 'Herramientas PDF', desc: 'Unir, comprimir, JPG a PDF…', nuevo: true },
   { href: 'app/', icon: '📲', t: 't3', name: 'Instalar app', desc: 'Tenlo en tu móvil como una app' },
 ];
 const toolCards = (cls = 'tool-card', withDesc = true) =>
@@ -134,6 +134,7 @@ ${body}
   <nav>
     <a href="${url('entrevista/')}">🎤 Simulador de entrevista</a>
     <a href="${url('candidaturas/')}">📋 Mis candidaturas</a>
+    <a href="${url('herramientas-pdf/')}">📎 Herramientas PDF</a>
     <a href="${url('app/')}">📲 Instalar la app</a>
     <a href="${url('pro/')}">Versión Pro</a>
     <a href="${url('sobre-nosotros/')}">Quiénes somos</a>
@@ -903,6 +904,116 @@ ${PRO_DIALOG}
 <script type="module" src="${url('assets/js/tracker.js')}"></script>`,
 });
 
+/* ---------- Herramientas PDF ---------- */
+const PDF_TOOLS = [
+  {
+    slug: 'unir-pdf', tool: 'unir', icon: '📎', t: 't1', name: 'Unir PDF',
+    title: 'Unir PDF gratis y sin subir archivos | Tu CV Gratis',
+    h1: 'Unir PDF gratis',
+    lead: 'Junta varios PDF en uno solo: tu currículum, la carta de presentación y tus títulos en un único archivo, como piden muchas empresas.',
+    desc: 'Une varios PDF en uno gratis desde el móvil o el ordenador. Sin registro, sin marcas de agua y sin subir tus archivos a ningún servidor.',
+    steps: ['Elige dos o más archivos PDF.', 'Ordénalos con las flechas.', 'Pulsa "Unir PDF" y descarga el resultado.'],
+    faq: [['¿Hay límite de archivos?', 'No. Puedes unir todos los que quieras; con archivos muy grandes puede tardar un poco más en el móvil.'], ['¿Pone marca de agua?', 'No. El PDF unido queda exactamente igual que los originales.']],
+  },
+  {
+    slug: 'jpg-a-pdf', tool: 'jpg-a-pdf', icon: '🖼️', t: 't3', name: 'JPG a PDF',
+    title: 'Convertir JPG a PDF gratis (fotos a PDF) | Tu CV Gratis',
+    h1: 'Convertir JPG a PDF',
+    lead: 'Pasa a PDF las fotos de tu título, tu DNI o un certificado. Puedes juntar varias imágenes en un mismo PDF.',
+    desc: 'Convierte fotos e imágenes JPG o PNG a PDF gratis. Ideal para títulos, certificados y documentos. Sin subir nada a internet.',
+    steps: ['Elige una o varias fotos (JPG, PNG…).', 'Ordénalas y elige el tamaño de página.', 'Pulsa "Crear PDF" y descárgalo.'],
+    faq: [['¿Puedo hacer la foto con el móvil?', 'Sí. Haz la foto con buena luz y sobre un fondo liso, y conviértela aquí directamente.'], ['¿Se pierde calidad?', 'Muy poca. Las imágenes se optimizan para que el PDF no pese demasiado.']],
+  },
+  {
+    slug: 'comprimir-pdf', tool: 'comprimir', icon: '🗜️', t: 't4', name: 'Comprimir PDF',
+    title: 'Comprimir PDF gratis: reduce el tamaño de tu PDF | Tu CV Gratis',
+    h1: 'Comprimir PDF',
+    lead: 'Muchos portales de empleo no aceptan archivos de más de 2 MB. Reduce el peso de tu PDF en segundos.',
+    desc: 'Reduce el tamaño de un PDF gratis para poder enviarlo por email o subirlo a portales de empleo. Sin registro y sin subir tus archivos.',
+    steps: ['Elige el PDF que pesa demasiado.', 'Elige el nivel de compresión.', 'Pulsa "Comprimir PDF" y descarga la versión ligera.'],
+    faq: [['¿Funciona con cualquier PDF?', 'Funciona muy bien con PDF escaneados o con fotos. Si tu PDF es solo texto, puede que ya esté optimizado.'], ['¿Por qué no puedo seleccionar el texto después?', 'Para reducir tanto el peso, cada página se guarda como imagen. Se ve igual, pero el texto no se puede copiar.']],
+  },
+  {
+    slug: 'pdf-a-jpg', tool: 'pdf-a-jpg', icon: '📸', t: 't2', name: 'PDF a JPG',
+    title: 'Convertir PDF a JPG gratis | Tu CV Gratis',
+    h1: 'Convertir PDF a JPG',
+    lead: 'Convierte cada página de un PDF en una imagen JPG: para compartirla por WhatsApp, subirla a redes o a un formulario que solo acepta imágenes.',
+    desc: 'Convierte las páginas de un PDF a imágenes JPG gratis, en alta calidad. Sin registro y sin subir tus archivos a internet.',
+    steps: ['Elige un PDF.', 'Elige la calidad.', 'Pulsa "Convertir a JPG": si tiene varias páginas, las descargas todas juntas en un .zip.'],
+    faq: [['¿Cómo abro el .zip en el móvil?', 'En Android, desde la app "Archivos"; en iPhone, tocando el archivo en la app "Archivos". Se descomprime con un toque.']],
+  },
+  {
+    slug: 'dividir-pdf', tool: 'dividir', icon: '✂️', t: 't5', name: 'Dividir PDF',
+    title: 'Dividir PDF y extraer páginas gratis | Tu CV Gratis',
+    h1: 'Dividir PDF y extraer páginas',
+    lead: 'Quédate solo con las páginas que necesitas, o separa cada página en un PDF distinto.',
+    desc: 'Extrae páginas de un PDF o sepáralo en varios archivos gratis. Sin registro, sin marcas de agua y sin subir tus archivos.',
+    steps: ['Elige un PDF.', 'Escribe las páginas que quieres (por ejemplo 1-3, 5) o marca "separar cada página".', 'Pulsa "Extraer páginas" y descarga.'],
+    faq: [['¿Cómo indico las páginas?', 'Con números y guiones: "2" es la página 2, "1-3" las páginas 1, 2 y 3, y "1-3, 7" añade también la 7.']],
+  },
+  {
+    slug: 'pdf-a-word', tool: 'pdf-a-word', icon: '📝', t: 't1', name: 'PDF a Word',
+    title: 'Convertir PDF a Word gratis (texto editable) | Tu CV Gratis',
+    h1: 'Convertir PDF a Word',
+    lead: 'Pasa el texto de un PDF a un documento de Word (.docx) para poder editarlo.',
+    desc: 'Convierte el texto de un PDF a Word (.docx) editable gratis, sin registro y sin subir tus archivos a ningún servidor.',
+    steps: ['Elige un PDF con texto.', 'Pulsa "Convertir a Word".', 'Abre el .docx y revisa el formato.'],
+    faq: [['¿Se mantiene el diseño?', 'Se conserva el texto, los títulos y los párrafos. Las imágenes, tablas y diseños complejos no se conservan.'], ['¿Quieres editar tu currículum?', 'Mejor súbelo a nuestro editor: lo pasamos a una plantilla nueva y lo descargas en PDF o en Word.']],
+  },
+];
+
+page('herramientas-pdf/', {
+  title: 'Herramientas PDF gratis: unir, comprimir, convertir | Tu CV Gratis',
+  description: 'Herramientas PDF gratis y sin subir archivos: unir PDF, JPG a PDF, comprimir, PDF a JPG, dividir y PDF a Word. Desde el móvil o el ordenador.',
+  body: `
+<section class="iv-hero"><div class="narrow">
+  <p class="breadcrumb"><a href="${url()}">Inicio</a> › Herramientas PDF</p>
+  <span class="eyebrow">🧰 Herramientas PDF</span>
+  <h1>Prepara tus documentos en segundos</h1>
+  <p class="sub">Une tu CV con la carta y tus títulos, pasa fotos a PDF o reduce el peso para subirlo a un portal de empleo. Gratis y <strong>sin subir tus archivos</strong>: todo se hace en tu dispositivo.</p>
+</div></section>
+<section class="section" style="padding-top:28px"><div class="wrap">
+  <div class="tools-grid">${PDF_TOOLS.map((x) => `<a class="tool-card" href="${url(x.slug + '/')}"><span class="icon-tile ${x.t}">${x.icon}</span><span><strong>${x.name}</strong><small>${esc(x.lead.split('.')[0])}.</small></span></a>`).join('')}</div>
+</div></section>`,
+});
+
+PDF_TOOLS.forEach((x) => {
+  page(`${x.slug}/`, {
+    title: x.title,
+    description: x.desc,
+    jsonld: {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: `${x.name} · ${CONFIG.nombreSitio}`,
+      applicationCategory: 'UtilitiesApplication',
+      operatingSystem: 'Web',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+      url: abs(`${x.slug}/`),
+    },
+    body: `
+<section class="iv-hero"><div class="narrow">
+  <p class="breadcrumb"><a href="${url()}">Inicio</a> › <a href="${url('herramientas-pdf/')}">Herramientas PDF</a> › ${x.name}</p>
+  <h1>${x.icon} ${x.h1}</h1>
+  <p class="sub">${x.lead}</p>
+</div></section>
+<div class="narrow pt-wrap">
+  <div class="pt-card" id="pdf-tool" data-tool="${x.tool}"><p class="muted-s">Cargando…</p></div>
+  <div class="pt-private">🔒 <strong>100 % privado:</strong> tus archivos se procesan en tu propio dispositivo y nunca se suben a internet.</div>
+  <div class="prose" style="margin-top:28px">
+    <h2>Cómo funciona</h2>
+    <ol>${x.steps.map((st) => `<li>${st}</li>`).join('')}</ol>
+    <h2>Preguntas frecuentes</h2>
+    ${x.faq.map(([q, a]) => `<h3>${q}</h3><p>${a}</p>`).join('')}
+    <h3>¿Es gratis?</h3><p>Sí, totalmente gratis, sin registro y sin marcas de agua.</p>
+    <h2>Más herramientas</h2>
+    <ul>${PDF_TOOLS.filter((o) => o !== x).map((o) => `<li><a href="${url(o.slug + '/')}">${o.icon} ${o.name}</a></li>`).join('')}</ul>
+  </div>
+  ${ctaBox('¿Buscas trabajo? Crea también tu currículum gratis y descárgalo en PDF.')}
+</div>
+<script type="module" src="${url('assets/js/pdftools.js')}"></script>`,
+  });
+});
+
 /* ---------- App ---------- */
 page('app/', {
   title: 'Descargar la app de Tu CV Gratis para Android e iPhone',
@@ -1334,7 +1445,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js', 'assets/js/pro.js', 'assets/js/docx.js', 'assets/js/analyzer.js', 'assets/js/interview.js', 'assets/data/entrevista.js', 'entrevista/', 'assets/js/tracker.js', 'candidaturas/'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js', 'assets/js/pro.js', 'assets/js/docx.js', 'assets/js/analyzer.js', 'assets/js/interview.js', 'assets/data/entrevista.js', 'entrevista/', 'assets/js/tracker.js', 'candidaturas/', 'assets/js/pdftools.js'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';
