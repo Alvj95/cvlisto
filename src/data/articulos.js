@@ -180,6 +180,7 @@ export const ARTICULOS = [
 
 <h2>Después de la entrevista</h2>
 <p>Si te dieron un correo de contacto, un mensaje corto de agradecimiento el mismo día deja muy buena impresión. Si pasa el plazo que te dijeron y no sabes nada, es correcto preguntar con educación cómo va el proceso.</p>
+<p>Para practicar, usa nuestro <a href="../../entrevista/">simulador de entrevista</a>: preguntas de tu sector con consejos y respuestas modelo.</p>
 <p>Y si esta vez no sale, no pasa nada: cada entrevista es práctica para la siguiente. Asegúrate de que tu <a href="../../crear/">currículum</a> y tu <a href="../../carta/">carta de presentación</a> estén a punto para seguir enviándolos.</p>`,
   },
   {

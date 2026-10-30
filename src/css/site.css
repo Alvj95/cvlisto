@@ -638,3 +638,36 @@ html.is-pro .ed-preview { background: radial-gradient(circle at 20% 0%, #fff0c9 
 .offer-unlock p { color: var(--muted); margin: 6px 0 12px; font-size: .92rem; }
 .offer-unlock .crown-big { font-size: 2rem; }
 html.is-pro .dlg-offer h2 .badge { display: none; }
+
+/* Simulador de entrevista */
+.iv-hero { background: var(--grad-soft); padding: 28px 0 24px; }
+.iv-hero h1 { font-size: clamp(1.8rem, 4.4vw, 2.6rem); margin: 6px 0 10px; }
+.iv-hero .sub { color: var(--muted); margin: 0; }
+.iv { padding: 22px 0 32px; }
+.iv-groups { margin-bottom: 16px; }
+.iv-card { background: #fff; border: 1px solid var(--line); border-radius: 24px; padding: 24px; box-shadow: var(--shadow); scroll-margin-top: 80px; }
+.iv-top { display: flex; justify-content: space-between; align-items: center; }
+.iv-count { font-weight: 800; color: var(--brand); font-size: .85rem; text-transform: uppercase; letter-spacing: .08em; }
+.iv-q { font-size: clamp(1.4rem, 3.6vw, 1.9rem); margin: 10px 0 18px; }
+.iv-lbl { display: block; font-weight: 700; font-size: .9rem; margin-bottom: 6px; }
+.iv-card textarea { width: 100%; font: inherit; padding: 12px 14px; border: 2px solid var(--line); border-radius: 14px; resize: vertical; }
+.iv-card textarea:focus { outline: none; border-color: var(--brand); }
+.iv-reveal { margin-top: 14px; position: relative; }
+.iv-answer p { margin: 8px 0; }
+.iv-model { background: var(--brand-soft); border-radius: 16px; padding: 12px 16px; margin-top: 10px; }
+.iv-model p { margin: 4px 0 0; font-style: italic; }
+.iv-mine { background: #dcf7ef; border-radius: 16px; padding: 12px 16px; margin-top: 10px; }
+.iv-mine p { margin: 4px 0 0; }
+.iv-reveal.is-locked .iv-answer { filter: blur(6px); user-select: none; pointer-events: none; }
+.iv-unlock { position: absolute; inset: 20px 0 auto; margin: auto; max-width: 420px; text-align: center; background: rgba(255,255,255,.95); border: 2px solid #f0c25a; border-radius: 20px; padding: 16px; box-shadow: var(--shadow); }
+.iv-unlock p { color: var(--muted); font-size: .9rem; margin: 6px 0 12px; }
+.iv-unlock .crown-big { font-size: 2rem; }
+.iv-nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+.iv-nav .btn[disabled] { opacity: .4; cursor: default; }
+.iv-card-link { border-color: #ffd0de !important; background: linear-gradient(135deg, #fff1f5, #fff) !important; }
+.btn[hidden], .btn-link[hidden] { display: none !important; }
+.iv-groups .chip[aria-pressed="true"] { background: var(--brand); color: #fff; border-color: var(--brand); }
+@media (max-width: 720px) {
+  .iv-groups { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; margin-inline: -16px; padding-inline: 16px; scrollbar-width: none; }
+  .iv-groups .chip { flex: none; }
+}

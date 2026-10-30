@@ -117,6 +117,7 @@ ${body}
 <footer class="site-foot"><div class="wrap">
   <div><strong>${CONFIG.nombreSitio}</strong> · Currículum gratis, sin trampas. © ${YEAR}</div>
   <nav>
+    <a href="${url('entrevista/')}">🎤 Simulador de entrevista</a>
     <a href="${url('app/')}">📲 Instalar la app</a>
     <a href="${url('pro/')}">Versión Pro</a>
     <a href="${url('sobre-nosotros/')}">Quiénes somos</a>
@@ -460,6 +461,11 @@ page('crear/', {
       <div><strong>¿Vas a enviarlo a una oferta?</strong><p>Pega el anuncio y te decimos qué palabras clave te faltan.</p></div>
       <button type="button" class="btn btn-sm js-offer">Analizar oferta</button>
     </div>
+    <div class="import-card iv-card-link">
+      <span class="ico t2">🎤</span>
+      <div><strong>¿Te han llamado para una entrevista?</strong><p>Practica las preguntas de tu sector con respuestas modelo.</p></div>
+      <a class="btn btn-sm" href="${url('entrevista/')}">Practicar</a>
+    </div>
     <div class="import-card word-card">
       <span class="ico t3">📄</span>
       <div><strong>Descárgalo en Word <span class="badge badge-pro">👑 Pro</span></strong><p>Para editarlo en tu ordenador o cuando una empresa te lo pida en .docx.</p></div>
@@ -502,8 +508,7 @@ ${SHARE_DIALOG}
     <li>8 plantillas premium que destacan</li>
     <li>Descarga en Word (.docx)</li>
     <li>Sin anuncios · pago único, para siempre</li>
-    <li>Analizador de ofertas: qué te falta para cada empleo</li>
-    <li>Y muy pronto: simulador de entrevista</li>
+    <li>Analizador de ofertas y simulador de entrevista</li>
   </ul>
   <p class="price-line">${CONFIG.proPrecioAntes ? `<s>${CONFIG.proPrecioAntes}</s> ` : ''}<strong>${CONFIG.proPrecio}</strong> · pago único, para siempre</p>
   <div class="dlg-actions">
@@ -792,6 +797,26 @@ ARTICULOS.forEach((a) => {
   });
 });
 
+/* ---------- Simulador de entrevista ---------- */
+page('entrevista/', {
+  title: 'Simulador de entrevista de trabajo: preguntas y respuestas | Tu CV Gratis',
+  description: 'Practica tu entrevista de trabajo con las preguntas más habituales y por sector (hostelería, comercio, logística…), con consejos y respuestas modelo.',
+  body: `
+<section class="iv-hero"><div class="narrow">
+  <p class="breadcrumb"><a href="${url()}">Inicio</a> › Simulador de entrevista</p>
+  <span class="eyebrow">🎤 Simulador de entrevista</span>
+  <h1>Llega a la entrevista con las respuestas preparadas</h1>
+  <p class="sub">Practica las preguntas que más se repiten y las de tu sector. Escribe tu respuesta, escúchala en voz alta y compárala con una respuesta modelo.</p>
+</div></section>
+<div class="narrow iv">
+  <div class="chips iv-groups" id="iv-groups"></div>
+  <div class="iv-card" id="iv-card"><p class="muted-s">Cargando preguntas…</p></div>
+  <a id="iv-pro-link" href="${url('pro/')}" hidden>Pro</a>
+  <p class="muted-s center" style="margin-top:20px">Tus respuestas se guardan solo en este dispositivo. ¿Quieres más consejos? Lee <a href="${url('consejos/como-preparar-una-entrevista-de-trabajo/')}">cómo preparar una entrevista de trabajo</a>.</p>
+</div>
+<script type="module" src="${url('assets/js/interview.js')}"></script>`,
+});
+
 /* ---------- App ---------- */
 page('app/', {
   title: 'Descargar la app de Tu CV Gratis para Android e iPhone',
@@ -832,7 +857,7 @@ page('app/', {
 
 /* ---------- Pro ---------- */
 // Funciones Pro aún en construcción: se muestran con la etiqueta "Muy pronto".
-const PRO_SOON = new Set(['Simulador de entrevista', 'Cartas premium', 'Cartas premium a juego', 'Seguimiento de candidaturas']);
+const PRO_SOON = new Set(['Cartas premium', 'Cartas premium a juego', 'Seguimiento de candidaturas']);
 const soonTag = (name) => (PRO_SOON.has(name) ? ' <span class="badge badge-soon">Muy pronto</span>' : '');
 const PRO_FEATURES = [
   ['👑', 't3', '8 plantillas premium', 'Impacto, Ejecutiva, Creativa, Nocturna, Cronología, Elegante, Geométrica y Suave. Diseños que se recuerdan.'],
@@ -1220,7 +1245,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js', 'assets/js/pro.js', 'assets/js/docx.js', 'assets/js/analyzer.js'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js', 'assets/js/pro.js', 'assets/js/docx.js', 'assets/js/analyzer.js', 'assets/js/interview.js', 'assets/data/entrevista.js', 'entrevista/'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';
