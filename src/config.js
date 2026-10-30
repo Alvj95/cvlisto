@@ -15,8 +15,8 @@ export const CONFIG = {
   proCheckoutUrl: process.env.PRO_CHECKOUT_URL || '',
 
   // Datos del titular para el aviso legal (obligatorios por la LSSI en España).
-  titular: process.env.OWNER_NAME || '[NOMBRE Y APELLIDOS DEL TITULAR]',
-  nif: process.env.OWNER_NIF || '[NIF]',
-  domicilio: process.env.OWNER_ADDRESS || '[DOMICILIO]',
-  email: process.env.CONTACT_EMAIL || '[EMAIL DE CONTACTO]',
+  titular: process.env.OWNER_NAME || 'Jose Alejandro Alvarado Rodriguez',
+  nif: process.env.OWNER_NIF || '60692576S',
+  domicilio: process.env.OWNER_ADDRESS || 'El Prat de Llobregat, 08820 Barcelona, España',
+  email: process.env.CONTACT_EMAIL || 'alvj321@gmail.com',
 };
