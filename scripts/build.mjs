@@ -118,6 +118,7 @@ ${body}
   <div><strong>${CONFIG.nombreSitio}</strong> · Currículum gratis, sin trampas. © ${YEAR}</div>
   <nav>
     <a href="${url('entrevista/')}">🎤 Simulador de entrevista</a>
+    <a href="${url('candidaturas/')}">📋 Mis candidaturas</a>
     <a href="${url('app/')}">📲 Instalar la app</a>
     <a href="${url('pro/')}">Versión Pro</a>
     <a href="${url('sobre-nosotros/')}">Quiénes somos</a>
@@ -348,6 +349,7 @@ const PRO_DIALOG = `<dialog id="dlg-pro" class="dlg-pro">
     <li>Descarga en Word (.docx)</li>
     <li>Sin anuncios · pago único, para siempre</li>
     <li>Analizador de ofertas y simulador de entrevista</li>
+    <li>Cartas a juego y candidaturas ilimitadas</li>
   </ul>
   <p class="price-line">${CONFIG.proPrecioAntes ? `<s>${CONFIG.proPrecioAntes}</s> ` : ''}<strong>${CONFIG.proPrecio}</strong> · pago único, para siempre</p>
   <div class="dlg-actions">
@@ -480,6 +482,11 @@ page('crear/', {
       <span class="ico t2">🎤</span>
       <div><strong>¿Te han llamado para una entrevista?</strong><p>Practica las preguntas de tu sector con respuestas modelo.</p></div>
       <a class="btn btn-sm" href="${url('entrevista/')}">Practicar</a>
+    </div>
+    <div class="import-card tr-card-link">
+      <span class="ico t5">📋</span>
+      <div><strong>¿Ya lo has enviado?</strong><p>Apunta tus candidaturas y sabrás cuándo volver a llamar.</p></div>
+      <a class="btn btn-sm" href="${url('candidaturas/')}">Mis candidaturas</a>
     </div>
     <div class="import-card word-card">
       <span class="ico t3">📄</span>
@@ -827,6 +834,44 @@ page('entrevista/', {
 <script type="module" src="${url('assets/js/interview.js')}"></script>`,
 });
 
+/* ---------- Seguimiento de candidaturas ---------- */
+page('candidaturas/', {
+  title: 'Seguimiento de candidaturas: organiza tu búsqueda de empleo | Tu CV Gratis',
+  description: 'Apunta a qué empresas has enviado tu currículum, en qué estado está cada proceso y cuándo volver a llamar. Gratis y sin registro.',
+  ads: false,
+  body: `
+<section class="iv-hero"><div class="narrow">
+  <p class="breadcrumb"><a href="${url()}">Inicio</a> › Mis candidaturas</p>
+  <span class="eyebrow">📋 Seguimiento de candidaturas</span>
+  <h1>Tu búsqueda de empleo, bajo control</h1>
+  <p class="sub">Apunta cada CV que envías y en qué punto está. Te avisamos cuando toca volver a llamar.</p>
+</div></section>
+<div class="narrow tr">
+  <div class="tr-stats" id="tr-stats"></div>
+  <div class="tr-bar"><div class="chips" id="tr-filters"></div><button type="button" class="btn" id="tr-add">+ Añadir candidatura</button></div>
+  <p class="pro-lock" id="tr-limit" hidden><span>👑 Sin Pro puedes seguir 3 candidaturas. Con Pro, todas las que quieras.</span><a class="btn btn-sm" href="${url('pro/')}">Ver Pro</a></p>
+  <div id="tr-list"></div>
+  <p class="muted-s center" style="margin-top:20px">Tus candidaturas se guardan solo en este dispositivo.</p>
+</div>
+<dialog id="dlg-tr">
+  <h2 id="tr-dlg-title">Nueva candidatura</h2>
+  <form id="tr-form" class="tr-form">
+    <div class="field"><label for="tr-empresa">Empresa *</label><input id="tr-empresa" name="empresa" required placeholder="Ej.: Hotel Miramar"></div>
+    <div class="field"><label for="tr-puesto">Puesto</label><input id="tr-puesto" name="puesto" placeholder="Ej.: Recepcionista"></div>
+    <div class="tr-row">
+      <div class="field"><label for="tr-fecha">Fecha de envío</label><input id="tr-fecha" name="fecha" type="date"></div>
+      <div class="field"><label for="tr-estado">Estado</label><select id="tr-estado" name="estado"></select></div>
+    </div>
+    <div class="field"><label for="tr-enlace">Enlace a la oferta</label><input id="tr-enlace" name="enlace" inputmode="url" placeholder="https://…"></div>
+    <div class="field"><label for="tr-contacto">Persona de contacto</label><input id="tr-contacto" name="contacto" placeholder="Nombre, teléfono o email"></div>
+    <div class="field"><label for="tr-notas">Notas</label><textarea id="tr-notas" name="notas" rows="3" placeholder="Ej.: Entrevista el martes a las 10:00"></textarea></div>
+    <div class="dlg-actions"><button type="button" class="btn btn-ghost" id="tr-cancel">Cancelar</button><button type="submit" class="btn">Guardar</button></div>
+  </form>
+</dialog>
+${PRO_DIALOG}
+<script type="module" src="${url('assets/js/tracker.js')}"></script>`,
+});
+
 /* ---------- App ---------- */
 page('app/', {
   title: 'Descargar la app de Tu CV Gratis para Android e iPhone',
@@ -867,7 +912,7 @@ page('app/', {
 
 /* ---------- Pro ---------- */
 // Funciones Pro aún en construcción: se muestran con la etiqueta "Muy pronto".
-const PRO_SOON = new Set(['Seguimiento de candidaturas']);
+const PRO_SOON = new Set();
 const soonTag = (name) => (PRO_SOON.has(name) ? ' <span class="badge badge-soon">Muy pronto</span>' : '');
 const PRO_FEATURES = [
   ['👑', 't3', '8 plantillas premium', 'Impacto, Ejecutiva, Creativa, Nocturna, Cronología, Elegante, Geométrica y Suave. Diseños que se recuerdan.'],
@@ -1255,7 +1300,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js', 'assets/js/pro.js', 'assets/js/docx.js', 'assets/js/analyzer.js', 'assets/js/interview.js', 'assets/data/entrevista.js', 'entrevista/'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js', 'assets/js/pro.js', 'assets/js/docx.js', 'assets/js/analyzer.js', 'assets/js/interview.js', 'assets/data/entrevista.js', 'entrevista/', 'assets/js/tracker.js', 'candidaturas/'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';
