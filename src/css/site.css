@@ -604,3 +604,6 @@ html.is-pro .crown::after { content: " ✓"; }
 html.is-pro .tpl-opt.is-pro { border-color: #e8d3a0; }
 html.is-pro .ed-toolbar .pro-chip { margin: 0 4px 0 0; font-size: .75rem; padding: 4px 11px; }
 html.is-pro .ed-preview { background: radial-gradient(circle at 20% 0%, #fff0c9 0, transparent 40%), radial-gradient(circle at 100% 100%, #f3dfb4 0, transparent 40%), #efe9dc; }
+.crown-mini { font-size: .8em; margin-left: 2px; }
+.word-card { border-color: #f3d48a !important; background: linear-gradient(135deg, #fffaf0, #fff) !important; }
+.word-card .badge { font-size: .65rem; margin-left: 4px; }

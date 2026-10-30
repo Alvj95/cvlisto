@@ -455,6 +455,11 @@ page('crear/', {
       <div class="swatches" id="swatches"></div>
     </div></details>
 
+    <div class="import-card word-card">
+      <span class="ico t3">📄</span>
+      <div><strong>Descárgalo en Word <span class="badge badge-pro">👑 Pro</span></strong><p>Para editarlo en tu ordenador o cuando una empresa te lo pida en .docx.</p></div>
+      <button type="button" class="btn btn-sm js-word">Descargar .docx</button>
+    </div>
     <div class="import-card" style="border-color:#dcd8ff">
       <span class="ico t1">✉️</span>
       <div><strong>¿Te piden carta de presentación?</strong><p>Se escribe sola con los datos de este currículum.</p></div>
@@ -471,6 +476,7 @@ page('crear/', {
       <span class="grow" id="pages-info"></span>
       <a class="btn btn-ghost" href="${url('carta/')}">✉️ Carta de presentación</a>
       <button type="button" class="btn btn-ghost js-share">📤 Enviar</button>
+      <button type="button" class="btn btn-ghost js-word" title="Descargar en Word (Pro)">📄 Word <span class="crown-mini">👑</span></button>
       <button type="button" class="btn js-download">⬇ Descargar PDF gratis</button>
     </div>
     <div class="pro-lock" id="pro-lock" hidden>
@@ -486,12 +492,12 @@ ${PRINT_DIALOG}
 ${SHARE_DIALOG}
 
 <dialog id="dlg-pro" class="dlg-pro">
-  <div class="dlg-pro-top"><span class="crown-big">👑</span><h2>Esta plantilla es Pro</h2><p>Te queda genial, ¿verdad? Consigue Pro y descárgala hoy.</p></div>
+  <div class="dlg-pro-top"><span class="crown-big">👑</span><h2 id="dlg-pro-title">Esta plantilla es Pro</h2><p id="dlg-pro-text">Te queda genial, ¿verdad? Consigue Pro y descárgala hoy.</p></div>
   <ul class="tick">
     <li>8 plantillas premium que destacan</li>
-    <li>Sin anuncios</li>
-    <li>Pago único, para siempre</li>
-    <li>Y muy pronto: Word, analizador de ofertas y simulador de entrevista</li>
+    <li>Descarga en Word (.docx)</li>
+    <li>Sin anuncios · pago único, para siempre</li>
+    <li>Y muy pronto: analizador de ofertas y simulador de entrevista</li>
   </ul>
   <p class="price-line">${CONFIG.proPrecioAntes ? `<s>${CONFIG.proPrecioAntes}</s> ` : ''}<strong>${CONFIG.proPrecio}</strong> · pago único, para siempre</p>
   <div class="dlg-actions">
@@ -807,7 +813,7 @@ page('app/', {
 
 /* ---------- Pro ---------- */
 // Funciones Pro aún en construcción: se muestran con la etiqueta "Muy pronto".
-const PRO_SOON = new Set(['Descarga en Word', 'Descarga en Word (.docx)', 'Analizador de ofertas', 'Simulador de entrevista', 'Cartas premium', 'Cartas premium a juego', 'Seguimiento de candidaturas']);
+const PRO_SOON = new Set(['Analizador de ofertas', 'Simulador de entrevista', 'Cartas premium', 'Cartas premium a juego', 'Seguimiento de candidaturas']);
 const soonTag = (name) => (PRO_SOON.has(name) ? ' <span class="badge badge-soon">Muy pronto</span>' : '');
 const PRO_FEATURES = [
   ['👑', 't3', '8 plantillas premium', 'Impacto, Ejecutiva, Creativa, Nocturna, Cronología, Elegante, Geométrica y Suave. Diseños que se recuerdan.'],
@@ -972,7 +978,7 @@ function show() {
   const info = proInfo();
   $('#act-form-card').hidden = Boolean(info);
   $('#act-ok').hidden = !info;
-  if (info) $('#act-info').textContent = 'Clave: ' + info.key.slice(0, 8) + '…' + (info.email ? ' · ' + info.email : '');
+  if (info) $('#act-info').textContent = 'Clave: ' + info.key.slice(0, 8) + '…' + (info.email ? ' · ' + info.email : '') + (info.storeId ? ' · Tienda #' + info.storeId : '');
 }
 $('#act-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -1195,7 +1201,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js', 'assets/js/pro.js'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js', 'assets/js/pro.js', 'assets/js/docx.js'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';

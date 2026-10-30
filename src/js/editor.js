@@ -1,5 +1,6 @@
 import { renderCV, emptyCV, TEMPLATES, ACCENTS, isProTemplate } from './cv-render.js';
 import { isPro } from './pro.js';
+import { cvToDocx } from './docx.js';
 import { OFICIOS, SECTORES, ejemploCV } from '../data/oficios.js';
 import { extractLines, parseCV } from './importer.js';
 import { LANGS, tr, known } from './i18n.js';
@@ -577,10 +578,36 @@ function renderForm() {
 // Las plantillas Pro se pueden probar; para descargarlas hace falta la versión Pro.
 const locked = () => isProTemplate(cv.template) && !isPro();
 
+const PRO_TEXTS = {
+  plantilla: ['Esta plantilla es Pro', 'Te queda genial, ¿verdad? Consigue Pro y descárgala hoy.'],
+  word: ['La descarga en Word es Pro', 'Descarga tu currículum en .docx para editarlo en tu ordenador o enviarlo donde te lo pidan.'],
+};
+
+function showPro(kind) {
+  const [title, text] = PRO_TEXTS[kind];
+  $('#dlg-pro-title').textContent = title;
+  $('#dlg-pro-text').textContent = text;
+  $$('#dlg-pro .js-free-tpl').forEach((b) => (b.hidden = kind !== 'plantilla'));
+  $('#dlg-pro').showModal();
+}
+
 function proGate() {
   if (!locked()) return false;
-  $('#dlg-pro').showModal();
+  showPro('plantilla');
   return true;
+}
+
+/* ---------- Descargar en Word (Pro) ---------- */
+function downloadWord() {
+  if (!isPro()) return showPro('word');
+  if (!cv.nombre.trim()) return alert('Escribe al menos tu nombre antes de descargar.');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(cvToDocx(cv));
+  a.download = fileName('CV', cv.nombre).replace(/\.pdf$/, '.docx');
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
 }
 
 function useFreeTemplate() {
@@ -781,8 +808,10 @@ function init() {
     // Estilo Pro: sin el "gratis" en los botones y con distintivo en la barra.
     $$('.js-download').forEach((b) => (b.textContent = b.textContent.replace(' gratis', '')));
     $('#pages-info')?.insertAdjacentHTML('beforebegin', '<span class="pro-chip">👑 PRO</span>');
+    $$('.crown-mini, .word-card .badge-pro').forEach((el) => el.remove());
   }
   $$('.js-download').forEach((b) => b.addEventListener('click', download));
+  $$('.js-word').forEach((b) => b.addEventListener('click', downloadWord));
   $$('.js-share').forEach((b) =>
     b.addEventListener('click', () => {
       if (!cv.nombre.trim()) return alert('Escribe al menos tu nombre antes de enviarlo.');

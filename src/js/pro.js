@@ -69,6 +69,7 @@ export async function activate(rawKey) {
     key,
     instanceId: data.instance?.id,
     email: data.meta?.customer_email || '',
+    storeId: data.meta?.store_id || null,
     activatedAt: Date.now(),
     checkedAt: Date.now(),
   });
