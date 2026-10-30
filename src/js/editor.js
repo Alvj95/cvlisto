@@ -197,7 +197,7 @@ function updateLangNote() {
   const name = LANGS.find((l) => l.id === lang).es;
   note.hidden = false;
   note.innerHTML = pending.length
-    ? `<strong>✍️ ${pending.length} ${pending.length === 1 ? 'texto escrito por ti' : 'textos escritos por ti'} no se traducen solos.</strong> Escríbelos en ${esc(name)} en el formulario, por ejemplo: <em>${pending
+    ? `<strong>✍️ ${pending.length === 1 ? '1 texto escrito por ti no se traduce solo.' : `${pending.length} textos escritos por ti no se traducen solos.`}</strong> ${pending.length === 1 ? 'Escríbelo' : 'Escríbelos'} en ${esc(name)} en el formulario, por ejemplo: <em>${pending
         .slice(0, 2)
         .map((t) => esc(t.length > 50 ? `${t.slice(0, 50)}…` : t))
         .join('</em>, <em>')}</em>.`

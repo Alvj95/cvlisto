@@ -85,7 +85,7 @@ ${body}
   </nav>
 </div></footer>
 ${
-  bodyClass === 'editor-page'
+  bodyClass.includes('editor-page')
     ? ''
     : `<nav class="tabbar" aria-label="Navegación">
   ${[
@@ -175,6 +175,7 @@ page('', {
       <a class="btn btn-white" href="${url('crear/')}">Crear mi currículum →</a>
       <a class="btn btn-lg btn-glass" href="${url('ejemplos/')}">Ver ejemplos</a>
     </div>
+    <p class="hero-first"><a href="${url('primer-empleo/')}">🌱 ¿Es tu primer currículum? Te ayudamos paso a paso →</a></p>
     <div class="stats">
       <div><strong>10 min</strong><span>y lo tienes listo</span></div>
       <div><strong>${OFICIOS.length} oficios</strong><span>con frases hechas</span></div>
@@ -197,6 +198,12 @@ page('', {
     <div class="card step"><span class="step-n">2</span><h3>Toca y personaliza</h3><p>Rellena tus datos, toca las sugerencias que te sirvan y mira el resultado en tiempo real.</p></div>
     <div class="card step"><span class="step-n">3</span><h3>Descarga en PDF</h3><p>Gratis, las veces que quieras. Listo para enviar por email, WhatsApp o portales de empleo.</p></div>
   </div>
+</div></section>
+
+<section class="wrap"><div class="first-job">
+  <span class="icon-tile t4">🌱</span>
+  <div><h2>¿Nunca has hecho un currículum?</h2><p>Responde 8 preguntas sencillas y te lo escribimos. Contamos tus prácticas, voluntariado, cursos y disponibilidad, aunque no hayas tenido un contrato.</p></div>
+  <a class="btn btn-lg" href="${url('primer-empleo/')}">Empezar paso a paso</a>
 </div></section>
 
 <section class="section section-alt"><div class="wrap">
@@ -313,6 +320,11 @@ page('crear/', {
       <div><strong>¿Ya tienes un currículum?</strong><p>Súbelo (Word, PDF o texto) y pasamos tus datos a la nueva plantilla.</p></div>
       <label class="btn btn-sm" style="cursor:pointer">Subir<input type="file" id="import-input" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden></label>
     </div>
+    <a class="import-card first-card" href="${url('primer-empleo/')}">
+      <span class="ico t4">🌱</span>
+      <div><strong>¿Es tu primer currículum?</strong><p>Responde 8 preguntas sencillas y te lo escribimos.</p></div>
+      <span class="btn btn-sm btn-ghost">Empezar</span>
+    </a>
     <div class="oficio-box">
       <div class="field"><label for="oficio">¿A qué trabajo te presentas?</label><select id="oficio"></select></div>
       <p>Te sugerimos frases y habilidades para ese oficio. <button type="button" class="btn-link" id="btn-example">Rellenar con un ejemplo</button></p>
@@ -460,6 +472,35 @@ ${SHARE_DIALOG}
 </dialog>
 
 <div id="print-root"></div>`,
+});
+
+/* ---------- Asistente primer empleo ---------- */
+page('primer-empleo/', {
+  title: 'Currículum para tu primer empleo, paso a paso y gratis | CV Listo',
+  description:
+    'Haz tu primer currículum respondiendo 8 preguntas sencillas. Ideal si no tienes experiencia: contamos tus prácticas, voluntariado y cursos. Gratis y sin registro.',
+  ads: false,
+  bodyClass: 'editor-page wizard-page',
+  head: `<script type="module" src="${url('assets/js/wizard.js')}"></script>`,
+  body: `
+<div class="wizard">
+  <div class="w-top">
+    <div class="w-count" id="w-count"></div>
+    <div class="progress-bar w-progress"><i id="w-bar"></i></div>
+  </div>
+  <div class="w-card">
+    <h1 id="w-title"></h1>
+    <p class="w-sub" id="w-sub"></p>
+    <div id="w-body"></div>
+    <p class="w-error" id="w-error" role="alert"></p>
+  </div>
+  <div class="w-nav">
+    <button type="button" class="btn btn-ghost" id="w-back">← Atrás</button>
+    <button type="button" class="btn" id="w-next">Siguiente →</button>
+  </div>
+  <input type="hidden" id="w-done-url" value="${url('crear/')}">
+  <p class="w-skip"><a href="${url('crear/')}">Prefiero rellenarlo yo directamente</a></p>
+</div>`,
 });
 
 /* ---------- Carta de presentación ---------- */
@@ -821,7 +862,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';
