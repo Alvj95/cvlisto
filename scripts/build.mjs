@@ -256,8 +256,22 @@ page('', {
 const MOBILE_BAR = `<div class="mobile-bar">
   <button type="button" class="btn btn-ghost" id="tab-edit" aria-pressed="true">✎ Editar</button>
   <button type="button" class="btn btn-ghost" id="tab-preview" aria-pressed="false">👁 Ver</button>
+  <button type="button" class="btn btn-ghost js-share">📤 Enviar</button>
   <button type="button" class="btn js-download">⬇ PDF</button>
 </div>`;
+
+const SHARE_DIALOG = `<dialog id="dlg-shared">
+  <h2>PDF descargado ✅</h2>
+  <p>Lo tienes en tu carpeta de <strong>Descargas</strong>. Para enviarlo por WhatsApp:</p>
+  <ol>
+    <li>Abre WhatsApp Web y entra en el chat.</li>
+    <li>Pulsa el clip 📎, elige <em>Documento</em> y selecciona el PDF.</li>
+  </ol>
+  <div class="dlg-actions">
+    <button type="button" class="btn btn-ghost" onclick="this.closest('dialog').close()">Cerrar</button>
+    <a class="btn" href="https://web.whatsapp.com/" target="_blank" rel="noopener">Abrir WhatsApp Web</a>
+  </div>
+</dialog>`;
 
 const PRINT_DIALOG = `<dialog id="dlg-print">
   <h2>Descargar en PDF</h2>
@@ -384,6 +398,7 @@ page('crear/', {
     <div class="ed-toolbar">
       <span class="grow" id="pages-info"></span>
       <a class="btn btn-ghost" href="${url('carta/')}">✉️ Carta de presentación</a>
+      <button type="button" class="btn btn-ghost js-share">📤 Enviar</button>
       <button type="button" class="btn js-download">⬇ Descargar PDF gratis</button>
     </div>
     <div class="sheet-wrap" id="sheet"></div>
@@ -392,6 +407,7 @@ page('crear/', {
 
 ${MOBILE_BAR}
 ${PRINT_DIALOG}
+${SHARE_DIALOG}
 
 <dialog id="dlg-pro">
   <h2>Plantillas Pro</h2>
@@ -501,6 +517,7 @@ page('carta/', {
     <div class="ed-toolbar">
       <span class="grow" id="pages-info"></span>
       <a class="btn btn-ghost" href="${url('crear/')}">📄 Mi currículum</a>
+      <button type="button" class="btn btn-ghost js-share">📤 Enviar</button>
       <button type="button" class="btn js-download">⬇ Descargar PDF gratis</button>
     </div>
     <div class="sheet-wrap" id="sheet"></div>
@@ -509,6 +526,7 @@ page('carta/', {
 
 ${MOBILE_BAR}
 ${PRINT_DIALOG}
+${SHARE_DIALOG}
 
 <div id="print-root"></div>`,
 });
@@ -803,7 +821,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';

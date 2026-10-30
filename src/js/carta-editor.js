@@ -2,6 +2,7 @@ import { emptyCV } from './cv-render.js';
 import { OFICIOS } from '../data/oficios.js';
 import { LANGS } from './i18n.js';
 import { FUENTES, emptyLetter, generateLetter, renderLetter } from './letter.js';
+import { htmlToPdf, shareOrDownload, fileName } from './share.js';
 
 // La carta usa los datos del currículum guardado en este dispositivo.
 const CV_KEY = 'cvlisto:cv:v1';
@@ -84,6 +85,28 @@ function renderLangs() {
   );
 }
 
+/* ---------- Enviar (WhatsApp, email…) ---------- */
+async function share(button, html, name, text) {
+  const buttons = $$('.js-share');
+  const labels = buttons.map((b) => b.textContent);
+  buttons.forEach((b) => {
+    b.classList.add('busy');
+    b.textContent = '⏳ Preparando…';
+  });
+  try {
+    const blob = await htmlToPdf(html);
+    const result = await shareOrDownload(blob, name, text);
+    if (result === 'downloaded') $('#dlg-shared').showModal();
+  } catch {
+    alert('No hemos podido preparar el PDF. Prueba con "Descargar PDF".');
+  } finally {
+    buttons.forEach((b, i) => {
+      b.classList.remove('busy');
+      b.textContent = labels[i];
+    });
+  }
+}
+
 function printLetter() {
   $('#print-root').innerHTML = renderLetter(cv, letter, letter.texto);
   const name = `Carta ${cv.nombre || ''}`.trim();
@@ -149,6 +172,12 @@ function init() {
     $('#dlg-print').showModal();
   };
   $$('.js-download').forEach((b) => b.addEventListener('click', download));
+  $$('.js-share').forEach((b) =>
+    b.addEventListener('click', () => {
+      if (!cv.nombre.trim()) return alert('Primero escribe tu nombre en tu currículum.');
+      share(b, renderLetter(cv, letter, letter.texto), fileName('Carta', cv.nombre), 'Te envío mi carta de presentación.');
+    }),
+  );
   $('#dlg-print-ok').addEventListener('click', () => {
     storage.set(PRINT_TIP_KEY, '1');
     $('#dlg-print').close();

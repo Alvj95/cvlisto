@@ -160,9 +160,16 @@ const RENDERERS = {
     )}</div></div>`,
 };
 
+// Color de acento mezclado con blanco (10 %), para fondos suaves.
+function soft(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  const mix = (c) => Math.round(c * 0.1 + 255 * 0.9);
+  return `rgb(${mix(n >> 16)}, ${mix((n >> 8) & 255)}, ${mix(n & 255)})`;
+}
+
 export function renderCV(d) {
   L = d.lang || 'es';
   const tpl = RENDERERS[d.template] ? d.template : 'clasica';
   const accent = /^#[0-9a-f]{6}$/i.test(d.accent || '') ? d.accent : ACCENTS[0];
-  return `<article class="cv tpl-${tpl}" lang="${L}" style="--accent:${accent}">${RENDERERS[tpl](d)}</article>`;
+  return `<article class="cv tpl-${tpl}" lang="${L}" style="--accent:${accent};--accent-soft:${soft(accent)}">${RENDERERS[tpl](d)}</article>`;
 }

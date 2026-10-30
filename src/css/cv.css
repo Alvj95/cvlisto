@@ -44,7 +44,7 @@
 .cv-tags { display: flex; flex-wrap: wrap; gap: 4pt; }
 .cv-tags li {
   padding: 2pt 7pt; border-radius: 10pt; font-size: 9pt;
-  background: color-mix(in srgb, var(--accent) 10%, #fff); color: var(--ink);
+  background: var(--accent-soft, #eef2fb); color: var(--ink);
 }
 .cv-langs li { display: flex; justify-content: space-between; gap: 6pt; margin-bottom: 2pt; }
 .cv-langs span { color: var(--muted); }
@@ -81,7 +81,7 @@
 
 /* Compacta */
 .tpl-compacta { padding: 0 0 12mm; font-size: 9.5pt; }
-.tpl-compacta .cv-head { background: color-mix(in srgb, var(--accent) 9%, #fff); padding: 10mm 14mm; border-bottom: 2pt solid var(--accent); }
+.tpl-compacta .cv-head { background: var(--accent-soft, #eef2fb); padding: 10mm 14mm; border-bottom: 2pt solid var(--accent); }
 .tpl-compacta .cv-photo { width: 26mm; height: 26mm; border-radius: 4pt; }
 .tpl-compacta .cv-body { display: grid; grid-template-columns: 1fr 58mm; gap: 8mm; padding: 0 14mm; }
 .tpl-compacta .cv-sec { margin-top: 5mm; }

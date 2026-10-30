@@ -3,6 +3,7 @@ import { OFICIOS, SECTORES, ejemploCV } from '../data/oficios.js';
 import { extractLines, parseCV } from './importer.js';
 import { LANGS, tr, known } from './i18n.js';
 import { reviewCV, notaTexto } from './reviewer.js';
+import { htmlToPdf, shareOrDownload, fileName } from './share.js';
 
 // Todo se guarda en el navegador del usuario: el currículum nunca sale de su dispositivo.
 const STORE_KEY = 'cvlisto:cv:v1';
@@ -587,6 +588,28 @@ function download() {
   $('#dlg-print').showModal();
 }
 
+/* ---------- Enviar (WhatsApp, email…) ---------- */
+async function share(button, html, name, text) {
+  const buttons = $$('.js-share');
+  const labels = buttons.map((b) => b.textContent);
+  buttons.forEach((b) => {
+    b.classList.add('busy');
+    b.textContent = '⏳ Preparando…';
+  });
+  try {
+    const blob = await htmlToPdf(html);
+    const result = await shareOrDownload(blob, name, text);
+    if (result === 'downloaded') $('#dlg-shared').showModal();
+  } catch {
+    alert('No hemos podido preparar el PDF. Prueba con "Descargar PDF".');
+  } finally {
+    buttons.forEach((b, i) => {
+      b.classList.remove('busy');
+      b.textContent = labels[i];
+    });
+  }
+}
+
 /* ---------- Importar un currículum antiguo ---------- */
 let imported = null;
 
@@ -735,6 +758,12 @@ function init() {
   $('#dlg-import-ok').addEventListener('click', applyImport);
 
   $$('.js-download').forEach((b) => b.addEventListener('click', download));
+  $$('.js-share').forEach((b) =>
+    b.addEventListener('click', () => {
+      if (!cv.nombre.trim()) return alert('Escribe al menos tu nombre antes de enviarlo.');
+      share(b, renderCV(cv), fileName('CV', cv.nombre), 'Te envío mi currículum.');
+    }),
+  );
   $('#dlg-print-ok').addEventListener('click', () => {
     storage.set(PRINT_TIP_KEY, '1');
     $('#dlg-print').close();
