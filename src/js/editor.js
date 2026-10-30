@@ -447,13 +447,23 @@ function showImportSummary(d) {
   const row = (label, value) =>
     `<li class="${value ? '' : 'miss'}"><b>${label}</b>${value ? esc(value) : 'No encontrado'}</li>`;
   const list = (items) => items.filter(Boolean).join(' · ');
+  const dates = (x) => [x.inicio, x.actual ? 'Actualidad' : x.fin].filter(Boolean).join(' – ');
+  // Una línea por entrada, para que se vea si algo se ha juntado.
+  const entries = (label, items) =>
+    `<li class="${items.length ? '' : 'miss'}"><b>${label}</b>${
+      items.length
+        ? `<ol class="import-entries">${items
+            .map(([parts, when]) => `<li>${esc(parts.filter(Boolean).join(' · '))}${when ? ` <small>${esc(when)}</small>` : ''}</li>`)
+            .join('')}</ol>`
+        : 'No encontrado'
+    }</li>`;
   $('#import-summary').innerHTML = `<ul class="import-sum">
     ${row('Nombre', d.nombre)}
     ${row('Puesto', d.puesto)}
     ${row('Contacto', list([d.telefono, d.email, d.ciudad, d.web]))}
     ${row('Perfil', d.perfil && (d.perfil.length > 140 ? `${d.perfil.slice(0, 140)}…` : d.perfil))}
-    ${row(`Experiencia (${d.experiencia.length})`, list(d.experiencia.map((e) => [e.puesto, e.empresa].filter(Boolean).join(' – '))))}
-    ${row(`Formación (${d.formacion.length})`, list(d.formacion.map((f) => f.titulo)))}
+    ${entries(`Experiencia (${d.experiencia.length})`, d.experiencia.map((e) => [[e.puesto, e.empresa, e.lugar], dates(e)]))}
+    ${entries(`Formación (${d.formacion.length})`, d.formacion.map((f) => [[f.titulo, f.centro], dates(f)]))}
     ${row(`Habilidades (${d.habilidades.length})`, list(d.habilidades))}
     ${row('Idiomas', list(d.idiomas.map((i) => [i.idioma, i.nivel].filter(Boolean).join(' '))))}
   </ul>`;

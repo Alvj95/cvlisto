@@ -54,7 +54,7 @@ async function docxLines(buf) {
     let text = '';
     for (const node of para.getElementsByTagNameNS(W, '*')) {
       if (node.localName === 't') text += node.textContent;
-      else if (node.localName === 'tab') text += ' ';
+      else if (node.localName === 'tab') text += '  ';
       else if (node.localName === 'br') text += '\n';
     }
     const style = para.getElementsByTagNameNS(W, 'pStyle')[0]?.getAttributeNS(W, 'val') || '';
@@ -187,16 +187,23 @@ function dates(line) {
   return null;
 }
 
-const tidy = (s) => s.replace(/^[\s|·,:;()–—-]+|[\s|·,:;()–—-]+$/g, '').replace(/\(\s*\)/g, '').trim();
+const tidy = (s) =>
+  s
+    .replace(/\(\s*\)/g, '')
+    .replace(/^[\s|·,:;–—-]+|[\s|·,:;–—-]+$/g, '')
+    .replace(/^\)\s*|\s*\($/g, '')
+    .trim();
 
 function splitPlace(s) {
   const m = s.split(/\s+[·|–—-]\s+|,\s+(?=[A-ZÁÉÍÓÚÑ][^,]*$)/);
   return m.length > 1 ? { empresa: tidy(m[0]), lugar: tidy(m.slice(1).join(', ')) } : { empresa: tidy(s), lugar: '' };
 }
 
+const SCHOOL = /\b(ies|i\.e\.s\.?|cifp|cip|ceip|colegio|instituto|universidad|universitat|uned|escuela|academia|centro de (?:formaci[oó]n|estudios)|centro|fundaci[oó]n|sepe|conservatorio|university|college|school|institute|academy|lyc[ée]e|universit[eé]|faculdade|universit[àa]|scuola|istituto|autoescuela)\b/i;
+
 // "Puesto — Empresa, Ciudad" o "Puesto | Empresa" en una sola línea.
 function splitTitle(s) {
-  const parts = s.split(/\s+[—–|]\s+|\s+-\s+/).map(tidy).filter(Boolean);
+  const parts = s.split(/\s+[—–|]\s+|\s+-\s+|\s{2,}/).map(tidy).filter(Boolean);
   if (parts.length < 2) return { title: s, rest: '' };
   return { title: parts[0], rest: parts.slice(1).join(' · ') };
 }
@@ -241,16 +248,33 @@ function parseEntries(lines, kind) {
       } else {
         cur.tareas.push(rest);
       }
-    } else if (!cur || pending || !second || (d && hasDates())) {
-      fresh(rest, d || pending);
-      pending = null;
     } else {
-      cur.centro = splitPlace(rest).empresa;
-      if (!hasDates()) setDates(d);
+      // Formación: cada viñeta es un curso distinto; el centro se reconoce por su nombre.
+      const school = SCHOOL.test(rest);
+      if (cur && !cur.titulo && !school) {
+        // Venía el centro primero y ahora llega el título.
+        const { title, rest: more } = splitTitle(rest);
+        cur.titulo = title;
+        if (more && !cur.centro) cur.centro = more;
+        if (!hasDates()) setDates(d || pending);
+        pending = null;
+      } else if (cur && second && school && !bullet && !(d && hasDates())) {
+        cur.centro = splitPlace(rest).empresa;
+        if (!hasDates()) setDates(d);
+      } else if (school && !splitTitle(rest).rest) {
+        // Centro en una línea suelta, antes del título.
+        cur = { titulo: '', centro: splitPlace(rest).empresa, inicio: '', fin: '' };
+        entries.push(cur);
+        setDates(d || pending);
+        pending = null;
+      } else {
+        fresh(rest, d || pending);
+        pending = null;
+      }
     }
   }
   if (exp) return entries.map(({ bullets, ...e }) => ({ ...e, tareas: e.tareas.join('\n') }));
-  return entries;
+  return entries.map((e) => (e.titulo ? e : { ...e, titulo: e.centro, centro: '' }));
 }
 
 function parseSkills(lines) {
@@ -358,5 +382,11 @@ export function parseCV(rawLines) {
   result.idiomas = parseLangs(buckets.idiomas);
   result.otros = buckets.otros.map((l) => l.text).join('\n');
   result._secciones = found;
-  return result;
+  // Los dobles espacios solo servían para separar columnas; ya no hacen falta.
+  const squeeze = (v) =>
+    typeof v === 'string' ? v.split('\n').map((l) => l.replace(/\s{2,}/g, ' ').trim()).join('\n')
+      : Array.isArray(v) ? v.map(squeeze)
+      : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, squeeze(x)]))
+      : v;
+  return squeeze(result);
 }
