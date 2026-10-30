@@ -2,6 +2,7 @@ import { renderCV, emptyCV, TEMPLATES, ACCENTS } from './cv-render.js';
 import { OFICIOS, ejemploCV } from '../data/oficios.js';
 import { extractLines, parseCV } from './importer.js';
 import { LANGS, tr, known } from './i18n.js';
+import { reviewCV, notaTexto } from './reviewer.js';
 
 // Todo se guarda en el navegador del usuario: el currículum nunca sale de su dispositivo.
 const STORE_KEY = 'cvlisto:cv:v1';
@@ -43,6 +44,7 @@ function changed({ rerenderForm = false } = {}) {
   if (rerenderForm) renderForm();
   updateProgress();
   updateLangNote();
+  updateReviewBadge();
   renderPreview();
   clearTimeout(saveTimer);
   saveTimer = setTimeout(save, 400);
@@ -84,6 +86,65 @@ function updateLangNote() {
         .map((t) => esc(t.length > 50 ? `${t.slice(0, 50)}…` : t))
         .join('</em>, <em>')}</em>.`
     : `<strong>✅ Todo tu currículum está en ${esc(name)}.</strong>`;
+}
+
+/* ---------- Revisor ---------- */
+// Cuenta las páginas aunque la vista previa esté oculta (móvil, pestaña Editar).
+function countPages() {
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden';
+  probe.innerHTML = renderCV(cv);
+  document.body.appendChild(probe);
+  const pages = Math.ceil((probe.firstElementChild.offsetHeight - 2) / A4_H);
+  probe.remove();
+  return pages;
+}
+
+function updateReviewBadge() {
+  const { consejos } = reviewCV(cv, { pages: 1 });
+  const importantes = consejos.filter((c) => c.nivel !== 'baja').length;
+  $('#review-badge').textContent = importantes || '';
+}
+
+function openReview() {
+  const { nota, consejos } = reviewCV(cv, { pages: countPages() });
+  const { label, color } = notaTexto(nota);
+  const ring = $('#review-score');
+  ring.style.setProperty('--p', nota);
+  ring.style.setProperty('--c', color);
+  $('span', ring).textContent = nota;
+  $('#review-title').textContent = label;
+  $('#review-sub').textContent = consejos.length
+    ? `Te damos ${consejos.length} ${consejos.length === 1 ? 'consejo' : 'consejos'} para mejorarlo.`
+    : 'No hemos encontrado nada que mejorar.';
+  const NIVEL = { alta: 'Importante', media: 'Mejorable', baja: 'Detalle' };
+  $('#review-list').innerHTML = consejos.length
+    ? consejos
+        .map(
+          (c, i) => `<li class="${c.nivel}"><span class="dot" title="${NIVEL[c.nivel]}"></span><div class="grow"><strong>${esc(c.titulo)}</strong><small>${esc(c.detalle)}</small></div>
+          <button type="button" class="btn btn-ghost btn-sm" data-fix="${i}">Corregir</button></li>`,
+        )
+        .join('')
+    : '<li class="review-ok">🎉 Tu currículum está listo para enviar.</li>';
+  $$('[data-fix]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const c = consejos[b.dataset.fix];
+      $('#dlg-review').close();
+      goToSection({ escritura: 'experiencia' }[c.seccion] || c.seccion, c.campo);
+    }),
+  );
+  $('#dlg-review').showModal();
+}
+
+function goToSection(sec, campo) {
+  const editor = $('.editor');
+  if (editor.classList.contains('show-preview')) $('#tab-edit').click();
+  const block = $(`[data-sec="${sec}"]`)?.parentElement;
+  if (!block) return;
+  block.open = true;
+  const field = (campo && $(`#${campo}`)) || $$('input, textarea, select', block).find((el) => el.offsetParent && el.type !== 'file');
+  (field || block).scrollIntoView({ behavior: 'smooth', block: field ? 'center' : 'start' });
+  setTimeout(() => field?.focus({ preventScroll: true }), 400);
 }
 
 /* ---------- Progreso ---------- */
@@ -543,6 +604,7 @@ function init() {
     changed();
   });
 
+  $$('.js-review').forEach((b) => b.addEventListener('click', openReview));
   $('#import-input').addEventListener('change', (e) => importFile(e.target.files[0]));
   $('#dlg-import-ok').addEventListener('click', applyImport);
 
@@ -608,6 +670,7 @@ function init() {
   renderForm();
   updateProgress();
   updateLangNote();
+  updateReviewBadge();
   renderPreview();
 }
 

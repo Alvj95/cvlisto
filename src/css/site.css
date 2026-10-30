@@ -329,6 +329,30 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-co
   .mobile-bar .btn-ghost[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
 }
 
+/* Revisor */
+.review-btn { margin-top: 12px; }
+.review-badge { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--pink); color: #fff; font-size: .75rem; }
+.review-badge:empty { display: none; }
+.dlg-wide { max-width: 560px; }
+.review-head { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+.review-head h2 { margin: 0 0 4px; }
+.review-head p { color: var(--muted); }
+.score { --p: 0; --c: var(--brand); width: 84px; height: 84px; border-radius: 50%; flex: none; display: grid; place-items: center;
+  background: conic-gradient(var(--c) calc(var(--p) * 1%), #ecebf5 0); }
+.score span { width: 66px; height: 66px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 1.5rem; font-weight: 800; color: var(--ink); }
+.review-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; max-height: 55vh; overflow: auto; }
+.review-list:focus { outline: none; }
+.review-list li { display: flex; gap: 10px; align-items: flex-start; background: var(--bg); border-radius: 14px; padding: 10px 12px; }
+.review-list .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; margin-top: 7px; }
+.review-list .alta .dot { background: #e0457b; }
+.review-list .media .dot { background: #f59e0b; }
+.review-list .baja .dot { background: #5b8cff; }
+.review-list strong { display: block; font-size: .95rem; }
+.review-list small { color: var(--muted); display: block; line-height: 1.45; }
+.review-list .grow { flex: 1; min-width: 0; }
+.review-list .btn { flex: none; align-self: center; }
+.review-ok { text-align: center; padding: 18px; color: var(--ok); font-weight: 700; }
+
 /* Ventanas */
 dialog { border: 0; border-radius: 24px; padding: 26px; max-width: 440px; width: calc(100% - 32px); box-shadow: 0 30px 80px rgba(20,27,52,.3); }
 dialog::backdrop { background: rgba(20, 27, 52, .5); backdrop-filter: blur(3px); }

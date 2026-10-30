@@ -284,6 +284,7 @@ page('crear/', {
       <div class="top"><strong id="prog-title">Empecemos tu CV</strong><span class="pct" id="prog-pct">0%</span></div>
       <div class="progress-bar"><i id="prog-bar"></i></div>
       <p id="prog-tip">Elige tu oficio para ver sugerencias.</p>
+      <button type="button" class="btn btn-white btn-sm review-btn js-review">🔍 Revisar mi CV <span class="review-badge" id="review-badge"></span></button>
     </div>
     <div class="import-card">
       <span class="ico t4">📂</span>
@@ -400,6 +401,17 @@ ${PRINT_DIALOG}
   <div class="dlg-actions">
     <button type="button" class="btn btn-ghost" onclick="this.closest('dialog').close()">Mantener el mío</button>
     <button type="button" class="btn" id="dlg-example-ok">Cargar ejemplo</button>
+  </div>
+</dialog>
+
+<dialog id="dlg-review" class="dlg-wide">
+  <div class="review-head">
+    <div class="score" id="review-score"><span></span></div>
+    <div><h2 id="review-title">Revisión de tu CV</h2><p id="review-sub" style="margin:0"></p></div>
+  </div>
+  <ul class="review-list" id="review-list"></ul>
+  <div class="dlg-actions">
+    <button type="button" class="btn" onclick="this.closest('dialog').close()">Cerrar</button>
   </div>
 </dialog>
 
@@ -767,7 +779,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'icons/icon-192.png'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'icons/icon-192.png'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';
