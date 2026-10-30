@@ -248,6 +248,17 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-co
 .check { display: flex; gap: 8px; align-items: center; font-size: .9rem; margin: -4px 0 12px; font-weight: 600; }
 .check input { width: 18px; height: 18px; accent-color: var(--brand); }
 
+.import-card { display: flex; align-items: center; gap: 12px; background: #fff; border: 1.5px dashed #b9eedd; border-radius: 18px; padding: 14px 16px; margin-bottom: 14px; }
+.import-card .ico { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; font-size: 1.2rem; flex: none; }
+.import-card > div { flex: 1; min-width: 0; }
+.import-card strong { font-size: .95rem; }
+.import-card p { margin: 2px 0 0; font-size: .84rem; color: var(--muted); }
+.import-card.busy { opacity: .6; pointer-events: none; }
+.import-sum:focus { outline: none; }
+.import-sum { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; max-height: 50vh; overflow: auto; }
+.import-sum li { background: var(--bg); border-radius: 12px; padding: 8px 12px; font-size: .9rem; }
+.import-sum li b { display: block; font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.import-sum li.miss { color: var(--muted); }
 .oficio-box { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 16px; margin-bottom: 14px; }
 .oficio-box .field { margin-bottom: 6px; }
 .oficio-box p { margin: 0; font-size: .86rem; color: var(--muted); }

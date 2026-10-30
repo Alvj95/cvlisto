@@ -257,6 +257,11 @@ page('crear/', {
       <div class="progress-bar"><i id="prog-bar"></i></div>
       <p id="prog-tip">Elige tu oficio para ver sugerencias.</p>
     </div>
+    <div class="import-card">
+      <span class="ico t4">📂</span>
+      <div><strong>¿Ya tienes un currículum?</strong><p>Súbelo (Word, PDF o texto) y pasamos tus datos a la nueva plantilla.</p></div>
+      <label class="btn btn-sm" style="cursor:pointer">Subir<input type="file" id="import-input" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden></label>
+    </div>
     <div class="oficio-box">
       <div class="field"><label for="oficio">¿A qué trabajo te presentas?</label><select id="oficio"></select></div>
       <p>Te sugerimos frases y habilidades para ese oficio. <button type="button" class="btn-link" id="btn-example">Rellenar con un ejemplo</button></p>
@@ -375,6 +380,16 @@ page('crear/', {
   <div class="dlg-actions">
     <button type="button" class="btn btn-ghost" onclick="this.closest('dialog').close()">Mantener el mío</button>
     <button type="button" class="btn" id="dlg-example-ok">Cargar ejemplo</button>
+  </div>
+</dialog>
+
+<dialog id="dlg-import">
+  <h2>Revisa lo que hemos encontrado</h2>
+  <div id="import-summary"></div>
+  <p class="hint" style="margin:12px 0 0">La lectura automática puede fallar con diseños complicados. Después podrás corregir cualquier dato en el editor. Se sustituirá lo que tengas ahora en el editor.</p>
+  <div class="dlg-actions">
+    <button type="button" class="btn btn-ghost" onclick="this.closest('dialog').close()">Cancelar</button>
+    <button type="button" class="btn" id="dlg-import-ok">Usar estos datos</button>
   </div>
 </dialog>
 
@@ -618,7 +633,8 @@ for (const p of pages) {
 
 await cp(join(ROOT, 'src/css'), join(OUT, 'assets/css'), { recursive: true });
 await cp(join(ROOT, 'src/js'), join(OUT, 'assets/js'), { recursive: true });
-await cp(join(ROOT, 'src/data'), join(OUT, 'assets/js/data'), { recursive: true });
+await cp(join(ROOT, 'src/data'), join(OUT, 'assets/data'), { recursive: true });
+await cp(join(ROOT, 'src/vendor'), join(OUT, 'assets/vendor'), { recursive: true });
 for (const f of await readdir(join(ROOT, 'src/static'))) await cp(join(ROOT, 'src/static', f), join(OUT, f), { recursive: true });
 
 // App instalable (PWA): es también la base para publicarla en Google Play como TWA.
@@ -656,7 +672,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/data/oficios.js', 'icons/icon-192.png'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'icons/icon-192.png'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';

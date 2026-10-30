@@ -1,5 +1,6 @@
 import { renderCV, emptyCV, TEMPLATES, ACCENTS } from './cv-render.js';
-import { OFICIOS, ejemploCV } from './data/oficios.js';
+import { OFICIOS, ejemploCV } from '../data/oficios.js';
+import { extractLines, parseCV } from './importer.js';
 
 // Todo se guarda en el navegador del usuario: el currículum nunca sale de su dispositivo.
 const STORE_KEY = 'cvlisto:cv:v1';
@@ -361,6 +362,71 @@ function download() {
   $('#dlg-print').showModal();
 }
 
+/* ---------- Importar un currículum antiguo ---------- */
+let imported = null;
+
+async function importFile(file) {
+  if (!file) return;
+  const card = $('.import-card');
+  const label = $('label', card);
+  const prev = label.firstChild.textContent;
+  card.classList.add('busy');
+  label.firstChild.textContent = 'Leyendo…';
+  try {
+    const lines = await extractLines(file);
+    const data = parseCV(lines);
+    const any = data.nombre || data.email || data.telefono || data.experiencia.length || data.perfil;
+    if (!any) {
+      alert(
+        file.name.toLowerCase().endsWith('.pdf')
+          ? 'No hemos podido leer texto en este PDF. Puede que sea una foto escaneada. Prueba con el archivo de Word o escribe tus datos.'
+          : 'No hemos encontrado datos en este archivo. Prueba con otro formato o escribe tus datos.',
+      );
+      return;
+    }
+    imported = data;
+    showImportSummary(data);
+  } catch (err) {
+    alert(
+      err.message === 'doc'
+        ? 'Los archivos .doc antiguos no se pueden leer. Ábrelo en Word y guárdalo como .docx o PDF.'
+        : 'No hemos podido leer este archivo. Usa un PDF, un Word (.docx) o un texto (.txt).',
+    );
+  } finally {
+    card.classList.remove('busy');
+    label.firstChild.textContent = prev;
+    $('#import-input').value = '';
+  }
+}
+
+function showImportSummary(d) {
+  const row = (label, value) =>
+    `<li class="${value ? '' : 'miss'}"><b>${label}</b>${value ? esc(value) : 'No encontrado'}</li>`;
+  const list = (items) => items.filter(Boolean).join(' · ');
+  $('#import-summary').innerHTML = `<ul class="import-sum">
+    ${row('Nombre', d.nombre)}
+    ${row('Puesto', d.puesto)}
+    ${row('Contacto', list([d.telefono, d.email, d.ciudad, d.web]))}
+    ${row('Perfil', d.perfil && (d.perfil.length > 140 ? `${d.perfil.slice(0, 140)}…` : d.perfil))}
+    ${row(`Experiencia (${d.experiencia.length})`, list(d.experiencia.map((e) => [e.puesto, e.empresa].filter(Boolean).join(' – '))))}
+    ${row(`Formación (${d.formacion.length})`, list(d.formacion.map((f) => f.titulo)))}
+    ${row(`Habilidades (${d.habilidades.length})`, list(d.habilidades))}
+    ${row('Idiomas', list(d.idiomas.map((i) => [i.idioma, i.nivel].filter(Boolean).join(' '))))}
+  </ul>`;
+  $('#dlg-import').showModal();
+}
+
+function applyImport() {
+  if (!imported) return;
+  const { _secciones, ...data } = imported;
+  cv = { ...emptyCV(), template: cv.template, accent: cv.accent, lang: cv.lang, oficio: cv.oficio, foto: cv.foto, ...data };
+  imported = null;
+  $('#dlg-import').close();
+  renderForm();
+  $$('.ed-block').forEach((b) => (b.open = true));
+  changed();
+}
+
 /* ---------- Arranque ---------- */
 function applyExample(slug) {
   const o = OFICIOS.find((x) => x.slug === slug);
@@ -417,6 +483,9 @@ function init() {
     renderPhoto();
     changed();
   });
+
+  $('#import-input').addEventListener('change', (e) => importFile(e.target.files[0]));
+  $('#dlg-import-ok').addEventListener('click', applyImport);
 
   $$('.js-download').forEach((b) => b.addEventListener('click', download));
   $('#dlg-print-ok').addEventListener('click', () => {
