@@ -8,6 +8,9 @@ export const CONFIG = {
   // Carpeta base: "/" con dominio propio, "/cvlisto/" en GitHub Pages sin dominio.
   base: process.env.BASE_PATH || '/',
 
+  // Estadísticas de visitas (Cloudflare Web Analytics: sin cookies). Vacío = desactivado.
+  cfAnalyticsToken: process.env.CF_ANALYTICS_TOKEN || '7a85f77966bb4848a1f5351abb9536b0',
+
   // ID de editor de AdSense, p. ej. "ca-pub-1234567890123456". Vacío = sin anuncios.
   adsenseClient: process.env.ADSENSE_CLIENT || 'ca-pub-8590744942912233',
 

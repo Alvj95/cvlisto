@@ -176,6 +176,7 @@ ${bodyClass.includes('editor-page') ? '' : INSTALL_BAR}
 ${INSTALL_DIALOG}
 <script src="${url('assets/js/install.js')}" defer></script>
 <script type="module">import { recheck } from '${url('assets/js/pro.js')}'; recheck();</script>
+${CONFIG.cfAnalyticsToken ? `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "${esc(CONFIG.cfAnalyticsToken)}"}'></script>` : ''}
 <script>if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('${url('sw.js')}').catch(function(){})})}</script>
 </body>
 </html>
@@ -1199,6 +1200,8 @@ legal(
 <h2>Compras de la versión Pro</h2>
 <p>Los pagos los procesa <strong>Lemon Squeezy</strong> (Lemon Squeezy LLC), que actúa como vendedor y comerciante registrado. Lemon Squeezy recoge los datos necesarios para el cobro y la factura (nombre, email, país y datos de pago) según su propia <a href="https://www.lemonsqueezy.com/privacy" rel="nofollow">política de privacidad</a>. Nosotros nunca vemos los datos de tu tarjeta; solo recibimos tu nombre, tu email y la clave de licencia, que usamos para darte soporte y gestionar devoluciones.</p>
 <p>Al activar Pro, la clave se comprueba con el servicio de licencias de Lemon Squeezy y se guarda en tu navegador.</p>
+<h2>Estadísticas de visitas</h2>
+<p>Usamos <strong>Cloudflare Web Analytics</strong> para saber cuántas personas visitan el sitio, qué páginas se ven y desde qué país. Es una herramienta <strong>sin cookies</strong> que no te identifica ni guarda datos personales: solo cuenta visitas de forma agregada. Más información en <a href="https://www.cloudflare.com/privacypolicy/" rel="nofollow">cloudflare.com/privacypolicy</a>.</p>
 <h2>Contacto por email</h2>
 <p>Si nos escribes, usaremos tu email solo para responderte y no lo cederemos a terceros.</p>
 <h2>Tus derechos</h2>
@@ -1211,6 +1214,8 @@ legal(
   'Qué cookies usa Tu CV Gratis y cómo gestionarlas.',
   `<h2>Almacenamiento propio</h2>
 <p>El editor usa el almacenamiento local del navegador para guardar tu currículum mientras lo escribes. Es imprescindible para que funcione y no se usa para rastrearte.</p>
+<h2>Estadísticas</h2>
+<p>Contamos las visitas con Cloudflare Web Analytics, que no usa cookies ni identifica a las personas.</p>
 <h2>Cookies de terceros</h2>
 <p>En las páginas con publicidad, Google AdSense puede instalar cookies para mostrar y medir anuncios. Solo se usarán con tu consentimiento, que se solicita mediante el aviso de cookies que aparece la primera vez que visitas el sitio.</p>
 <h2>Cómo gestionarlas</h2>
