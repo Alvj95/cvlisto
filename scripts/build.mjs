@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { CONFIG } from '../src/config.js';
 import { OFICIOS, SECTORES, ejemploCV } from '../src/data/oficios.js';
 import { ARTICULOS } from '../src/data/articulos.js';
+import { GENERALES } from '../src/data/entrevista.js';
 import { renderCV, TEMPLATES } from '../src/js/cv-render.js';
 import { generateLetter, emptyLetter } from '../src/js/letter.js';
 
@@ -863,6 +864,33 @@ page('entrevista/', {
   <a id="iv-pro-link" href="${url('pro/')}" hidden>Pro</a>
   <p class="muted-s center" style="margin-top:20px">Tus respuestas se guardan solo en este dispositivo. ¿Quieres más consejos? Lee <a href="${url('consejos/como-preparar-una-entrevista-de-trabajo/')}">cómo preparar una entrevista de trabajo</a>.</p>
 </div>
+<div class="narrow prose">
+  <h2>Cómo usar el simulador</h2>
+  <ol>
+    <li><strong>Elige un grupo de preguntas.</strong> Empieza por las generales, que salen en casi todas las entrevistas, y sigue con las de tu sector. Si ya has creado tu currículum, tu sector aparece marcado con ⭐.</li>
+    <li><strong>Responde antes de mirar.</strong> Escribe tu respuesta o dila en voz alta, como si tuvieras delante a la persona que te entrevista. Pulsa "🔊 Escuchar" para oír la pregunta.</li>
+    <li><strong>Compara con la respuesta modelo.</strong> Fíjate en qué busca la empresa con esa pregunta y en el consejo. No copies la respuesta: adáptala a tu experiencia real.</li>
+    <li><strong>Repite hasta que te salga natural.</strong> Lo ideal es contestar en uno o dos minutos, sin leer y con ejemplos concretos.</li>
+  </ol>
+  <h2>Las preguntas que más se repiten en una entrevista</h2>
+  <p>Estas son las preguntas generales que hacen en casi cualquier entrevista de trabajo, tanto en hostelería y comercio como en oficinas o fábricas, y lo que la empresa quiere descubrir con cada una:</p>
+  <ol>${GENERALES.map((g) => `<li><strong>${esc(g.q)}</strong> ${esc(g.busca)}</li>`).join('')}</ol>
+  <h2>Consejos para el día de la entrevista</h2>
+  <ul>
+    <li><strong>Infórmate sobre la empresa:</strong> qué hace, dónde está y qué tipo de clientes tiene. Mira su web y sus redes sociales. Es la mejor forma de responder a "¿por qué quieres trabajar aquí?".</li>
+    <li><strong>Llega 10 minutos antes</strong> y revisa el camino el día anterior. Si la entrevista es por videollamada, prueba la cámara, el micrófono y la conexión con tiempo.</li>
+    <li><strong>Lleva tu currículum impreso</strong> y una lista con tus fechas de trabajo, para no dudar si te preguntan por ellas.</li>
+    <li><strong>Usa ejemplos reales.</strong> En lugar de "soy muy trabajador", cuenta una situación concreta: qué pasó, qué hiciste y qué resultado tuvo.</li>
+    <li><strong>Habla bien de tus antiguos trabajos,</strong> aunque te fuera mal en alguno. Criticar a un jefe anterior es de lo que peor impresión causa.</li>
+    <li><strong>Prepara una o dos preguntas</strong> para el final: cómo es un día normal en el puesto, cómo es el equipo o cuáles son los siguientes pasos del proceso.</li>
+    <li><strong>Después, da las gracias.</strong> Si en una semana no sabes nada, es correcto llamar o escribir para preguntar cómo va el proceso.</li>
+  </ul>
+  <h2>Preguntas frecuentes</h2>
+  <h3>¿Cuánto tiempo debo practicar?</h3><p>Con 20 o 30 minutos al día durante dos o tres días es suficiente para llegar con soltura. Practica sobre todo las preguntas generales y dos o tres de tu sector.</p>
+  <h3>¿Se guardan mis respuestas?</h3><p>Sí, en tu propio dispositivo. No se envían a ningún sitio: si vuelves otro día, las encontrarás donde las dejaste.</p>
+  <h3>¿Es gratis?</h3><p>Puedes practicar todas las preguntas gratis y ver el consejo y la respuesta modelo de las tres primeras. Con <a href="${url('pro/')}">Tu CV Gratis Pro</a> se desbloquean las respuestas modelo de todas.</p>
+  <p>¿Aún no tienes el currículum listo? <a href="${url('crear/')}">Créalo gratis aquí</a> y apunta tus envíos en <a href="${url('candidaturas/')}">Mis candidaturas</a>.</p>
+</div>
 <script type="module" src="${url('assets/js/interview.js')}"></script>`,
 });
 
@@ -913,6 +941,12 @@ const PDF_TOOLS = [
     lead: 'Junta varios PDF en uno solo: tu currículum, la carta de presentación y tus títulos en un único archivo, como piden muchas empresas.',
     desc: 'Une varios PDF en uno gratis desde el móvil o el ordenador. Sin registro, sin marcas de agua y sin subir tus archivos a ningún servidor.',
     steps: ['Elige dos o más archivos PDF.', 'Ordénalos con las flechas.', 'Pulsa "Unir PDF" y descarga el resultado.'],
+    guide: `<h2>¿Cuándo hace falta unir PDF?</h2>
+<p>Muchas ofertas de empleo solo dejan adjuntar <strong>un archivo</strong>, y otras te piden "currículum, carta de presentación y títulos" en el mismo envío. Si mandas cinco archivos sueltos, es fácil que alguno se pierda o que nadie lo abra. Con un único PDF, quien lo recibe tiene toda tu información en orden y de un vistazo.</p>
+<h2>En qué orden poner los documentos</h2>
+<ol><li><strong>Carta de presentación</strong>, si la envías: es lo primero que se lee.</li><li><strong>Currículum.</strong></li><li><strong>Títulos y certificados</strong>, del más importante para el puesto al menos importante.</li><li><strong>Otros documentos</strong> que pida la oferta: carné, cartas de recomendación…</li></ol>
+<h2>Consejos para el archivo final</h2>
+<ul><li>Ponle un nombre claro, por ejemplo <em>CV-Laura-Garcia-Recepcionista.pdf</em>. Evita nombres como <em>documento(3).pdf</em>.</li><li>Si el PDF final pesa más de 2 MB, pásalo por <a href="${url('comprimir-pdf/')}">Comprimir PDF</a>: muchos portales de empleo no aceptan archivos más grandes.</li><li>Si tienes algún título en foto, conviértelo antes con <a href="${url('jpg-a-pdf/')}">JPG a PDF</a> y después únelo con el resto.</li></ul>`,
     faq: [['¿Hay límite de archivos?', 'No. Puedes unir todos los que quieras; con archivos muy grandes puede tardar un poco más en el móvil.'], ['¿Pone marca de agua?', 'No. El PDF unido queda exactamente igual que los originales.']],
   },
   {
@@ -922,6 +956,12 @@ const PDF_TOOLS = [
     lead: 'Pasa a PDF las fotos de tu título, tu DNI o un certificado. Puedes juntar varias imágenes en un mismo PDF.',
     desc: 'Convierte fotos e imágenes JPG o PNG a PDF gratis. Ideal para títulos, certificados y documentos. Sin subir nada a internet.',
     steps: ['Elige una o varias fotos (JPG, PNG…).', 'Ordénalas y elige el tamaño de página.', 'Pulsa "Crear PDF" y descárgalo.'],
+    guide: `<h2>Cómo hacer una buena foto de un documento</h2>
+<ul><li><strong>Luz natural y sin flash:</strong> junto a una ventana, de día. El flash crea brillos que tapan el texto.</li><li><strong>Fondo liso y oscuro,</strong> como una mesa, para que se vean bien los bordes del papel.</li><li><strong>El móvil paralelo al papel,</strong> justo encima, para que el documento no salga torcido ni deformado.</li><li><strong>Que se vea entero,</strong> con un poco de margen alrededor, y comprueba que el texto se lee al ampliar la foto.</li></ul>
+<h2>¿Qué documentos se suelen pedir en PDF?</h2>
+<p>En los procesos de selección es habitual que pidan el título de la ESO, Bachillerato, FP o la universidad, certificados de cursos (por ejemplo, manipulador de alimentos o prevención de riesgos laborales), el carné de conducir, el DNI o NIE y la vida laboral. Si los tienes en papel, una foto convertida a PDF es suficiente en la mayoría de los casos.</p>
+<h2>Si la foto no se convierte</h2>
+<p>Algunos móviles guardan las fotos en formato <strong>HEIC</strong>, que no todos los navegadores pueden abrir. En iPhone puedes cambiarlo en <em>Ajustes › Cámara › Formatos › Más compatible</em>. Otra solución rápida es hacer una captura de pantalla de la foto y convertir la captura.</p>`,
     faq: [['¿Puedo hacer la foto con el móvil?', 'Sí. Haz la foto con buena luz y sobre un fondo liso, y conviértela aquí directamente.'], ['¿Se pierde calidad?', 'Muy poca. Las imágenes se optimizan para que el PDF no pese demasiado.']],
   },
   {
@@ -931,6 +971,12 @@ const PDF_TOOLS = [
     lead: 'Muchos portales de empleo no aceptan archivos de más de 2 MB. Reduce el peso de tu PDF en segundos.',
     desc: 'Reduce el tamaño de un PDF gratis para poder enviarlo por email o subirlo a portales de empleo. Sin registro y sin subir tus archivos.',
     steps: ['Elige el PDF que pesa demasiado.', 'Elige el nivel de compresión.', 'Pulsa "Comprimir PDF" y descarga la versión ligera.'],
+    guide: `<h2>¿Por qué pesa tanto mi PDF?</h2>
+<p>Casi siempre por las <strong>imágenes</strong>: documentos escaneados, fotos de títulos hechas con el móvil o currículums con una foto muy grande. Un PDF con solo texto pesa muy poco, pero cada página escaneada puede ocupar varios megas.</p>
+<h2>Límites de tamaño habituales</h2>
+<ul><li>Muchos portales de empleo y formularios web aceptan archivos de <strong>2 MB</strong> como máximo, y algunos solo 1 MB.</li><li>En el correo electrónico, lo normal es un límite de 20 a 25 MB por mensaje, pero un adjunto ligero llega antes y se abre mejor en el móvil.</li><li>Para un currículum, lo ideal es que pese <strong>menos de 1 MB</strong>.</li></ul>
+<h2>Qué nivel de compresión elegir</h2>
+<p>Empieza por el nivel intermedio. Si el archivo sigue pesando demasiado, prueba el máximo; si el texto se ve borroso al ampliarlo, vuelve a un nivel más suave. Revisa siempre el resultado antes de enviarlo.</p>`,
     faq: [['¿Funciona con cualquier PDF?', 'Funciona muy bien con PDF escaneados o con fotos. Si tu PDF es solo texto, puede que ya esté optimizado.'], ['¿Por qué no puedo seleccionar el texto después?', 'Para reducir tanto el peso, cada página se guarda como imagen. Se ve igual, pero el texto no se puede copiar.']],
   },
   {
@@ -940,6 +986,11 @@ const PDF_TOOLS = [
     lead: 'Convierte cada página de un PDF en una imagen JPG: para compartirla por WhatsApp, subirla a redes o a un formulario que solo acepta imágenes.',
     desc: 'Convierte las páginas de un PDF a imágenes JPG gratis, en alta calidad. Sin registro y sin subir tus archivos a internet.',
     steps: ['Elige un PDF.', 'Elige la calidad.', 'Pulsa "Convertir a JPG": si tiene varias páginas, las descargas todas juntas en un .zip.'],
+    guide: `<h2>¿Para qué sirve pasar un PDF a imagen?</h2>
+<ul><li><strong>Para compartirlo por WhatsApp o redes sociales:</strong> una imagen se ve directamente en el chat, sin tener que abrir ni descargar nada.</li><li><strong>Para formularios que solo aceptan imágenes,</strong> como algunos perfiles de portales de empleo.</li><li><strong>Para sacar una página concreta</strong> de un documento largo y enseñarla.</li></ul>
+<h2>Qué calidad elegir</h2>
+<p>La calidad normal es suficiente para verlo en el móvil o compartirlo. La alta es mejor si vas a imprimir la imagen o si el documento tiene letra pequeña. Las imágenes en alta calidad pesan más.</p>
+<p>Si lo que necesitas es lo contrario, convertir fotos en un PDF, usa <a href="${url('jpg-a-pdf/')}">JPG a PDF</a>.</p>`,
     faq: [['¿Cómo abro el .zip en el móvil?', 'En Android, desde la app "Archivos"; en iPhone, tocando el archivo en la app "Archivos". Se descomprime con un toque.']],
   },
   {
@@ -949,6 +1000,10 @@ const PDF_TOOLS = [
     lead: 'Quédate solo con las páginas que necesitas, o separa cada página en un PDF distinto.',
     desc: 'Extrae páginas de un PDF o sepáralo en varios archivos gratis. Sin registro, sin marcas de agua y sin subir tus archivos.',
     steps: ['Elige un PDF.', 'Escribe las páginas que quieres (por ejemplo 1-3, 5) o marca "separar cada página".', 'Pulsa "Extraer páginas" y descarga.'],
+    guide: `<h2>Casos en los que te sirve</h2>
+<ul><li>Te han enviado un documento largo y solo tienes que entregar <strong>una o dos páginas</strong>, por ejemplo la del título o la de un certificado.</li><li>Escaneaste varios documentos juntos y necesitas <strong>separarlos</strong> en archivos distintos.</li><li>Tu currículum tiene una página de más y quieres enviar <strong>solo la primera</strong>.</li><li>Un archivo pesa demasiado para subirlo de una vez y quieres <strong>partirlo</strong> en trozos.</li></ul>
+<h2>Consejo</h2>
+<p>Después de separar las páginas, ponle a cada archivo un nombre que diga qué es: <em>Titulo-FP.pdf</em>, <em>Certificado-PRL.pdf</em>… Así quien lo recibe lo encuentra a la primera. Si luego quieres juntar algunas páginas con otros documentos, usa <a href="${url('unir-pdf/')}">Unir PDF</a>.</p>`,
     faq: [['¿Cómo indico las páginas?', 'Con números y guiones: "2" es la página 2, "1-3" las páginas 1, 2 y 3, y "1-3, 7" añade también la 7.']],
   },
   {
@@ -958,6 +1013,12 @@ const PDF_TOOLS = [
     lead: 'Pasa el texto de un PDF a un documento de Word (.docx) para poder editarlo.',
     desc: 'Convierte el texto de un PDF a Word (.docx) editable gratis, sin registro y sin subir tus archivos a ningún servidor.',
     steps: ['Elige un PDF con texto.', 'Pulsa "Convertir a Word".', 'Abre el .docx y revisa el formato.'],
+    guide: `<h2>¿Cuándo conviene pasar un PDF a Word?</h2>
+<p>Cuando necesitas <strong>cambiar el texto</strong> de un documento del que solo tienes el PDF: actualizar una carta, corregir un dato o reutilizar párrafos. La herramienta saca el texto con sus títulos y párrafos para que lo edites en Word, Google Docs o LibreOffice.</p>
+<h2>Limitaciones</h2>
+<ul><li>Solo funciona con PDF que tienen <strong>texto real</strong>. Si el PDF es un escaneo o una foto, el texto es una imagen y no se puede extraer.</li><li>Las tablas, columnas, imágenes y diseños complejos no se conservan: tendrás que darle formato de nuevo.</li></ul>
+<h2>Si lo que quieres es actualizar tu currículum</h2>
+<p>Es más fácil <a href="${url('crear/')}">subirlo a nuestro editor</a>: leemos tu CV antiguo, lo pasamos a una plantilla moderna y lo descargas en PDF o en Word en unos minutos.</p>`,
     faq: [['¿Se mantiene el diseño?', 'Se conserva el texto, los títulos y los párrafos. Las imágenes, tablas y diseños complejos no se conservan.'], ['¿Quieres editar tu currículum?', 'Mejor súbelo a nuestro editor: lo pasamos a una plantilla nueva y lo descargas en PDF o en Word.']],
   },
 ];
@@ -974,7 +1035,29 @@ page('herramientas-pdf/', {
 </div></section>
 <section class="section" style="padding-top:28px"><div class="wrap">
   <div class="tools-grid">${PDF_TOOLS.map((x) => `<a class="tool-card" href="${url(x.slug + '/')}"><span class="icon-tile ${x.t}">${x.icon}</span><span><strong>${x.name}</strong><small>${esc(x.lead.split('.')[0])}.</small></span></a>`).join('')}</div>
-</div></section>`,
+</div></section>
+<div class="narrow prose">
+  <h2>Los documentos que más se piden al buscar trabajo</h2>
+  <p>Además del currículum, en muchos procesos de selección te pedirán otros papeles: la carta de presentación, títulos y certificados de cursos, el carné de conducir, el DNI o NIE o la vida laboral. Estas herramientas sirven para tenerlos todos listos en el formato que piden las empresas, sin instalar nada.</p>
+  <h2>Qué herramienta necesitas</h2>
+  <ul>
+    <li><strong>Te piden todo en un solo archivo:</strong> <a href="${url('unir-pdf/')}">Unir PDF</a> junta tu CV, la carta y los títulos.</li>
+    <li><strong>Tienes el título o el DNI en foto:</strong> <a href="${url('jpg-a-pdf/')}">JPG a PDF</a> lo convierte en un documento.</li>
+    <li><strong>El portal de empleo dice que el archivo es demasiado grande:</strong> <a href="${url('comprimir-pdf/')}">Comprimir PDF</a> reduce su peso.</li>
+    <li><strong>Quieres enviarlo por WhatsApp como imagen:</strong> <a href="${url('pdf-a-jpg/')}">PDF a JPG</a>.</li>
+    <li><strong>Solo necesitas algunas páginas:</strong> <a href="${url('dividir-pdf/')}">Dividir PDF</a>.</li>
+    <li><strong>Quieres editar el texto de un PDF:</strong> <a href="${url('pdf-a-word/')}">PDF a Word</a>.</li>
+  </ul>
+  <h2>Tus archivos no salen de tu dispositivo</h2>
+  <p>La mayoría de webs de PDF suben tus documentos a sus servidores para procesarlos. Aquí no: todo se hace dentro de tu navegador, en tu móvil o tu ordenador. Es importante cuando se trata de tu DNI, tu vida laboral o tus datos personales. Por eso también funciona aunque tengas poca cobertura, una vez cargada la página.</p>
+  <h2>Consejos antes de enviar tus documentos</h2>
+  <ul>
+    <li>Envía siempre el currículum en <strong>PDF</strong>: se ve igual en cualquier móvil u ordenador, mientras que un Word puede descolocarse.</li>
+    <li>Usa nombres de archivo claros, con tu nombre y el puesto: <em>CV-Ana-Lopez-Dependienta.pdf</em>.</li>
+    <li>Intenta que cada archivo pese <strong>menos de 2 MB</strong>.</li>
+    <li>Abre el archivo final antes de enviarlo y comprueba que todas las páginas se ven bien y en orden.</li>
+  </ul>
+</div>`,
 });
 
 PDF_TOOLS.forEach((x) => {
@@ -1002,6 +1085,7 @@ PDF_TOOLS.forEach((x) => {
   <div class="prose" style="margin-top:28px">
     <h2>Cómo funciona</h2>
     <ol>${x.steps.map((st) => `<li>${st}</li>`).join('')}</ol>
+    ${x.guide}
     <h2>Preguntas frecuentes</h2>
     ${x.faq.map(([q, a]) => `<h3>${q}</h3><p>${a}</p>`).join('')}
     <h3>¿Es gratis?</h3><p>Sí, totalmente gratis, sin registro y sin marcas de agua.</p>
