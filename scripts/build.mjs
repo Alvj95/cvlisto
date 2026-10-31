@@ -1183,14 +1183,6 @@ page('pro/', {
   title: `Tu CV Gratis Pro: plantillas premium y más por ${CONFIG.proPrecio} (pago único)`,
   active: 'pro',
   description: `Consigue Tu CV Gratis Pro: 8 plantillas premium, descarga en Word, analizador de ofertas y simulador de entrevista. Pago único de ${CONFIG.proPrecio}, sin suscripciones.`,
-  jsonld: {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: 'Tu CV Gratis Pro',
-    description: 'Licencia de pago único con plantillas premium y herramientas para buscar empleo.',
-    brand: { '@type': 'Brand', name: CONFIG.nombreSitio },
-    offers: { '@type': 'Offer', price: CONFIG.proPrecio.replace(/[^\d,]/g, '').replace(',', '.'), priceCurrency: 'EUR', availability: 'https://schema.org/InStock', url: abs('pro/') },
-  },
   body: `
 <section class="pro-hero"><div class="wrap">
   <span class="pill">👑 Tu CV Gratis Pro</span>
