@@ -376,6 +376,7 @@ const SHARE_DIALOG = `<dialog id="dlg-shared">
 </dialog>`;
 
 const PRO_DIALOG = `<dialog id="dlg-pro" class="dlg-pro">
+  <button type="button" class="dlg-x" onclick="this.closest('dialog').close()" aria-label="Cerrar">✕</button>
   <div class="dlg-pro-top"><span class="crown-big">👑</span><h2 id="dlg-pro-title">Esta plantilla es Pro</h2><p id="dlg-pro-text">Te queda genial, ¿verdad? Consigue Pro y descárgala hoy.</p></div>
   <ul class="tick">
     <li>8 plantillas premium que destacan</li>
@@ -383,6 +384,7 @@ const PRO_DIALOG = `<dialog id="dlg-pro" class="dlg-pro">
     <li>Sin anuncios · pago único, para siempre</li>
     <li>Analizador de ofertas y simulador de entrevista</li>
     <li>Cartas a juego y candidaturas ilimitadas</li>
+    <li>Editar y firmar PDF</li>
   </ul>
   <p class="price-line">${CONFIG.proPrecioAntes ? `<s>${CONFIG.proPrecioAntes}</s> ` : ''}<strong>${CONFIG.proPrecio}</strong> · pago único, para siempre</p>
   <div class="dlg-actions">
@@ -935,6 +937,22 @@ ${PRO_DIALOG}
 /* ---------- Herramientas PDF ---------- */
 const PDF_TOOLS = [
   {
+    slug: 'editar-firmar-pdf', tool: 'editar', icon: '✍️', t: 't3', name: 'Editar y firmar PDF', pro: true,
+    title: 'Editar y firmar PDF online: cambia el texto y añade tu firma | Tu CV Gratis',
+    h1: 'Editar y firmar PDF',
+    lead: 'Cambia el texto de un PDF, rellena formularios, marca casillas y añade tu firma, escrita o dibujada con el dedo.',
+    desc: 'Edita el texto de un PDF y fírmalo desde el móvil o el ordenador: escribe tu nombre como firma o dibújala, rellena formularios y marca casillas. Sin subir tus archivos.',
+    steps: ['Elige el PDF.', 'Toca "Editar texto" y después el texto que quieras cambiar, o usa "Añadir texto", "Fecha" o "Marcar".', 'Toca "Firmar": escribe tu nombre y elige un estilo de firma, dibújala con el dedo o sube una foto de tu firma.', 'Coloca la firma en su sitio, ajusta el tamaño y descarga el PDF.'],
+    guide: `<h2>Qué puedes hacer</h2>
+<ul><li><strong>Cambiar un texto del PDF:</strong> tocas la línea, escribes lo nuevo y queda en su sitio, con un tamaño y un color parecidos al original.</li><li><strong>Escribir donde quieras:</strong> tu nombre, tu DNI, una dirección o cualquier dato que falte.</li><li><strong>Rellenar formularios:</strong> si el PDF trae campos para escribir, aparecen en una lista para rellenarlos cómodamente.</li><li><strong>Marcar casillas</strong> con ✓ o ✗, <strong>tapar</strong> datos que no quieras enseñar y <strong>resaltar</strong> lo importante.</li><li><strong>Añadir imágenes,</strong> como un logotipo o un sello.</li></ul>
+<h2>Tu firma, en segundos</h2>
+<p>Escribe tu nombre y elige entre varios estilos de letra de firma, dibújala con el dedo o el ratón, o sube una foto de tu firma en papel: quitamos el fondo blanco automáticamente. Puedes guardarla en tu dispositivo para no tener que hacerla otra vez.</p>
+<p>Es una firma que se añade al documento como imagen, igual que si lo imprimieras, lo firmaras y lo escanearas, pero sin papel. Sirve para el día a día: aceptar una oferta de trabajo, autorizaciones, formularios o documentos entre particulares.</p>
+<h2>Consejos</h2>
+<ul><li>Si el PDF es un escaneo o una foto, no tiene texto que se pueda tocar. Usa "Tapar" sobre lo que quieras cambiar y escribe encima con "Añadir texto".</li><li>Amplía la página con los dedos para colocar la firma con precisión.</li><li>Antes de enviarlo, abre el PDF descargado y revisa que todo esté en su sitio.</li></ul>`,
+    faq: [['¿Puedo probarlo gratis?', 'Sí. Puedes abrir tu PDF, editarlo y firmarlo para ver cómo queda. Para descargar el resultado necesitas Tu CV Gratis Pro, con pago único y sin suscripciones.'], ['¿Se guarda mi firma en algún servidor?', 'No. Si eliges recordarla, se guarda solo en tu propio dispositivo. Tus documentos tampoco se suben a internet.'], ['¿Se pueden cambiar las palabras originales del PDF?', 'Se tapan con el color del fondo y se escribe el texto nuevo encima, en la misma posición. Es como lo hacen la mayoría de editores de PDF.']],
+  },
+  {
     slug: 'unir-pdf', tool: 'unir', icon: '📎', t: 't1', name: 'Unir PDF',
     title: 'Unir PDF gratis y sin subir archivos | Tu CV Gratis',
     h1: 'Unir PDF gratis',
@@ -1034,7 +1052,7 @@ page('herramientas-pdf/', {
   <p class="sub">Une tu CV con la carta y tus títulos, pasa fotos a PDF o reduce el peso para subirlo a un portal de empleo. Gratis y <strong>sin subir tus archivos</strong>: todo se hace en tu dispositivo.</p>
 </div></section>
 <section class="section" style="padding-top:28px"><div class="wrap">
-  <div class="tools-grid">${PDF_TOOLS.map((x) => `<a class="tool-card" href="${url(x.slug + '/')}"><span class="icon-tile ${x.t}">${x.icon}</span><span><strong>${x.name}</strong><small>${esc(x.lead.split('.')[0])}.</small></span></a>`).join('')}</div>
+  <div class="tools-grid">${PDF_TOOLS.map((x) => `<a class="tool-card" href="${url(x.slug + '/')}"><span class="icon-tile ${x.t}">${x.icon}</span><span><strong>${x.name}${x.pro ? ' 👑' : ''}</strong><small>${esc(x.lead.split('.')[0])}.</small></span></a>`).join('')}</div>
 </div></section>
 <div class="narrow prose">
   <h2>Los documentos que más se piden al buscar trabajo</h2>
@@ -1047,6 +1065,7 @@ page('herramientas-pdf/', {
     <li><strong>Quieres enviarlo por WhatsApp como imagen:</strong> <a href="${url('pdf-a-jpg/')}">PDF a JPG</a>.</li>
     <li><strong>Solo necesitas algunas páginas:</strong> <a href="${url('dividir-pdf/')}">Dividir PDF</a>.</li>
     <li><strong>Quieres editar el texto de un PDF:</strong> <a href="${url('pdf-a-word/')}">PDF a Word</a>.</li>
+    <li><strong>Tienes que rellenar o firmar un documento:</strong> <a href="${url('editar-firmar-pdf/')}">Editar y firmar PDF</a> 👑.</li>
   </ul>
   <h2>Tus archivos no salen de tu dispositivo</h2>
   <p>La mayoría de webs de PDF suben tus documentos a sus servidores para procesarlos. Aquí no: todo se hace dentro de tu navegador, en tu móvil o tu ordenador. Es importante cuando se trata de tu DNI, tu vida laboral o tus datos personales. Por eso también funciona aunque tengas poca cobertura, una vez cargada la página.</p>
@@ -1080,7 +1099,8 @@ PDF_TOOLS.forEach((x) => {
   <p class="sub">${x.lead}</p>
 </div></section>
 <div class="narrow pt-wrap">
-  <div class="pt-card" id="pdf-tool" data-tool="${x.tool}"><p class="muted-s">Cargando…</p></div>
+  ${x.pro ? '<p class="pe-pro-note pro-hide">👑 Herramienta <strong>Pro</strong>: pruébala gratis con tu PDF; para descargar el resultado necesitas Pro.</p>' : ''}
+  <div class="pt-card" id="${x.pro ? 'pdf-edit' : 'pdf-tool'}" data-tool="${x.tool}"><p class="muted-s">Cargando…</p></div>
   <div class="pt-private">🔒 <strong>100 % privado:</strong> tus archivos se procesan en tu propio dispositivo y nunca se suben a internet.</div>
   <div class="prose" style="margin-top:28px">
     <h2>Cómo funciona</h2>
@@ -1088,13 +1108,14 @@ PDF_TOOLS.forEach((x) => {
     ${x.guide}
     <h2>Preguntas frecuentes</h2>
     ${x.faq.map(([q, a]) => `<h3>${q}</h3><p>${a}</p>`).join('')}
-    <h3>¿Es gratis?</h3><p>Sí, totalmente gratis, sin registro y sin marcas de agua.</p>
+    ${x.pro ? '' : '<h3>¿Es gratis?</h3><p>Sí, totalmente gratis, sin registro y sin marcas de agua.</p>'}
     <h2>Más herramientas</h2>
-    <ul>${PDF_TOOLS.filter((o) => o !== x).map((o) => `<li><a href="${url(o.slug + '/')}">${o.icon} ${o.name}</a></li>`).join('')}</ul>
+    <ul>${PDF_TOOLS.filter((o) => o !== x).map((o) => `<li><a href="${url(o.slug + '/')}">${o.icon} ${o.name}${o.pro ? ' 👑' : ''}</a></li>`).join('')}</ul>
   </div>
   ${ctaBox('¿Buscas trabajo? Crea también tu currículum gratis y descárgalo en PDF.')}
 </div>
-<script type="module" src="${url('assets/js/pdftools.js')}"></script>`,
+${x.pro ? PRO_DIALOG : ''}
+<script type="module" src="${url(`assets/js/${x.pro ? 'pdfedit' : 'pdftools'}.js`)}"></script>`,
   });
 });
 
@@ -1147,6 +1168,7 @@ const PRO_FEATURES = [
   ['🎤', 't2', 'Simulador de entrevista', 'Preguntas reales de tu oficio con respuestas modelo para que llegues preparado.'],
   ['✉️', 't1', 'Cartas premium', 'Cartas de presentación con el mismo diseño que tu currículum. Todo a juego.'],
   ['📋', 't3', 'Seguimiento de candidaturas', 'Apunta a qué empresas enviaste el CV, cuándo y cómo va cada proceso.'],
+  ['✍️', 't2', 'Editar y firmar PDF', 'Cambia el texto de cualquier PDF, rellena formularios y fírmalo con tu nombre o con el dedo.'],
   ['🚫', 't5', 'Sin anuncios', 'Navega por toda la web sin publicidad.'],
   ['♾️', 't4', 'Para siempre', 'Un solo pago. Sin suscripciones, sin renovaciones y con todas las mejoras futuras incluidas.'],
 ];
@@ -1162,6 +1184,7 @@ const PRO_ROWS = [
   ['Simulador de entrevista', false, true],
   ['Cartas premium a juego', false, true],
   ['Seguimiento de candidaturas', false, true],
+  ['Editar y firmar PDF', false, true],
   ['Sin anuncios', false, true],
 ];
 const PRO_FAQ = [
@@ -1521,7 +1544,7 @@ await writeFile(
 // Service worker: páginas primero desde la red (para ver siempre lo último) y
 // recursos desde la caché; así el editor funciona también sin conexión.
 const VERSION = Date.now().toString(36);
-const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js', 'assets/js/pro.js', 'assets/js/docx.js', 'assets/js/analyzer.js', 'assets/js/interview.js', 'assets/data/entrevista.js', 'entrevista/', 'assets/js/tracker.js', 'candidaturas/', 'assets/js/pdftools.js'].map(url);
+const PRECACHE = ['', 'crear/', 'assets/css/site.css', 'assets/css/cv.css', 'assets/js/editor.js', 'assets/js/cv-render.js', 'assets/js/importer.js', 'assets/js/reviewer.js', 'assets/js/share.js', 'assets/js/wizard.js', 'primer-empleo/', 'assets/js/letter.js', 'assets/js/carta-editor.js', 'carta/', 'assets/js/i18n.js', 'assets/data/oficios.js', 'assets/data/traducciones.js', 'assets/data/traducciones-mas.js', 'assets/data/traducciones-mas2.js', 'assets/data/oficios-mas.js', 'icons/icon-192.png', 'assets/js/install.js', 'assets/js/pro.js', 'assets/js/docx.js', 'assets/js/analyzer.js', 'assets/js/interview.js', 'assets/data/entrevista.js', 'entrevista/', 'assets/js/tracker.js', 'candidaturas/', 'assets/js/pdftools.js', 'assets/js/pdfedit.js'].map(url);
 await writeFile(
   join(OUT, 'sw.js'),
   `const CACHE = 'cvlisto-${VERSION}';

@@ -780,3 +780,79 @@ html.is-pro .tools-dd summary { color: #f9dc7c; background: rgba(249,220,124,.12
 .pt-done { font-size: 1.3rem; font-weight: 800; color: var(--ok); }
 .pt-dl { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 10px 0; }
 .pt-private { margin-top: 12px; background: #dcf7ef; color: #0b6b52; border-radius: 14px; padding: 10px 14px; font-size: .9rem; }
+
+/* ---------- Editar y firmar PDF ---------- */
+@font-face { font-family: "Great Vibes"; src: url("../vendor/fonts/great-vibes-latin-400-normal.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Dancing Script"; src: url("../vendor/fonts/dancing-script-latin-600-normal.woff2") format("woff2"); font-weight: 400 700; font-display: swap; }
+html.is-pro .pro-hide { display: none; }
+.dlg-x { position: absolute; top: 10px; right: 10px; z-index: 2; border: 0; background: rgba(255,255,255,.85); border-radius: 50%; width: 34px; height: 34px; font-size: 1rem; cursor: pointer; color: var(--ink); }
+.dlg-pro { position: relative; }
+.pe-pro-note { background: #fff6e0; border: 1px solid #f5d98a; color: #6b4a00; border-radius: 14px; padding: 10px 14px; font-size: .92rem; margin: 0 0 12px; }
+.pe-loading { text-align: center; font-weight: 700; color: var(--brand); padding: 30px 0; }
+.pe-app[hidden], .pe-fields[hidden], .pe-loading[hidden], .pt-drop[hidden] { display: none; }
+.pe-bar { position: sticky; top: 64px; z-index: 6; display: flex; gap: 6px; overflow-x: auto; padding: 8px; margin: -4px -4px 0; background: #fff; border-radius: 16px; box-shadow: 0 6px 18px rgba(20,27,52,.08); scrollbar-width: none; }
+.pe-bar::-webkit-scrollbar { display: none; }
+.pe-bar button { flex: none; display: grid; justify-items: center; gap: 2px; min-width: 70px; padding: 8px 6px; border: 1.5px solid var(--line); background: #fff; border-radius: 12px; font: inherit; font-size: .74rem; font-weight: 700; color: var(--ink); cursor: pointer; }
+.pe-bar button span { font-size: 1.25rem; line-height: 1; }
+.pe-bar button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #fff; }
+.pe-hint { margin: 10px 0; font-size: .9rem; color: var(--muted); text-align: center; }
+.pe-hint.on { color: #fff; background: var(--brand); border-radius: 12px; padding: 8px 12px; font-weight: 700; }
+.pe-fields { margin: 10px 0; background: #f7f7fc; border-radius: 14px; padding: 10px 14px; }
+.pe-fields summary { font-weight: 700; cursor: pointer; }
+.pe-fields-grid { display: grid; gap: 10px; margin-top: 10px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.pe-fields-grid label { display: grid; gap: 4px; font-size: .85rem; font-weight: 700; }
+.pe-fields-grid label.pt-check { display: flex; }
+.pe-fields-grid input:not([type=checkbox]), .pe-fields-grid select { font: inherit; font-weight: 500; padding: 8px 10px; border: 1.5px solid var(--line); border-radius: 10px; }
+.pe-pages { display: grid; gap: 18px; margin: 12px auto 0; max-width: 900px; }
+.pe-page { position: relative; width: 100%; background: #fff; box-shadow: 0 4px 20px rgba(20,27,52,.15); --k: 1; }
+.pe-page canvas { display: block; width: 100%; height: 100%; }
+.pe-placing .pe-page { cursor: crosshair; outline: 2px dashed var(--brand); outline-offset: 3px; }
+.pe-hits, .pe-layer { position: absolute; inset: 0; }
+.pe-hits { pointer-events: none; }
+.pe-hit { position: absolute; pointer-events: auto; border: 1.5px dashed rgba(91,75,255,.55); background: rgba(91,75,255,.07); border-radius: 3px; padding: 0; cursor: text; }
+.pe-hit:hover, .pe-hit:focus-visible { background: rgba(91,75,255,.2); border-style: solid; }
+.pe-layer { pointer-events: none; }
+.pe-num { position: absolute; right: 6px; bottom: -22px; font-size: .75rem; color: var(--muted); }
+.pe-obj { position: absolute; pointer-events: auto; touch-action: none; cursor: move; user-select: none; -webkit-user-select: none; }
+.pe-obj.sel { outline: 2px solid var(--brand); outline-offset: 1px; }
+.pe-text { line-height: 1.2; white-space: pre; }
+.pe-tx { outline: none; min-width: 1ch; cursor: move; }
+.pe-text.editing, .pe-text.editing .pe-tx { cursor: text; user-select: text; -webkit-user-select: text; touch-action: auto; }
+.pe-text.editing { outline: 2px solid var(--brand); background: rgba(255,255,255,.35); }
+.pe-tx:empty::before { content: "Escribe aquí"; color: #9aa0b8; }
+.pe-img img { width: 100%; height: 100%; display: block; pointer-events: none; }
+.pe-check svg, .pe-cross svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.pe-check svg *, .pe-cross svg * { stroke-width: calc(var(--k) * 2px); }
+.pe-rs { display: none; position: absolute; right: -9px; bottom: -9px; width: 18px; height: 18px; border-radius: 50%; background: var(--brand); border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.3); cursor: nwse-resize; }
+.pe-obj.sel .pe-rs { display: block; }
+.pe-tools { position: absolute; left: 0; bottom: calc(100% + 8px); display: flex; gap: 4px; background: var(--ink); padding: 5px; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.25); z-index: 5; white-space: nowrap; font: 600 14px/1 system-ui, sans-serif; cursor: default; }
+.pe-obj.tools-below .pe-tools { bottom: auto; top: calc(100% + 8px); }
+.pe-tools button { border: 0; background: rgba(255,255,255,.12); color: #fff; min-width: 32px; height: 32px; border-radius: 8px; font: inherit; cursor: pointer; padding: 0 6px; }
+.pe-tools .ink, .sig-inks .ink { width: 26px; min-width: 26px; height: 26px; border-radius: 50%; background: var(--ink); border: 2px solid #fff; padding: 0; align-self: center; }
+.pe-actions { position: sticky; bottom: 76px; z-index: 6; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 18px; padding: 10px; background: rgba(255,255,255,.92); backdrop-filter: blur(8px); border-radius: 16px; box-shadow: 0 -4px 18px rgba(20,27,52,.08); }
+@media (min-width: 721px) { .pe-actions { bottom: 12px; } }
+@media (max-width: 720px) { .pe-bar { top: 56px; } }
+.pe-actions #pe-save { flex: 1 1 200px; max-width: 320px; }
+.dlg-sign { max-width: 520px; }
+.sig-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 12px; }
+.sig-tabs .chip[aria-pressed="true"] { background: var(--brand); color: #fff; border-color: var(--brand); }
+.sig-pane[hidden] { display: none; }
+.sig-input { width: 100%; font: inherit; font-size: 1.05rem; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 12px; }
+.sig-styles { display: grid; gap: 8px; margin-top: 10px; }
+.sig-style { border: 1.5px solid var(--line); background: #fff; border-radius: 14px; padding: 6px 14px; font-size: 2.1rem; line-height: 1.5; text-align: left; cursor: pointer; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.sig-style[aria-pressed="true"] { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(91,75,255,.15); }
+.sig-pad { width: 100%; aspect-ratio: 900 / 330; border: 1.5px dashed #c9c3ff; border-radius: 14px; background: #fff linear-gradient(transparent calc(78% - 1px), #e4e3ef calc(78% - 1px), #e4e3ef 78%, transparent 78%); touch-action: none; cursor: crosshair; }
+.sig-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0; }
+.sig-photo-prev img, .sig-saved img { max-width: 100%; max-height: 110px; display: block; margin: 10px auto; }
+.sig-saved { background: #f7f7fc; border-radius: 14px; padding: 6px 12px; margin-bottom: 8px; }
+.sig-saved p { margin: 4px 0; }
+.sig-saved-btn { display: block; width: 100%; border: 1.5px solid var(--line); background: #fff; border-radius: 12px; cursor: pointer; }
+.sig-inks { display: flex; align-items: center; gap: 10px; margin: 14px 0 8px; font-weight: 700; font-size: .9rem; }
+.sig-inks .ink { border: 3px solid #fff; box-shadow: 0 0 0 1.5px var(--line); cursor: pointer; }
+.sig-inks .ink[aria-pressed="true"] { box-shadow: 0 0 0 2.5px var(--brand); }
+.pe-actions { flex-wrap: nowrap; padding: 8px; gap: 6px; }
+.pe-actions .btn { padding-top: 10px; padding-bottom: 10px; }
+.pe-actions .pe-ico { flex: none; width: 48px; padding-left: 0; padding-right: 0; font-size: 1.2rem; }
+.pe-actions #pe-save { flex: 1; max-width: 360px; }
+.pe-bar button { min-width: 62px; padding: 6px 4px; }
+.pe-bar button span { font-size: 1.1rem; }
