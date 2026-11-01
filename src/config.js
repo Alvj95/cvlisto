@@ -21,6 +21,9 @@ export const CONFIG = {
   // Precio de la versión Pro (pago único). "proPrecioAntes" se muestra tachado: quítalo si no hay oferta.
   proPrecio: '4,99 €',
   proPrecioAntes: '9,99 €',
+  // Oferta con código de descuento de Lemon Squeezy. Se oculta sola al pasar la fecha "hasta".
+  // Para quitarla antes, deja "codigo" vacío.
+  promo: { codigo: 'G2NDK3OQ', descuento: '50 %', precio: '2,50 €', hasta: '2026-12-31', hastaTexto: '31 de diciembre' },
 
   // Datos del titular para el aviso legal (obligatorios por la LSSI en España).
   titular: process.env.OWNER_NAME || 'Jose Alejandro Alvarado Rodriguez',

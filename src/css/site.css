@@ -856,3 +856,24 @@ html.is-pro .pro-hide { display: none; }
 .pe-actions #pe-save { flex: 1; max-width: 360px; }
 .pe-bar button { min-width: 62px; padding: 6px 4px; }
 .pe-bar button span { font-size: 1.1rem; }
+
+/* ---------- Oferta con código ---------- */
+.cp-bar { position: relative; display: flex; align-items: center; justify-content: center; gap: 6px 10px; flex-wrap: wrap; background: linear-gradient(90deg, #ff4d6d, #ff8a3d); color: #fff; font-weight: 700; font-size: .86rem; padding: 8px 40px; text-align: center; }
+.cp-bar code { background: rgba(255,255,255,.22); border: 1.5px dashed rgba(255,255,255,.85); border-radius: 8px; padding: 1px 8px; font-weight: 800; letter-spacing: .08em; }
+.cp-bar a { color: #fff; text-decoration: underline; font-weight: 800; }
+.cp-bar-x { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: 0; background: none; color: #fff; font-size: 1rem; padding: 6px 8px; cursor: pointer; }
+html.is-pro .cp-bar, html.is-pro .cp-ticket { display: none; }
+.cp-ticket { position: relative; max-width: 420px; margin: 0 auto 18px; background: #fff; color: #141b34; border-radius: 20px; padding: 16px 18px 14px; box-shadow: 0 18px 40px rgba(20,27,52,.35); text-align: center; scroll-margin-top: 90px; }
+.cp-ticket::before, .cp-ticket::after { content: ""; position: absolute; top: 50%; width: 22px; height: 22px; border-radius: 50%; background: #7a5cff; transform: translateY(-50%); }
+.cp-ticket::before { left: -11px; }
+.cp-ticket::after { right: -11px; }
+.cp-tag { display: inline-block; background: linear-gradient(90deg, #ff4d6d, #ff8a3d); color: #fff; font-weight: 800; font-size: .8rem; letter-spacing: .06em; padding: 5px 12px; border-radius: 999px; }
+.cp-off { font-size: 2.6rem; font-weight: 900; line-height: 1; margin: 8px 0 2px; background: linear-gradient(90deg, #ff4d6d, #ff8a3d); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.cp-sub { font-size: .92rem; color: #4b5270; margin: 0 0 10px; }
+.cp-code { display: flex; align-items: center; gap: 8px; border: 2px dashed #b9b0ff; background: #f4f2ff; border-radius: 14px; padding: 8px 8px 8px 14px; }
+.cp-code b { flex: 1; font-size: 1.4rem; font-weight: 800; letter-spacing: .1em; text-align: left; color: #3b2fc4; }
+.cp-code button { border: 0; background: #5b4bff; color: #fff; font: inherit; font-weight: 800; border-radius: 10px; padding: 10px 14px; font-size: .9rem; cursor: pointer; }
+.cp-price { margin: 10px 0 0; font-size: .95rem; color: #4b5270; }
+.cp-price s { opacity: .6; }
+.cp-price strong { font-size: 1.4rem; color: #141b34; }
+.cp-time { font-size: .82rem; color: #c2410c; font-weight: 700; margin: 4px 0 0; }

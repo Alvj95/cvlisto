@@ -18,6 +18,24 @@ const YEAR = new Date().getFullYear();
 
 const url = (p = '') => BASE + p.replace(/^\//, '');
 const abs = (p = '') => SITE + '/' + p.replace(/^\//, '');
+
+const PROMO = CONFIG.promo?.codigo ? CONFIG.promo : null;
+// La oferta desaparece sola pasada la fecha, aunque la web no se vuelva a publicar.
+const promoUntil = (sel) =>
+  `<script>(function(){if(new Date()>new Date('${PROMO.hasta}T23:59:59')){document.querySelectorAll('${sel}').forEach(function(e){e.remove()})}})()</script>`;
+const promoTicket = () =>
+  PROMO
+    ? `<div class="cp-ticket" id="oferta"><span class="cp-tag">🎉 OFERTA DE LANZAMIENTO</span><div class="cp-off">−${PROMO.descuento}</div>
+  <p class="cp-sub">${CONFIG.proCheckoutUrl ? 'en Tu CV Gratis Pro con este código:' : 'en Tu CV Gratis Pro. Guarda este código para cuando abramos la compra:'}</p>
+  <div class="cp-code"><b>${PROMO.codigo}</b><button type="button" data-copy="${PROMO.codigo}" onclick="var b=this,t=b.dataset.copy,ok=function(){b.textContent='¡Copiado!';setTimeout(function(){b.textContent='Copiar'},2000)};if(navigator.clipboard){navigator.clipboard.writeText(t).then(ok,function(){prompt('Copia el código:',t)})}else{prompt('Copia el código:',t)}">Copiar</button></div>
+  <p class="cp-price"><s>${CONFIG.proPrecio}</s> → <strong>${PROMO.precio}</strong> · pago único</p>
+  <p class="cp-time">⏳ Hasta el ${PROMO.hastaTexto}</p></div>${promoUntil('.cp-ticket')}`
+    : '';
+const PROMO_BAR = PROMO
+  ? `<div class="cp-bar" id="cp-bar"><span>🎁 Lanzamiento: Pro con <b>−${PROMO.descuento}</b> usando el código <code>${PROMO.codigo}</code></span><a href="${url('pro/')}#oferta">Ver oferta →</a><button type="button" class="cp-bar-x" aria-label="Cerrar">✕</button></div>
+<script>(function(){var b=document.getElementById('cp-bar');try{if(new Date()>new Date('${PROMO.hasta}T23:59:59')||localStorage.getItem('cvlisto:promo-x')==='${PROMO.codigo}'){b.remove();return}}catch(e){}b.querySelector('.cp-bar-x').onclick=function(){b.remove();try{localStorage.setItem('cvlisto:promo-x','${PROMO.codigo}')}catch(e){}}})()</script>`
+  : '';
+
 // Primera letra en minúscula, respetando siglas: "auxiliar de enfermería (TCAE)".
 const lc = (s) => s.charAt(0).toLowerCase() + s.slice(1);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -123,6 +141,7 @@ ${adsense}
 ${head}
 </head>
 <body class="${bodyClass}">
+${/editor-page/.test(bodyClass) ? '' : PROMO_BAR}
 <header class="site-head"><div class="wrap">
   <a class="logo" href="${url()}"><span class="logo-mark">CV</span>${CONFIG.nombreSitio}<span class="pro-chip pro-only">👑 PRO</span></a>
   <nav class="nav">${nav}<a class="btn btn-sm" href="${url('crear/')}">Crear mi CV</a></nav>
@@ -1198,7 +1217,7 @@ const PRO_FAQ = [
 ];
 const proBuy = (cls = 'btn btn-white btn-lg') =>
   CONFIG.proCheckoutUrl
-    ? `<a class="${cls} js-buy" href="${esc(CONFIG.proCheckoutUrl)}" rel="nofollow">👑 Conseguir Pro por ${CONFIG.proPrecio}</a>`
+    ? `<a class="${cls} js-buy" href="${esc(CONFIG.proCheckoutUrl + (CONFIG.promo?.codigo ? `${CONFIG.proCheckoutUrl.includes('?') ? '&' : '?'}checkout[discount_code]=${CONFIG.promo.codigo}` : ''))}" rel="nofollow">👑 Conseguir Pro por ${CONFIG.proPrecio}</a>`
     : `<span class="${cls} is-soon" aria-disabled="true">👑 Muy pronto disponible</span>`;
 const yes = (v) => (v === true ? '<span class="yes">✓</span>' : v === false ? '<span class="no">—</span>' : `<strong>${v}</strong>`);
 
@@ -1212,6 +1231,7 @@ page('pro/', {
   <div class="pro-owned pro-only">🎉 <strong>Ya eres Pro en este dispositivo.</strong> Gracias por tu apoyo. <a href="${url('crear/')}">Ir a mi currículum →</a></div>
   <h1>Un currículum que no pasa <span class="hl">desapercibido</span></h1>
   <p class="lead">8 plantillas premium y las herramientas para conseguir la entrevista. Paga una vez y es tuyo para siempre.</p>
+  ${promoTicket()}
   <div class="pro-price">
     ${CONFIG.proPrecioAntes ? `<s>${CONFIG.proPrecioAntes}</s>` : ''}<strong>${CONFIG.proPrecio}</strong><span>pago único<br>sin suscripción</span>
   </div>
